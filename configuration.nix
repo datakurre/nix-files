@@ -1,3 +1,4 @@
+# Dell Precision M3800
 { config, pkgs, ... }:
 
 {
@@ -37,6 +38,7 @@
 
   hardware = {
     pulseaudio.enable = true;
+    pulseaudio.configFile = ./pulse/default.pa;
     nvidiaOptimus.disable = true;
   };
 
@@ -46,6 +48,7 @@
   };
 
   services = {
+    acpid.enable = true;
     pcscd.enable = true;
     unclutter.enable = true;
     nixosManual.showManual = true;
@@ -196,5 +199,5 @@
     gc-keep-outputs = true
   '';
 
-  system.stateVersion = "15.09";
+  system.stateVersion = "16.03";
 }
