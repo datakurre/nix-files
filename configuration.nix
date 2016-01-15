@@ -134,7 +134,7 @@
 
     xorg.xbacklight
 
-    (idea.idea-ultimate.override { jdk = pkgs.oraclejdk8; })
+    idea.idea-ultimate
 
     gnupg
     pass
