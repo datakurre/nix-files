@@ -42,6 +42,11 @@
     nvidiaOptimus.disable = true;
   };
 
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "ondemand";
+  };
+
   programs = {
     ssh.startAgent = false;
     zsh.enable = true;
@@ -126,7 +131,7 @@
     irssi
     mercurial
     nodejs
-    python
+    pythonFull
     spotify
     tmux
     vim
