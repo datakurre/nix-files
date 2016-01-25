@@ -82,9 +82,11 @@
 
     windowManager.xmonad.enable = true;
     windowManager.xmonad.enableContribAndExtras = true;
+    windowManager.default = "xmonad";
 
     desktopManager.xterm.enable = false;
-    desktopManager.default = "none";
+    desktopManager.xfce.enable = true;
+    desktopManager.default = "xfce";
 
     libinput = {
       enable = true;
