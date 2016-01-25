@@ -127,6 +127,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    chromium
     firefox
     git
     gnumake
