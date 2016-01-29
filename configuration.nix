@@ -18,6 +18,16 @@
   networking = {
     hostName = "makondo";
     networkmanager.enable = true;
+    interfaceMonitor = {
+      enable = true;
+      commands = ''
+        systemctl restart network-manager
+      '';
+    };
+    vpnc.services = {
+      staff = builtins.readFile ./staff.conf;
+      sysadmin = builtins.readFile ./sysadmin.conf;
+    };
   };
 
   i18n = {
@@ -37,6 +47,8 @@
   };
 
   hardware = {
+    enableAllFirmware = true;
+    bluetooth.enable = false;
     pulseaudio.enable = true;
     pulseaudio.configFile = ./pulse/default.pa;
     nvidiaOptimus.disable = true;
@@ -44,7 +56,7 @@
 
   powerManagement = {
     enable = true;
-    cpuFreqGovernor = "ondemand";
+    cpuFreqGovernor = "powersave";
   };
 
   programs = {
@@ -53,7 +65,34 @@
   };
 
   services = {
-    acpid.enable = true;
+    acpid = {
+      enable = true;
+      powerEventCommands = ''
+        systemctl suspend
+      '';
+      lidEventCommands = ''
+        systemctl hibernate
+      '';
+      acEventCommands = ''
+        if [ `cat /sys/class/power_supply/ACAD/online` -eq 0 ]; then
+          tee /sys/class/backlight/intel_backlight/brightness <<< 1000
+          /run/current-system/sw/bin/cpupower frequency-set -u 1.50GHz
+          tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor <<< powersave
+        else
+          tee /sys/class/backlight/intel_backlight/brightness <<< 3000
+          tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor <<< performance
+          /run/current-system/sw/bin/cpupower frequency-set -u 3.30GHz
+        fi
+      '';
+      brightnessDownEventCommands = ''
+        val=`cat /sys/class/backlight/intel_backlight/brightness`
+        tee /sys/class/backlight/intel_backlight/brightness <<< `expr $val - 200`
+      '';
+      brightnessUpEventCommands = ''
+        val=`cat /sys/class/backlight/intel_backlight/brightness`
+        tee /sys/class/backlight/intel_backlight/brightness <<< `expr $val + 200`
+      '';
+    };
     pcscd.enable = true;
     unclutter.enable = true;
     nixosManual.showManual = true;
@@ -64,19 +103,30 @@
     virtualbox.host.enable = true;
   };
 
+  services.redshift = {
+    enable = true;
+    brightness.day = "0.95";
+    brightness.night = "0.7";
+    latitude = "62.1435";
+    longitude = "25.4449";
+  };
+
+  services.locate.enable = true;
+
   services.xserver = {
     enable = true;
+    enableTCP = false;
 
     layout = "fi";
-    xkbOptions = "eurosign:e";
+    xkbOptions = "eurosign:e,esc:nocaps";
 
     displayManager.slim.enable = true;
     displayManager.slim.defaultUser = "atsoukka";
     displayManager.xserverArgs = [ "-dpi 192" ];
     displayManager.sessionCommands = ''
-      xscreensaver -no-splash &
-      xss-lock -- xscreensaver-command -lock &
+      xss-lock -- xlock &
     '';
+    displayManager.desktopManagerHandlesLidAndPower = true;
 
     startGnuPGAgent = true;
 
@@ -85,6 +135,9 @@
     windowManager.default = "xmonad";
 
     desktopManager.xterm.enable = false;
+
+    videoDrivers = [ "intel" "nouveau" ];
+    vaapiDrivers = [ pkgs.vaapiIntel ];
 
     libinput = {
       enable = true;
@@ -120,8 +173,8 @@
   };
 
   environment.x11Packages = with pkgs; [
-    xscreensaver
     xss-lock
+    xlockmore
   ];
 
   environment.systemPackages = with pkgs; [
@@ -137,6 +190,9 @@
     tmux
     vim
     vpnc
+
+    npm2nix
+    pypi2nix
 
     xorg.xbacklight
 
@@ -187,14 +243,6 @@
   };
 
   nixpkgs.config.packageOverrides = pkgs: rec {
-    pam_u2f = pkgs.pam_u2f.overrideDerivation (args: rec {
-      name = "pam_u2f-${version}";
-      version = "1.0.4";
-       src = pkgs.fetchurl {
-        url = "https://developers.yubico.com/pam-u2f/Releases/${name}.tar.gz";
-        sha256 = "189j0wgx6fs146vfp88djqpl1flpfb3962l1a2marlp6d12jwm3i";
-      };
-    });
   };
 
   nixpkgs.config.allowUnfree = true;
