@@ -24,6 +24,10 @@
         systemctl restart network-manager
       '';
     };
+    firewall = {
+      enable = true;
+      trustedInterfaces = [ "docker0" ];
+    };
     vpnc.services = {
       staff = builtins.readFile ./staff.conf;
       sysadmin = builtins.readFile ./sysadmin.conf;
@@ -187,7 +191,6 @@
     nodejs
     pythonFull
     spotify
-    tmux
     vim
     vpnc
 
@@ -197,6 +200,7 @@
     xorg.xbacklight
 
     idea.idea-ultimate
+    idea.pycharm-professional
 
     gnupg
     pass
@@ -204,11 +208,13 @@
 
     dmenu
     haskellPackages.xmonad
+    networkmanager_vpnc
+    nmcli-dmenu
 
     isync
     msmtp
     notmuch
-    pythonPackages.afew
+    afew
     pythonPackages.alot
     w3m
   ];
@@ -243,6 +249,11 @@
   };
 
   nixpkgs.config.packageOverrides = pkgs: rec {
+    afew = pkgs.pythonPackages.afew.overrideDerivation(args: {
+      postPatch = ''
+        sed -i "s|'notmuch', 'new'|'notmuch', '--version'|g" afew/MailMover.py
+      '';
+    });
   };
 
   nixpkgs.config.allowUnfree = true;
