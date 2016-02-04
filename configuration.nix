@@ -53,9 +53,10 @@
   hardware = {
     enableAllFirmware = true;
     bluetooth.enable = false;
-    pulseaudio.enable = true;
-    pulseaudio.configFile = ./pulse/default.pa;
     nvidiaOptimus.disable = true;
+    pulseaudio.configFile = ./pulse/default.pa;
+    pulseaudio.enable = true;
+    pulseaudio.support32Bit = true;
   };
 
   powerManagement = {
@@ -96,6 +97,13 @@
         val=`cat /sys/class/backlight/intel_backlight/brightness`
         tee /sys/class/backlight/intel_backlight/brightness <<< `expr $val + 200`
       '';
+    };
+    mopidy = {
+      enable = true;
+      configuration = builtins.readFile ./mopidy.conf;
+      extensionPackages = [
+        pkgs.mopidy-spotify
+      ];
     };
     pcscd.enable = true;
     unclutter.enable = true;
@@ -190,7 +198,6 @@
     mercurial
     nodejs
     pythonFull
-    spotify
     vim
     vpnc
 
@@ -201,6 +208,8 @@
 
     idea.idea-ultimate
     idea.pycharm-professional
+
+    ncmpcpp
 
     gnupg
     pass
@@ -223,7 +232,7 @@
     pam.enableU2F = true;
     pam.services.atsoukka.u2fAuth = true;
     sudo.enable = true;
-    sudo.wheelNeedsPassword = false;
+    sudo.wheelNeedsPassword = true;
   };
 
   services.udev.extraRules = ''

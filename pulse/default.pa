@@ -1,4 +1,4 @@
-#!/nix/store/c23qkqnvryh3760mahaj6ndipisbzzvx-pulseaudio-7.1/bin/pulseaudio -nF
+#!/nix/store/4ihm42i8v7abjrkph0fwgb5xlpihfbbs-pulseaudio-7.1/bin/pulseaudio -nF
 #
 # This file is part of PulseAudio.
 #
@@ -43,7 +43,7 @@ load-module module-switch-on-port-available
 ### Load audio drivers statically
 ### (it's probably better to not load these drivers manually, but instead
 ### use module-udev-detect -- see below -- for doing this automatically)
-load-module module-alsa-sink device=hw:2,0
+#load-module module-alsa-sink
 #load-module module-alsa-source device=hw:1,0
 #load-module module-null-sink
 #load-module module-pipe-sink
@@ -132,7 +132,9 @@ load-module module-role-cork
 load-module module-filter-heuristics
 load-module module-filter-apply
 
+### Auto-enable USB-devices
+load-module module-switch-on-connect
 
 ### Make some devices default
-set-default-sink alsa_output.usb-1852_50d1-01.analog-stereo
+#set-default-sink output
 #set-default-source input
