@@ -89,14 +89,22 @@
           /run/current-system/sw/bin/cpupower frequency-set -u 3.30GHz
         fi
       '';
-      brightnessDownEventCommands = ''
-        val=`cat /sys/class/backlight/intel_backlight/brightness`
-        tee /sys/class/backlight/intel_backlight/brightness <<< `expr $val - 200`
-      '';
-      brightnessUpEventCommands = ''
-        val=`cat /sys/class/backlight/intel_backlight/brightness`
-        tee /sys/class/backlight/intel_backlight/brightness <<< `expr $val + 200`
-      '';
+      handlers = {
+        brightnessDown = {
+          event = "video/brightnessdown.*";
+          action = ''
+            val=`cat /sys/class/backlight/intel_backlight/brightness`
+            tee /sys/class/backlight/intel_backlight/brightness <<< `expr $val - 200`
+          '';
+        };
+        brightnessUp = {
+          event = "video/brightnessUp.*";
+          action = ''
+            val=`cat /sys/class/backlight/intel_backlight/brightness`
+            tee /sys/class/backlight/intel_backlight/brightness <<< `expr $val + 200`
+          '';
+        };
+      };
     };
     mopidy = {
       enable = true;
@@ -215,10 +223,8 @@
     pass
     pythonPackages.xkcdpass
 
-    dmenu
     haskellPackages.xmonad
     networkmanager_vpnc
-    nmcli-dmenu
 
     isync
     msmtp
