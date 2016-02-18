@@ -161,13 +161,14 @@
 
     libinput = {
       enable = true;
+      accelProfile = "adaptive";
       accelSpeed = "0.7";
       tapping = false;
       tappingDragLock = true;
       naturalScrolling = true;
+      disableWhileTyping = true;
       additionalOptions = ''
         Option "PalmDetection" "on"
-        Option "DisableWhileTyping" "on"
       '';
     };
 
