@@ -209,9 +209,14 @@
     pythonFull
     vim
     vpnc
+    acpi
+    htop
 
+    nixops
     npm2nix
     pypi2nix
+    gettext
+    pythonPackages.docker_compose
 
     xorg.xbacklight
 
@@ -247,7 +252,7 @@
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", TAG+="uaccess"
   '';
 
-  users.extraUsers.atsoukka = {
+  users.users.atsoukka = {
     isNormalUser = true;
     description = "Asko Soukka";
     home = "/home/atsoukka";
