@@ -18,12 +18,6 @@
   networking = {
     hostName = "makondo";
     networkmanager.enable = true;
-    interfaceMonitor = {
-      enable = true;
-      commands = ''
-        systemctl restart network-manager
-      '';
-    };
     firewall = {
       enable = true;
       trustedInterfaces = [ "docker0" ];
@@ -70,6 +64,12 @@
   };
 
   services = {
+    logind.extraConfig = ''
+        HandlePowerKey=ignore
+        HandeSuspendKey=ignore
+        HandleHibernateKey=ignore
+        HandleLidSwitch=ignore
+    '';
     acpid = {
       enable = true;
       powerEventCommands = ''
@@ -115,7 +115,7 @@
     };
     pcscd.enable = true;
     unclutter.enable = true;
-    nixosManual.showManual = true;
+    nixosManual.showManual = false;
   };
 
   virtualisation = {
@@ -146,7 +146,6 @@
     displayManager.sessionCommands = ''
       xss-lock -- xlock &
     '';
-    displayManager.desktopManagerHandlesLidAndPower = true;
 
     startGnuPGAgent = true;
 
