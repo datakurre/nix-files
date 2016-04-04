@@ -20,7 +20,7 @@
     networkmanager.enable = true;
     firewall = {
       enable = true;
-      trustedInterfaces = [ "docker0" ];
+      trustedInterfaces = [ "docker0" "vboxnet0" ];
     };
     vpnc.services = {
       staff = builtins.readFile ./staff.conf;
@@ -52,6 +52,7 @@
     pulseaudio.enable = true;
     pulseaudio.support32Bit = true;
   };
+  sound.enableMediaKeys = true;
 
   powerManagement = {
     enable = true;
@@ -144,10 +145,13 @@
     displayManager.slim.defaultUser = "atsoukka";
     displayManager.xserverArgs = [ "-dpi 192" ];
     displayManager.sessionCommands = ''
-      xss-lock -- xlock &
+      xscreensaver -no-splash &
+      xss-lock -- xscreensaver-command -lock &
+      # https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
+      gpg-connect-agent /bye
+      GPG_TTY=$(tty)
+      export GPT_TTY
     '';
-
-    startGnuPGAgent = true;
 
     windowManager.xmonad.enable = true;
     windowManager.xmonad.enableContribAndExtras = true;
@@ -194,7 +198,7 @@
 
   environment.x11Packages = with pkgs; [
     xss-lock
-    xlockmore
+    xscreensaver
   ];
 
   environment.systemPackages = with pkgs; [
@@ -219,8 +223,12 @@
 
     xorg.xbacklight
 
-    idea.idea-ultimate
-    idea.pycharm-professional
+    ((import (builtins.fetchTarball
+     "https://github.com/nixos/nixpkgs/archive/0d79a33fb69d37868f42a594855a26734859ec1c.tar.gz")
+     { config = { allowUnfree = true; }; }
+    ).idea.pycharm-professional.override {
+      oraclejdk8 = pkgs.oraclejdk8;
+    })
 
     ncmpcpp
 
@@ -271,7 +279,7 @@
   nixpkgs.config.packageOverrides = pkgs: rec {
     afew = pkgs.pythonPackages.afew.overrideDerivation(args: {
       postPatch = ''
-        sed -i "s|'notmuch', 'new'|'notmuch', '--version'|g" afew/MailMover.py
+        sed -i "s|'notmuch', 'new'|'test', '1'|g" afew/MailMover.py
       '';
     });
   };
