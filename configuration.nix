@@ -225,9 +225,10 @@
 
     ((import (builtins.fetchTarball
      "https://github.com/nixos/nixpkgs/archive/0d79a33fb69d37868f42a594855a26734859ec1c.tar.gz")
-     { config = { allowUnfree = true; }; }
+      { config = { allowUnfree = true; }; }
     ).idea.pycharm-professional.override {
-      oraclejdk8 = pkgs.oraclejdk8;
+      oraclejdk8 = (import "/nix/var/nix/profiles/per-user/root/channels/nixos-16.03"
+      { config = { allowUnfree = true; }; }).oraclejdk8;
     })
 
     ncmpcpp
