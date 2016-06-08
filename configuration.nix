@@ -112,6 +112,7 @@
       configuration = builtins.readFile ./mopidy.conf;
       extensionPackages = [
         pkgs.mopidy-spotify
+        pkgs.mopidy-soundcloud
       ];
     };
     pcscd.enable = true;
@@ -145,8 +146,7 @@
     displayManager.slim.defaultUser = "atsoukka";
     displayManager.xserverArgs = [ "-dpi 192" ];
     displayManager.sessionCommands = ''
-      xscreensaver -no-splash &
-      xss-lock -- xscreensaver-command -lock &
+      xss-lock -- xlock &
       # https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
       gpg-connect-agent /bye
       GPG_TTY=$(tty)
@@ -198,7 +198,7 @@
 
   environment.x11Packages = with pkgs; [
     xss-lock
-    xscreensaver
+    xlockmore
   ];
 
   environment.systemPackages = with pkgs; [
@@ -217,17 +217,21 @@
 
     nixops
     npm2nix
-    pypi2nix
+#   pypi2nix
     gettext
     pythonPackages.docker_compose
+    vagrant
 
     xorg.xbacklight
 
+#   (idea.pycharm-professional.override {
+#     jdk = oraclejdk8;
+#   })
     ((import (builtins.fetchTarball
      "https://github.com/nixos/nixpkgs/archive/0d79a33fb69d37868f42a594855a26734859ec1c.tar.gz")
       { config = { allowUnfree = true; }; }
     ).idea.pycharm-professional.override {
-      oraclejdk8 = (import "/nix/var/nix/profiles/per-user/root/channels/nixos-16.03"
+      oraclejdk8 = (import "/nix/var/nix/profiles/per-user/root/channels/stable"
       { config = { allowUnfree = true; }; }).oraclejdk8;
     })
 
