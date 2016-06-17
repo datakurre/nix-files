@@ -2,9 +2,10 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+#   ./hydra-configuration.nix
+  ];
 
   boot = {
     loader.grub.enable = true;
@@ -51,6 +52,7 @@
     pulseaudio.configFile = ./pulse/default.pa;
     pulseaudio.enable = true;
     pulseaudio.support32Bit = true;
+    opengl.extraPackages = [ pkgs.vaapiIntel ];
   };
   sound.enableMediaKeys = true;
 
@@ -153,14 +155,12 @@
       export GPG_TTY
     '';
 
+    desktopManager.xterm.enable = false;
     windowManager.xmonad.enable = true;
     windowManager.xmonad.enableContribAndExtras = true;
     windowManager.default = "xmonad";
 
-    desktopManager.xterm.enable = false;
-
     videoDrivers = [ "intel" "nouveau" ];
-    vaapiDrivers = [ pkgs.vaapiIntel ];
 
     libinput = {
       enable = true;
@@ -196,11 +196,6 @@
     exportConfiguration = true;
   };
 
-  environment.x11Packages = with pkgs; [
-    xss-lock
-    xlockmore
-  ];
-
   environment.systemPackages = with pkgs; [
     chromium
     firefox
@@ -217,12 +212,15 @@
 
     nixops
     npm2nix
-#   pypi2nix
     gettext
     pythonPackages.docker_compose
     vagrant
 
+    xlockmore
     xorg.xbacklight
+    xss-lock
+    haskellPackages.xmonad
+    networkmanager_vpnc
 
 #   (idea.pycharm-professional.override {
 #     jdk = oraclejdk8;
@@ -240,9 +238,6 @@
     gnupg
     pass
     pythonPackages.xkcdpass
-
-    haskellPackages.xmonad
-    networkmanager_vpnc
 
     isync
     msmtp
@@ -297,5 +292,6 @@
     gc-keep-outputs = true
   '';
 
-  system.stateVersion = "16.03";
+  system.stateVersion = "16.09";
+  system.autoUpgrade.enable = true;
 }
