@@ -148,7 +148,7 @@
     displayManager.slim.defaultUser = "atsoukka";
     displayManager.xserverArgs = [ "-dpi 192" ];
     displayManager.sessionCommands = ''
-      xss-lock -- xlock &
+      xss-lock -- xlock -mode matrix &
       # https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
       gpg-connect-agent /bye
       GPG_TTY=$(tty)
