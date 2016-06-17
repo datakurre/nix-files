@@ -8,6 +8,7 @@
   ];
 
   boot = {
+#   kernelPackages = pkgs.linuxPackages_4_6;
     blacklistedKernelModules = [ ];
     loader.grub.enable = true;
     loader.grub.version = 2;
