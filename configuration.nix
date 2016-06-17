@@ -24,8 +24,8 @@
       trustedInterfaces = [ "docker0" "vboxnet0" ];
     };
     vpnc.services = {
-      staff = builtins.readFile ./staff.conf;
-      sysadmin = builtins.readFile ./sysadmin.conf;
+      staff = builtins.readFile ./vpnc-staff.conf;
+      sysadmin = builtins.readFile ./vpnc-sysadmin.conf;
     };
   };
 
@@ -49,9 +49,9 @@
     enableAllFirmware = true;
     bluetooth.enable = false;
     nvidiaOptimus.disable = true;
-    pulseaudio.configFile = ./pulse/default.pa;
     pulseaudio.enable = true;
     pulseaudio.support32Bit = true;
+    pulseaudio.configFile = ./pulseaudio.conf;
     opengl.extraPackages = [ pkgs.vaapiIntel ];
   };
   sound.enableMediaKeys = true;
