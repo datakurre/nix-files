@@ -8,7 +8,7 @@
   ];
 
   boot = {
-#   kernelPackages = pkgs.linuxPackages_4_6;
+    kernelPackages = pkgs.linuxPackages_4_6;
     blacklistedKernelModules = [ ];
     loader.grub.enable = true;
     loader.grub.version = 2;
@@ -150,7 +150,7 @@
     displayManager.slim.defaultUser = "atsoukka";
     displayManager.xserverArgs = [ "-dpi 192" ];
     displayManager.sessionCommands = ''
-      xss-lock -- xlock -mode matrix &
+      xss-lock -- xlock -mode xjack -erasedelay 0 -dpmsstandby 60 &
       # https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
       gpg-connect-agent /bye
       GPG_TTY=$(tty)
