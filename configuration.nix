@@ -49,7 +49,7 @@
 
   hardware = {
     enableAllFirmware = true;
-    bluetooth.enable = false;
+    bluetooth.enable = true;
     nvidiaOptimus.disable = true;
     pulseaudio.enable = true;
     pulseaudio.support32Bit = true;
