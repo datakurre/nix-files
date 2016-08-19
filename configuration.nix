@@ -224,16 +224,16 @@
     haskellPackages.xmonad
     networkmanager_vpnc
 
-#   (idea.pycharm-professional.override {
-#     jdk = oraclejdk8;
-#   })
-    ((import (builtins.fetchTarball
-     "https://github.com/nixos/nixpkgs/archive/0d79a33fb69d37868f42a594855a26734859ec1c.tar.gz")
-      { config = { allowUnfree = true; }; }
-    ).idea.pycharm-professional.override {
-      oraclejdk8 = (import "/nix/var/nix/profiles/per-user/root/channels/stable"
-      { config = { allowUnfree = true; }; }).oraclejdk8;
+    (idea.pycharm-professional.override {
+      jdk = oraclejdk8;
     })
+#   ((import (builtins.fetchTarball
+#    "https://github.com/nixos/nixpkgs/archive/0d79a33fb69d37868f42a594855a26734859ec1c.tar.gz")
+#     { config = { allowUnfree = true; }; }
+#   ).idea.pycharm-professional.override {
+#     oraclejdk8 = (import "/nix/var/nix/profiles/per-user/root/channels/stable"
+#     { config = { allowUnfree = true; }; }).oraclejdk8;
+#   })
 
     ncmpcpp
 
