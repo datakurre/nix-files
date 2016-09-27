@@ -8,7 +8,7 @@
   ];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_4_6;
+    kernelPackages = pkgs.linuxPackages_4_7;
     blacklistedKernelModules = [ ];
     loader.grub.enable = true;
     loader.grub.version = 2;
@@ -150,7 +150,8 @@
     displayManager.slim.defaultUser = "atsoukka";
     displayManager.xserverArgs = [ "-dpi 192" ];
     displayManager.sessionCommands = ''
-      xss-lock -- xlock -mode xjack -erasedelay 0 -dpmsstandby 60 &
+      xss-lock -- xlock -mode xjack -erasedelay 0 &
+      # xss-lock -- xlock -mode xjack -erasedelay 0 -dpmsstandby 60 &
       # https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
       gpg-connect-agent /bye
       GPG_TTY=$(tty)
@@ -280,6 +281,14 @@
   };
 
   nixpkgs.config.packageOverrides = pkgs: rec {
+    hydra = pkgs.hydra.overrideDerivation(old: {
+      patches = old.patches ++ [
+        (pkgs.fetchurl {
+          url = "https://patch-diff.githubusercontent.com/raw/NixOS/hydra/pull/277.patch";
+          sha256 = "0k9ms3p2sjy5kyrkajbdbhvkd4sql3lhsv2x0xhqssysbk773256";
+        })
+      ];
+    });
     afew = pkgs.pythonPackages.afew.overrideDerivation(args: {
       postPatch = ''
         sed -i "s|'notmuch', 'new'|'test', '1'|g" afew/MailMover.py
