@@ -1,6 +1,14 @@
 # Dell Precision M3800
 { config, pkgs, ... }:
 
+let unstable = import "/nix/var/nix/profiles/per-user/root/channels/nixos-unstable" {
+  config = {
+    allowUnfree = true;
+  };
+};
+
+in
+
 {
   imports = [
     ./hardware-configuration.nix
@@ -8,11 +16,9 @@
   ];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_4_7;
-    blacklistedKernelModules = [ ];
-    loader.grub.enable = true;
-    loader.grub.version = 2;
-    loader.grub.device = "/dev/sda";
+    kernelPackages = pkgs.linuxPackages_4_10;
+    loader.systemd-boot.enable = true;
+    loader.efi.canTouchEfiVariables = true;
     cleanTmpDir = true;
   };
 
@@ -56,7 +62,7 @@
     pulseaudio.configFile = ./pulseaudio.conf;
     opengl.extraPackages = [ pkgs.vaapiIntel ];
   };
-  sound.enableMediaKeys = true;
+  sound.mediaKeys.enable = true;
 
   powerManagement = {
     enable = true;
@@ -131,20 +137,21 @@
 
   services.redshift = {
     enable = true;
-    brightness.day = "0.95";
+    brightness.day = "1.0";
     brightness.night = "0.7";
     latitude = "62.1435";
     longitude = "25.4449";
   };
 
   services.locate.enable = true;
+  services.memcached.enable = true;
 
   services.xserver = {
     enable = true;
     enableTCP = false;
 
     layout = "fi";
-    xkbOptions = "eurosign:e,esc:nocaps";
+    xkbOptions = "eurosign:e,caps:escape";
 
     displayManager.slim.enable = true;
     displayManager.slim.defaultUser = "atsoukka";
@@ -169,13 +176,11 @@
       enable = true;
       accelProfile = "adaptive";
       accelSpeed = "0.7";
+      scrollMethod = "twofinger";
       tapping = false;
-      tappingDragLock = true;
+      tappingDragLock = false;
       naturalScrolling = true;
       disableWhileTyping = true;
-      additionalOptions = ''
-        Option "PalmDetection" "on"
-      '';
     };
 
     config = ''
@@ -200,8 +205,10 @@
   };
 
   environment.systemPackages = with pkgs; [
-    chromium
-    firefox
+    unstable.chromium
+    unstable.firefox
+    unstable.vokoscreen
+
     git
     gnumake
     irssi
@@ -212,12 +219,14 @@
     vpnc
     acpi
     htop
+    psmisc
 
-    nixops
-    npm2nix
     gettext
     pythonPackages.docker_compose
     vagrant
+
+    unstable.pypi2nix
+    unstable.npm2nix
 
     xlockmore
     xorg.xbacklight
@@ -225,16 +234,9 @@
     haskellPackages.xmonad
     networkmanager_vpnc
 
-    (idea.pycharm-professional.override {
+    (unstable.idea.pycharm-professional.override {
       jdk = oraclejdk8;
     })
-#   ((import (builtins.fetchTarball
-#    "https://github.com/nixos/nixpkgs/archive/0d79a33fb69d37868f42a594855a26734859ec1c.tar.gz")
-#     { config = { allowUnfree = true; }; }
-#   ).idea.pycharm-professional.override {
-#     oraclejdk8 = (import "/nix/var/nix/profiles/per-user/root/channels/stable"
-#     { config = { allowUnfree = true; }; }).oraclejdk8;
-#   })
 
     ncmpcpp
 
@@ -260,7 +262,7 @@
   services.udev.extraRules = ''
     # Yubico YubiKey
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", TAG+="uaccess", MODE="0660", GROUP="wheel"
-    ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", RUN+="/run/current-system/sw/bin/loginctl lock-sessions"
+    ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
 
   users.users.atsoukka = {
@@ -304,6 +306,6 @@
     gc-keep-outputs = true
   '';
 
-  system.stateVersion = "16.09";
+  system.stateVersion = "17.03";
   system.autoUpgrade.enable = true;
 }
