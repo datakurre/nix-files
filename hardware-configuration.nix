@@ -5,22 +5,19 @@
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
 
-  # Minimal list of modules to use the efi system partition and the YubiKey
   boot.initrd.availableKernelModules = [
-     "nls_cp437"
-     "nls_iso8859-1"
-     "usbhid"
-     "vfat"
+    "achi"
+    "ehci_pci"
+    "usb_storage"
+    "xhci_hcd"
+  # Minimal list of modules to use the efi system partition and the YubiKey
   ] ++ [
-     "ahci"
-     "ehci_pci"
-     "rtsx_pci_sdmmc"
-     "sd_mod"
+    "nls_cp437"
+    "nls_iso8859-1"
+    "usbhid"
+    "vfat"
   ];
-  boot.blacklistedKernelModules = [ ];
-  boot.extraModulePackages = [ ];
   boot.kernelModules = [ "kvm-intel" ];
-  boot.kernelParams = [ "usbcore.autosuspend=-1" ];
 
   # Crypto setup, set modules accordingly
   boot.initrd.luks.cryptoModules = [ "aes" "xts" "sha512" ];
@@ -29,7 +26,7 @@
   boot.initrd.luks.yubikeySupport = true;
 
   # Configuration to use your Luks device
-  boot.initrd.luks.devices = [ {
+  boot.initrd.luks.devices = [{
     name = "luksroot";
     device = "/dev/sda2";
     preLVM = true;
@@ -38,7 +35,7 @@
         device = "/dev/sda1";
       };
     };
-  } ];
+  }];
 
   # File systems
   swapDevices = [ { device = "/dev/partitions/swap"; } ];
