@@ -98,7 +98,12 @@
   '';
   services.mopidy.enable = true;
   services.mopidy.extensionPackages = with pkgs; [
-    mopidy-spotify
+    (mopidy-spotify.overrideDerivation(args: {
+      src = pkgs.fetchurl {
+        url = "https://github.com/mopidy/mopidy-spotify/archive/feature/oauth.tar.gz";
+        sha256 = "0kd7x7ilgw3vjxafk5hcdvap8l7is05zsqjr80f21v9z2wymva74";
+      };
+    }))
     mopidy-soundcloud
   ];
   services.nixosManual.showManual = false;
