@@ -1,4 +1,3 @@
-# Dell Precision M3800
 { config, pkgs, ... }:
 
 let unstable = import "/nix/var/nix/profiles/per-user/root/channels/nixos-unstable" {
@@ -15,6 +14,7 @@ in
     afew
     blueman
     dnsmasq
+    gnome3.nautilus
     gnupg
     haskellPackages.xmonad
     isync
@@ -48,7 +48,6 @@ in
     pypi2nix
     pythonFull
     pythonPackages.docker_compose
-    steam
     vagrant
     vim
     vokoscreen

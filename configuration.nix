@@ -131,14 +131,20 @@
   services.xserver.displayManager.slim.defaultUser = "atsoukka";
   services.xserver.displayManager.xserverArgs = [ "-dpi 192" ];
   services.xserver.displayManager.sessionCommands = ''
+    # XLock
     xss-lock -- xlock -mode xjack -erasedelay 0 &
+    # Tray
     trayer --edge top --align right --SetDockType true --SetPartialStrut true --height 64 --widthtype pixel --width 100 --expand false &
     nm-applet &
     blueman-applet &
+    # GPG
     # https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
     gpg-connect-agent /bye
     GPG_TTY=$(tty)
     export GPG_TTY
+    # HiDPI
+    GDK_SCALE=2
+    CLUTTER_SCALE=2
     '';
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.windowManager.xmonad.enable = true;
