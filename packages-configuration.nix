@@ -14,7 +14,6 @@ in
     afew
     blueman
     dnsmasq
-    gnome3.nautilus
     gnupg
     haskellPackages.xmonad
     isync

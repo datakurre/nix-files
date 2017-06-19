@@ -1,6 +1,26 @@
 # Dell Precision M3800
 { config, pkgs, ... }:
 
+let
+
+  # Prioritize nautilus by default when opening directories
+  mimeAppsList = pkgs.writeTextFile {
+    name = "gnome-mimeapps";
+    destination = "/share/applications/mimeapps.list";
+    text = ''
+      [Default Applications]
+      inode/directory=nautilus.desktop;org.gnome.Nautilus.desktop
+    '';
+  };
+
+  unstable = import "/nix/var/nix/profiles/per-user/root/channels/nixos-unstable" {
+    config = {
+      allowUnfree = true;
+    };
+  };
+
+in
+
 {
   imports = [
     ./hardware-configuration.nix
@@ -122,6 +142,16 @@
   services.memcached.enable = true;
 
   services.gnome3.at-spi2-core.enable = true;
+  services.gnome3.gvfs.enable = true;
+  services.gnome3.sushi.enable = true;
+  services.udisks2.enable = true;
+
+  environment.systemPackages = [
+    unstable.gnome3.nautilus
+    unstable.gnome3.sushi
+  ];
+
+  services.dbus.packages = [ unstable.gnome3.sushi ];
 
   services.xserver.enable = true;
   services.xserver.enableTCP = false;
@@ -130,23 +160,27 @@
   services.xserver.displayManager.slim.enable = true;
   services.xserver.displayManager.slim.defaultUser = "atsoukka";
   services.xserver.displayManager.xserverArgs = [ "-dpi 192" ];
-  services.xserver.displayManager.sessionCommands = ''
-    # XLock
-    xss-lock -- xlock -mode xjack -erasedelay 0 &
-    # Tray
-    trayer --edge top --align right --SetDockType true --SetPartialStrut true --height 64 --widthtype pixel --width 100 --expand false &
-    nm-applet &
-    blueman-applet &
-    # GPG
-    # https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
+  services.xserver.displayManager.sessionCommands = with pkgs; with lib;''
+    # HiDPI
+    export GDK_SCALE=2
+    export CLUTTER_SCALE=2
+    # Nautilus
+    export XDG_DATA_DIRS=$XDG_DATA_DIRS''${XDG_DATA_DIRS:+:}${mimeAppsList}/share
+    export NAUTILUS_EXTENSION_DIR=${config.system.path}/lib/nautilus/extensions-3.0/
+    ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
+    # GPG, https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
     gpg-connect-agent /bye
     GPG_TTY=$(tty)
     export GPG_TTY
-    # HiDPI
-    GDK_SCALE=2
-    CLUTTER_SCALE=2
-    '';
+    # XLock
+    xss-lock -- xlock -mode xjack -erasedelay 0 &
+    # Tray
+    trayer --edge top --align right --SetDockType true --SetPartialStrut true --height 64 --widthtype pixel --width 132 --expand false &
+    nm-applet &
+    blueman-applet &
+  '';
   services.xserver.desktopManager.xterm.enable = false;
+  services.xserver.updateDbusEnvironment = true;
   services.xserver.windowManager.xmonad.enable = true;
   services.xserver.windowManager.xmonad.enableContribAndExtras = true;
   services.xserver.windowManager.default = "xmonad";
@@ -209,6 +243,7 @@
     gc-keep-outputs = true
   '';
 
+  services.udev.packages = [ pkgs.gnome3.gnome_settings_daemon ];
   services.udev.extraRules = ''
     # Yubico YubiKey
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", TAG+="uaccess", MODE="0660", GROUP="wheel"
