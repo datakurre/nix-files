@@ -23,6 +23,7 @@ in
     networkmanager_vpnc
     notmuch
     pass
+    phantomjs2
     pythonPackages.alot
     pythonPackages.xkcdpass
     trayer
