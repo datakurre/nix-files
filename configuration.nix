@@ -143,7 +143,6 @@ in
 
   services.gnome3.at-spi2-core.enable = true;
   services.gnome3.gvfs.enable = true;
-  services.gnome3.sushi.enable = true;
   services.udisks2.enable = true;
 
   environment.systemPackages = [
