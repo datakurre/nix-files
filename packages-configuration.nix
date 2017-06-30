@@ -39,8 +39,9 @@ in
     gettext
     git
     gnumake
-    (idea.pycharm-professional.override { jdk = oraclejdk8; })
+    (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
     irssi
+    libreoffice
     mercurial
     nixops
     nodejs
