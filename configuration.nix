@@ -28,7 +28,7 @@ in
     ./private-configuration
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_4_11;
+  boot.kernelPackages = pkgs.linuxPackages_4_12;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
@@ -155,6 +155,7 @@ in
   services.xserver.enable = true;
   services.xserver.enableTCP = false;
   services.xserver.layout = "fi";
+  services.xserver.xrandrHeads = [ "eDP1" "DP1" ];
   services.xserver.xkbOptions = "eurosign:e,caps:escape";
   services.xserver.displayManager.slim.enable = true;
   services.xserver.displayManager.slim.defaultUser = "atsoukka";
@@ -177,6 +178,8 @@ in
     trayer --edge top --align right --SetDockType true --SetPartialStrut true --height 64 --widthtype pixel --width 132 --expand false &
     nm-applet &
     blueman-applet &
+    # xrandr
+    xrandr --output eDP1 --auto --output DP1 --auto --scale 2x2 --right-of eDP1
   '';
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.updateDbusEnvironment = true;

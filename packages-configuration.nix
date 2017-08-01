@@ -14,9 +14,11 @@ in
     afew
     blueman
     dnsmasq
+    gimp
     gnupg
     haskellPackages.xmonad
     isync
+    lastpass-cli
     msmtp
     ncmpcpp
     networkmanagerapplet
@@ -25,8 +27,8 @@ in
     pass
     phantomjs2
     pythonPackages.alot
-    pythonPackages.xkcdpass
     trayer
+    unzip
     vpnc
     w3m
     xlockmore
@@ -39,7 +41,8 @@ in
     gettext
     git
     gnumake
-    (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
+#   (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
+    jetbrains.pycharm-professional
     irssi
     libreoffice
     mercurial
