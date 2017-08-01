@@ -179,7 +179,8 @@ in
     nm-applet &
     blueman-applet &
     # xrandr
-    xrandr --output eDP1 --auto --output DP1 --auto --scale 2x2 --right-of eDP1
+    # xrandr --output eDP1 --auto --output DP1 --auto --scale 2x2 --right-of eDP1
+    xrandr --output eDP1 --auto --output DP1 --auto --panning 3840x2160+3840+0 --scale 2x2 --right-of eDP1
   '';
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.updateDbusEnvironment = true;
