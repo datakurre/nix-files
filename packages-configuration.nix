@@ -14,6 +14,7 @@ in
     afew
     blueman
     dnsmasq
+    evince
     gimp
     gnupg
     haskellPackages.xmonad
@@ -32,6 +33,7 @@ in
     vpnc
     w3m
     xlockmore
+    xpdf
     xorg.xbacklight
     xss-lock
   ] ++ (with unstable; [
