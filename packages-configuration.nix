@@ -19,15 +19,14 @@ in
     gnupg
     haskellPackages.xmonad
     isync
+    jq
     lastpass-cli
     msmtp
     ncmpcpp
     networkmanagerapplet
     networkmanager_vpnc
-    notmuch
     pass
     phantomjs2
-    pythonPackages.alot
     trayer
     unzip
     vpnc
@@ -50,10 +49,12 @@ in
     mercurial
     nixops
     nodejs
+    notmuch
     npm2nix
     pypi2nix
     pythonFull
     pythonPackages.docker_compose
+    pythonPackages.alot
     vagrant
     vim
     vokoscreen
@@ -61,7 +62,12 @@ in
   ]);
 
   nixpkgs.config.packageOverrides = pkgs: rec {
-    afew = pkgs.pythonPackages.afew.overrideDerivation(args: {
+    gmime = pkgs.gmime.overrideDerivation(old: {
+      propagatedBuildInputs = old.propagatedBuildInputs ++ [
+        pkgs.gpgme.dev
+      ];
+    });
+    afew = pkgs.pythonPackages.afew.overrideDerivation(old: {
       postPatch = ''
         sed -i "s|'notmuch', 'new'|'test', '1'|g" afew/MailMover.py
       '';
