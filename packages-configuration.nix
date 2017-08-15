@@ -12,52 +12,52 @@ in
   environment.systemPackages = with pkgs; [
     acpi
     afew
+    azure-cli
     blueman
     dnsmasq
     evince
+    gettext
     gimp
+    git
+    gnumake
     gnupg
     haskellPackages.xmonad
+    irssi
     isync
     jq
     lastpass-cli
+    libreoffice
+    mercurial
     msmtp
     ncmpcpp
     networkmanagerapplet
     networkmanager_vpnc
+    notmuch
     pass
     phantomjs2
+    pythonFull
+    pythonPackages.alot
     trayer
     unzip
-    vpnc
-    w3m
-    xlockmore
-    xpdf
-    xorg.xbacklight
-    xss-lock
-  ] ++ (with unstable; [
-    azure-cli
-    chromium
-    firefox
-    gettext
-    git
-    gnumake
-#   (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
-    jetbrains.pycharm-professional
-    irssi
-    libreoffice
-    mercurial
-    nixops
-    nodejs
-    notmuch
-    npm2nix
-    pypi2nix
-    pythonFull
-    pythonPackages.docker_compose
-    pythonPackages.alot
     vagrant
     vim
     vokoscreen
+    vpnc
+    w3m
+    xlockmore
+    xorg.xbacklight
+    xpdf
+    xss-lock
+  ] ++ (with unstable; [
+    chromium
+    firefox
+    jetbrains.pycharm-professional
+#   (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
+    nixops
+    nodejs
+    npm2nix
+    pypi2nix
+    pythonPackages.docker_compose
     yarn
   ]);
 
