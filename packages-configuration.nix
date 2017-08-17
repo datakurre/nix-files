@@ -38,6 +38,7 @@ in
     pythonFull
     pythonPackages.alot
     trayer
+    zip
     unzip
     vagrant
     vim
