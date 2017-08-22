@@ -35,6 +35,7 @@ in
     notmuch
     pass
     phantomjs2
+    psmisc
     pythonFull
     pythonPackages.alot
     trayer
