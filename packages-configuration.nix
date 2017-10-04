@@ -53,7 +53,7 @@ in
     xss-lock
   ] ++ (with unstable; [
     chromium
-    firefox
+    firefox-devedition-bin
 #   jetbrains.pycharm-professional
     (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
     nixops
