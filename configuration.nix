@@ -28,7 +28,7 @@ in
     ./private-configuration
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_4_12;
+  boot.kernelPackages = pkgs.linuxPackages_4_13;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
@@ -79,6 +79,8 @@ in
   powerManagement.cpuFreqGovernor = "powersave";
 
   programs.ssh.startAgent = false;
+  programs.gnupg.agent.enable = true;
+  programs.gnupg.agent.enableSSHSupport = true;
   programs.chromium.enable = true;
   programs.zsh.enable = true;
 
@@ -168,10 +170,6 @@ in
     export XDG_DATA_DIRS=$XDG_DATA_DIRS''${XDG_DATA_DIRS:+:}${mimeAppsList}/share
     export NAUTILUS_EXTENSION_DIR=${config.system.path}/lib/nautilus/extensions-3.0/
     ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
-    # GPG, https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c
-    gpg-connect-agent /bye
-    GPG_TTY=$(tty)
-    export GPG_TTY
     # XLock
     xss-lock -- xlock -mode xjack -erasedelay 0 &
     # Tray
@@ -239,6 +237,8 @@ in
   users.users.atsoukka.uid = 1000;
   users.users.atsoukka.shell = "/run/current-system/sw/bin/zsh";
 
+  nix.useSandbox = true;
+  nix.sandboxPaths = [ "/etc/ssl/certs/ca-certificates.crt" ];
   nix.binaryCaches = [ https://cache.nixos.org ];
   nix.extraOptions = ''
     auto-optimise-store = true
@@ -253,5 +253,5 @@ in
     ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
 
-  system.stateVersion = "17.03";
+  system.stateVersion = "17.09";
 }

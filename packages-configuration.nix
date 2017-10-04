@@ -22,6 +22,7 @@ in
     gnumake
     gnupg
     haskellPackages.xmonad
+    htop
     irssi
     isync
     jq
@@ -53,8 +54,8 @@ in
   ] ++ (with unstable; [
     chromium
     firefox
-    jetbrains.pycharm-professional
-#   (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
+#   jetbrains.pycharm-professional
+    (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
     nixops
     nodejs
     npm2nix
