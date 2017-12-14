@@ -26,14 +26,15 @@ in
     ./hardware-configuration.nix
     ./packages-configuration.nix
     ./private-configuration
+    ./mopidy.nix
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_4_13;
+  boot.kernelPackages = pkgs.linuxPackages_4_14;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
 
-  hardware.bluetooth.enable = true;
+  hardware.bluetooth.enable = false;
   hardware.bumblebee.enable = true;
   hardware.bumblebee.connectDisplay = true;
 
@@ -118,14 +119,9 @@ in
     val=`cat /sys/class/backlight/intel_backlight/brightness`
     tee /sys/class/backlight/intel_backlight/brightness <<< `expr $val + 200`
   '';
-  services.mopidy.enable = true;
-  services.mopidy.extensionPackages = with pkgs; [
-    (mopidy-spotify.overrideDerivation(args: {
-      src = pkgs.fetchurl {
-        url = "https://github.com/mopidy/mopidy-spotify/archive/feature/oauth.tar.gz";
-        sha256 = "0kd7x7ilgw3vjxafk5hcdvap8l7is05zsqjr80f21v9z2wymva74";
-      };
-    }))
+  services.mopidyCustom.enable = true;
+  services.mopidyCustom.extensionPackages = with pkgs; [
+    mopidy-spotify
     mopidy-soundcloud
   ];
   services.nixosManual.showManual = false;
@@ -173,9 +169,9 @@ in
     # XLock
     xss-lock -- xlock -mode xjack -erasedelay 0 &
     # Tray
-    trayer --edge top --align right --SetDockType true --SetPartialStrut true --height 64 --widthtype pixel --width 132 --expand false &
+    trayer --edge top --align right --SetDockType true --SetPartialStrut true --height 64 --widthtype pixel --width 64 --expand false &
     nm-applet &
-    blueman-applet &
+    rfkill block bluetooth &
     # xrandr
     # xrandr --output eDP1 --auto --output DP1 --auto --scale 2x2 --right-of eDP1
     xrandr --output eDP1 --auto --output DP1 --auto --panning 3840x2160+3840+0 --scale 2x2 --right-of eDP1
@@ -237,6 +233,7 @@ in
   users.users.atsoukka.uid = 1000;
   users.users.atsoukka.shell = "/run/current-system/sw/bin/zsh";
 
+  nix.package = pkgs.nixUnstable;
   nix.useSandbox = true;
   nix.sandboxPaths = [ "/etc/ssl/certs/ca-certificates.crt" ];
   nix.binaryCaches = [ https://cache.nixos.org ];

@@ -13,7 +13,6 @@ in
     acpi
     afew
     azure-cli
-    blueman
     dnsmasq
     evince
     gettext
@@ -39,6 +38,7 @@ in
     psmisc
     pythonFull
     pythonPackages.alot
+    rfkill
     trayer
     zip
     unzip
@@ -58,8 +58,6 @@ in
     (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
     nixops
     nodejs
-    npm2nix
-    pypi2nix
     pythonPackages.docker_compose
     yarn
   ]);
