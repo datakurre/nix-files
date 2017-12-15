@@ -1,2 +1,4 @@
-/private-configuration
-/hydra-configuration
+/configuration.nix
+/nixos/private-configuration
+/nixos/hydra-configuration
+*.swp

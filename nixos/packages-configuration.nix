@@ -1,20 +1,14 @@
 { config, pkgs, ... }:
 
-let unstable = import "/nix/var/nix/profiles/per-user/root/channels/nixos-unstable" {
-  config = {
-    allowUnfree = true;
-  };
-};
-
-in
-
 {
   environment.systemPackages = with pkgs; [
     acpi
     afew
     azure-cli
+    chromium
     dnsmasq
     evince
+    firefox-devedition-bin
     gettext
     gimp
     git
@@ -24,6 +18,8 @@ in
     htop
     irssi
     isync
+    jetbrains.pycharm-professional
+#   (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
     jq
     lastpass-cli
     libreoffice
@@ -32,15 +28,17 @@ in
     ncmpcpp
     networkmanagerapplet
     networkmanager_vpnc
+    nixops
+    nodejs
     notmuch
     pass
     phantomjs2
     psmisc
     pythonFull
     pythonPackages.alot
+    pythonPackages.docker_compose
     rfkill
     trayer
-    zip
     unzip
     vagrant
     vim
@@ -51,16 +49,9 @@ in
     xorg.xbacklight
     xpdf
     xss-lock
-  ] ++ (with unstable; [
-    chromium
-    firefox-devedition-bin
-#   jetbrains.pycharm-professional
-    (jetbrains.pycharm-professional.override { jdk = oraclejdk8; })
-    nixops
-    nodejs
-    pythonPackages.docker_compose
     yarn
-  ]);
+    zip
+  ];
 
   nixpkgs.config.packageOverrides = pkgs: rec {
     gmime = pkgs.gmime.overrideDerivation(old: {
