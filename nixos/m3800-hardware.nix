@@ -5,18 +5,9 @@
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
 
-  boot.initrd.availableKernelModules = [
-    "achi"
-    "ehci_pci"
-    "usb_storage"
-    "xhci_hcd"
-  # Minimal list of modules to use the efi system partition and the YubiKey
-  ] ++ [
-    "nls_cp437"
-    "nls_iso8859-1"
-    "usbhid"
-    "vfat"
-  ];
+  boot.initrd.availableKernelModules = [ "achi" "ehci_pci" "usb_storage" "xhci_hcd"
+                                         # Minimal list of modules to use the efi system partition and the YubiKey
+                                         "nls_cp437" "nls_iso8859-1" "usbhid" "vfat" ];
   boot.kernelModules = [ "kvm-intel" ];
 
   # Crypto setup, set modules accordingly

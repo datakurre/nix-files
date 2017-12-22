@@ -24,7 +24,6 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    ./packages-configuration.nix
     ./private-configuration
     ./mopidy.nix
   ];
@@ -40,7 +39,7 @@ in
 
   hardware.opengl.driSupport32Bit = true;
   hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
-  hardware.pulseaudio.configFile = ./pulseaudio.conf;
+  hardware.pulseaudio.configFile = ./dotfiles/pulseaudio.conf;
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
 
@@ -144,8 +143,10 @@ in
   services.udisks2.enable = true;
 
   environment.systemPackages = [
+    trayer
     unstable.gnome3.nautilus
     unstable.gnome3.sushi
+    xorg.xbacklight
   ];
 
   services.dbus.packages = [ unstable.gnome3.sushi ];
@@ -170,7 +171,6 @@ in
     xss-lock -- xlock -mode xjack -erasedelay 0 &
     # Tray
     trayer --edge top --align right --SetDockType true --SetPartialStrut true --height 64 --widthtype pixel --width 64 --expand false &
-    nm-applet &
     rfkill block bluetooth &
     # xrandr
     # xrandr --output eDP1 --auto --output DP1 --auto --scale 2x2 --right-of eDP1
@@ -250,5 +250,5 @@ in
     ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
 
-  system.stateVersion = "17.09";
+  system.stateVersion = "18.03";
 }

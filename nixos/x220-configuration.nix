@@ -15,11 +15,6 @@ let
 in
 
 {
-  imports = [
-    ./x220-hardware-configuration.nix
-    ./packages-configuration.nix
-  ];
-
   boot.kernelPackages = pkgs.linuxPackages_4_14;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -59,26 +54,11 @@ in
   sound.mediaKeys.enable = true;
   powerManagement.enable = true;
 
-  programs.ssh.startAgent = false;
-  programs.gnupg.agent.enable = true;
-  programs.gnupg.agent.enableSSHSupport = true;
-  programs.chromium.enable = true;
-  programs.zsh.enable = true;
-
-  services.pcscd.enable = true;
-
   virtualisation.docker.enable = true;
   virtualisation.virtualbox.host.enable = true;
 
-  services.redshift.enable = true;
-  services.redshift.brightness.day = "1.0";
-  services.redshift.brightness.night = "0.7";
-  services.redshift.latitude = "62.1435";
-  services.redshift.longitude = "25.4449";
-
   services.gnome3.at-spi2-core.enable = true;
   services.gnome3.gvfs.enable = true;
-  services.udisks2.enable = true;
 
   environment.systemPackages = [
     pkgs.gnome3.nautilus
@@ -86,6 +66,12 @@ in
   ];
 
   services.dbus.packages = [ pkgs.gnome3.sushi ];
+
+  programs.zsh.enable = true;
+  programs.ssh.startAgent = false;
+  programs.gnupg.agent.enable = true;
+  programs.gnupg.agent.enableSSHSupport = true;
+  services.pcscd.enable = true;
 
   services.xserver.enable = true;
   services.xserver.enableTCP = false;
@@ -98,11 +84,6 @@ in
     export XDG_DATA_DIRS=$XDG_DATA_DIRS''${XDG_DATA_DIRS:+:}${mimeAppsList}/share
     export NAUTILUS_EXTENSION_DIR=${config.system.path}/lib/nautilus/extensions-3.0/
     ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
-    # XLock
-    xss-lock -- xlock -mode xjack -erasedelay 0 &
-    # Tray
-    trayer --edge top --align right --SetDockType true --SetPartialStrut true --widthtype pixel --width 32 --expand false &
-    nm-applet &
   '';
 
   services.xserver.desktopManager.xterm.enable = false;
@@ -151,6 +132,8 @@ in
     gc-keep-derivations = true
     gc-keep-outputs = true
   '';
+  nixpkgs.config.allowUnfree = true;
+
   services.nixosManual.showManual = false;
 
   services.udev.packages = [ pkgs.gnome3.gnome_settings_daemon ];
@@ -159,6 +142,11 @@ in
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", TAG+="uaccess", MODE="0660", GROUP="wheel"
     # ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
+
+  services.tarsnap.enable = true;
+  services.tarsnap.archives.data.directories = [
+    "/var/lib"
+  ];
 
   system.stateVersion = "18.03";
 }

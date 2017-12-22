@@ -2,3 +2,4 @@
 /nixos/private-configuration
 /nixos/hydra-configuration
 *.swp
+/.idea

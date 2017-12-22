@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# afew -C $HOME/.notmuch-jyu --tag -- folder:INBOX
+# afew -C $HOME/.notmuch-jyu --tag --new
+alot -n $HOME/.notmuch-jyu
+# afew -C $HOME/.notmuch-jyu --tag --all
+# afew -C $HOME/.notmuch-jyu --learn tag -- folder:
+# afew -C $HOME/.notmuch-jyu --learn tag -- from:
+# afew -C $HOME/.notmuch-jyu --learn tag -- to:
+# afew -C $HOME/.notmuch-jyu --update
+# afew -C $HOME/.notmuch-jyu --update-reference

@@ -1,0 +1,43 @@
+# https://wiki.archlinux.org/index.php/Isync
+IMAPAccount jyu
+Host email.jyu.fi
+User atsoukka
+PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/email/jyu.gpg"
+SSLType IMAPS
+AuthMechs PLAIN
+
+IMAPStore jyu-remote
+Account jyu
+
+MaildirStore jyu-local
+Path ~/.mail/jyu/
+Inbox ~/.mail/jyu/INBOX
+SubFolders Verbatim
+
+Channel jyu
+Master :jyu-remote:
+Slave :jyu-local:
+Create Both
+Patterns *
+SyncState *
+
+IMAPAccount iki
+Host mail.kapsi.fi
+User datakurre
+PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/email/kapsi.gpg"
+SSLType IMAPS
+
+IMAPStore iki-remote
+Account iki
+
+MaildirStore iki-local
+Path ~/.mail/iki/
+Inbox ~/.mail/iki/INBOX
+SubFolders Verbatim
+
+Channel iki
+Master :iki-remote:
+Slave :iki-local:
+Create Both
+Patterns *
+SyncState *

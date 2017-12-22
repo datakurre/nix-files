@@ -13,7 +13,7 @@ import XMonad.Layout.ThreeColumns
 main :: IO ()
 main = xmonad $ defaultConfig
   { startupHook = setWMName "LG3D"
---  , modMask = mod4Mask
+  , modMask = mod4Mask
   , focusFollowsMouse = False
   , clickJustFocuses = True
   , keys = myKeys <+> keys defaultConfig

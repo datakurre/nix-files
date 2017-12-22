@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# afew -C $HOME/.notmuch-iki --tag -- folder:INBOX
+# afew -C $HOME/.notmuch-iki --tag --new
+alot -n $HOME/.notmuch-iki
+# afew -C $HOME/.notmuch-iki --tag --all
+# afew -C $HOME/.notmuch-iki --learn tag -- folder:
+# afew -C $HOME/.notmuch-iki --learn tag -- from:
+# afew -C $HOME/.notmuch-iki --learn tag -- to:
+# afew -C $HOME/.notmuch-iki --update
+# afew -C $HOME/.notmuch-iki --update-reference
