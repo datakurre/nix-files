@@ -24,7 +24,7 @@ SyncState *
 IMAPAccount iki
 Host mail.kapsi.fi
 User datakurre
-PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/email/kapsi.gpg"
+PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/email/iki.gpg"
 SSLType IMAPS
 
 IMAPStore iki-remote

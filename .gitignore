@@ -3,3 +3,4 @@
 /nixos/hydra-configuration
 *.swp
 /.idea
+/factorio.nix

@@ -21,6 +21,9 @@ in
   boot.cleanTmpDir = true;
 
   hardware.bluetooth.enable = false;
+  hardware.opengl.driSupport32Bit = true;
+  hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.support32Bit = true;
 
   time.timeZone = "Europe/Helsinki";
 

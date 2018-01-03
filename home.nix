@@ -1,6 +1,8 @@
 { pkgs, config, ... }:
 
 {
+  imports = [ ./factorio.nix ];
+
   home.packages = with pkgs; [
     acpi
     afew
@@ -18,6 +20,7 @@
     jq
     lastpass-cli
     libreoffice
+    lynx
     msmtp
     ncmpcpp
     networkmanagerapplet
@@ -90,7 +93,9 @@
   programs.zsh.oh-my-zsh.enable = true;
   programs.zsh.shellAliases = {
     vi = "vim";
+    tray = "${pkgs.trayer}/bin/trayer --edge top --align right --SetDockType true --SetPartialStrut true --widthtype pixel --width 32 --expand false";
     notmuch-iki = "notmuch --config=${config.home.homeDirectory}/.notmuch-iki";
+
     alot-iki = "alot -n ${config.home.homeDirectory}/.notmuch-iki";
   };
   programs.zsh.oh-my-zsh.plugins = [
@@ -131,10 +136,6 @@
   services.screen-locker.lockCmd = "xlock -mode xjack -erasedelay 0";
 
   services.udiskie.enable = true;
-
-  xsession.initExtra = ''
-    ${pkgs.trayer}/bin/trayer --edge top --align right --SetDockType true --SetPartialStrut true --widthtype pixel --width 32 --expand false &
-  '';
   xsession.windowManager.xmonad.enable = true;
   xsession.windowManager.xmonad.enableContribAndExtras = true;
   xsession.windowManager.xmonad.config = ./dotfiles/xmonad.hs;
