@@ -9,6 +9,14 @@ self: super:
 
   aspellDicts = super.recurseIntoAttrs (super.callPackages ./aspell/dictionaries.nix {});
 
+  zest-releaser-python2 = (super.callPackage ./zest-releaser {
+    pythonPackages = self.python2Packages;
+  }).build."zest.releaser";
+
+  zest-releaser-python3 = (super.callPackage ./zest-releaser {
+    pythonPackages = self.python3Packages;
+  }).build."zest.releaser";
+
   gmime = super.gmime.overrideAttrs(old: {
     propagatedBuildInputs = old.propagatedBuildInputs ++ [ self.gpgme.dev ];
   });

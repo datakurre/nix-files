@@ -44,6 +44,8 @@
     xlockmore
     w3m
     yarn
+    zest-releaser-python2
+    zest-releaser-python3
     zip
   ];
 
