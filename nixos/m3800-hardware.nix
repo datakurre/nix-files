@@ -46,4 +46,6 @@
   };
 
   nix.maxJobs = 8;
+
+  powerManagement.cpuFreqGovernor = "powersave";
 }

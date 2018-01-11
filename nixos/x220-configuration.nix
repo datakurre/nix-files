@@ -70,18 +70,18 @@ in
 
   services.dbus.packages = [ pkgs.gnome3.sushi ];
 
-  programs.zsh.enable = true;
-  programs.ssh.startAgent = false;
-  programs.gnupg.agent.enable = true;
   programs.gnupg.agent.enableSSHSupport = true;
+  programs.gnupg.agent.enable = true;
+  programs.ssh.startAgent = false;
+  programs.zsh.enable = true;
   services.pcscd.enable = true;
 
   services.xserver.enable = true;
   services.xserver.enableTCP = false;
   services.xserver.layout = "fi";
   services.xserver.xkbOptions = "eurosign:e,caps:escape";
-  services.xserver.displayManager.slim.enable = true;
   services.xserver.displayManager.slim.defaultUser = "datakurre";
+  services.xserver.displayManager.slim.enable = true;
   services.xserver.displayManager.sessionCommands = with pkgs; with lib;''
     # Nautilus
     export XDG_DATA_DIRS=$XDG_DATA_DIRS''${XDG_DATA_DIRS:+:}${mimeAppsList}/share
@@ -90,11 +90,11 @@ in
   '';
 
   services.xserver.desktopManager.xterm.enable = false;
-  services.xserver.windowManager.xmonad.enable = true;
-  services.xserver.windowManager.default = "xmonad";
   services.xserver.updateDbusEnvironment = true;
+  services.xserver.windowManager.default = "xmonad";
+  services.xserver.windowManager.xmonad.enable = true;
 
-   services.xserver.inputClassSections = [''
+  services.xserver.inputClassSections = [''
      Identifier      "Trackpoint Wheel Emulation"
      Driver          "evdev"
      MatchProduct    "TPPS/2 IBM TrackPoint"
