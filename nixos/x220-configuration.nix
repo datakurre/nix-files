@@ -80,6 +80,7 @@ in
   services.xserver.enableTCP = false;
   services.xserver.layout = "fi";
   services.xserver.xkbOptions = "eurosign:e,caps:escape";
+  services.xserver.xrandrHeads = [ "eDP1" "VGA1" "HDMI1" ];
   services.xserver.displayManager.slim.enable = true;
   services.xserver.displayManager.slim.defaultUser = "datakurre";
   services.xserver.displayManager.sessionCommands = with pkgs; with lib;''
