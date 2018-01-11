@@ -1,7 +1,7 @@
 { pkgs, config, ... }:
 
 {
-  imports = [ ./factorio.nix ];
+  imports = [];
 
   home.packages = with pkgs; [
     acpi
@@ -97,8 +97,10 @@
     vi = "vim";
     tray = "${pkgs.trayer}/bin/trayer --edge top --align right --SetDockType true --SetPartialStrut true --widthtype pixel --width 32 --expand false";
     notmuch-iki = "notmuch --config=${config.home.homeDirectory}/.notmuch-iki";
+    notmuch-jyu = "notmuch --config=${config.home.homeDirectory}/.notmuch-jyu";
 
     alot-iki = "alot -n ${config.home.homeDirectory}/.notmuch-iki";
+    alot-jyu = "alot -n ${config.home.homeDirectory}/.notmuch-jyu";
   };
   programs.zsh.oh-my-zsh.plugins = [
     "cpv" "git" "pass" "pip" "python" "coffee" "colorize"
@@ -111,6 +113,7 @@
     export EDITOR="vim";
     export GS_OPTIONS="-sPAPERSIZE=a4";
     export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
+    export NIX_PATH="nixpkgs=${config.home.homeDirectory}/.nix-defexpr/channels/nixos/nixpkgs";
   '';
 
   services.network-manager-applet.enable = true;
