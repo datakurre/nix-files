@@ -2,7 +2,6 @@
 
 ''
 theme = solarized_dark
-
 auto_replyto_mailinglist = True
 
 [accounts]
@@ -18,8 +17,8 @@ signature = ~/.config/alot/signature-jyu
 realname = Asko Soukka
 address = asko.soukka@iki.fi
 sendmail_command = msmtp --account=iki -t
-sent_box = maildir:///home/datakurre/.mail/iki/Sent
-draft_box = maildir:///home/datakurre/.mail/iki/Drafts
+sent_box = maildir://${config.home.homeDirectory}/.mail/iki/Sent
+draft_box = maildir://${config.home.homeDirectory}/.mail/iki/Drafts
 
 [bindings]
 up = move up
