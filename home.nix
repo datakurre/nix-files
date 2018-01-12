@@ -41,6 +41,7 @@
     vanilla-dmz
     vokoscreen
     vpnc
+    vlc
     xlockmore
     w3m
     yarn
