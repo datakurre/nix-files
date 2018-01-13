@@ -9,6 +9,10 @@ self: super:
 
   aspellDicts = super.recurseIntoAttrs (super.callPackages ./aspell/dictionaries.nix {});
 
+  sikulix = super.callPackage ./sikuli {};
+
+  findimagedupes = super.callPackage ./findimagedupes {};
+
   zest-releaser-python2 = (super.callPackage ./zest-releaser {
     pythonPackages = self.python2Packages;
   }).build."zest.releaser";

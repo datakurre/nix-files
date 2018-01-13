@@ -9,6 +9,7 @@
     chromium
     evince
     firefox-devedition-bin
+    findimagedupes
     gimp
     git
     gnumake
@@ -102,6 +103,8 @@
 
     alot-iki = "alot -n ${config.home.homeDirectory}/.notmuch-iki";
     alot-jyu = "alot -n ${config.home.homeDirectory}/.notmuch-jyu";
+    tls-fingerprit = "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
+    xrandr-vga = "xrandr --output VGA1 --scale 1.333x1";
   };
   programs.zsh.oh-my-zsh.plugins = [
     "cpv" "git" "pass" "pip" "python" "coffee" "colorize"
