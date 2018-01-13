@@ -15,6 +15,7 @@
     gnumake
     gnupg
     htop
+    imagemagick
     irssi
     isync
     jetbrains.pycharm-professional
