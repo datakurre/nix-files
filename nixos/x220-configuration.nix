@@ -66,6 +66,8 @@ in
   environment.systemPackages = [
     pkgs.gnome3.nautilus
     pkgs.gnome3.sushi
+    pkgs.xorg.xmodmap
+    pkgs.vim
   ];
 
   services.dbus.packages = [ pkgs.gnome3.sushi ];
@@ -80,7 +82,6 @@ in
   services.xserver.enableTCP = false;
   services.xserver.layout = "fi";
   services.xserver.xkbOptions = "eurosign:e,caps:escape";
-  services.xserver.xrandrHeads = [ "eDP1" "VGA1" "HDMI1" ];
   services.xserver.displayManager.slim.enable = true;
   services.xserver.displayManager.slim.defaultUser = "datakurre";
   services.xserver.displayManager.sessionCommands = with pkgs; with lib;''
@@ -88,6 +89,9 @@ in
     export XDG_DATA_DIRS=$XDG_DATA_DIRS''${XDG_DATA_DIRS:+:}${mimeAppsList}/share
     export NAUTILUS_EXTENSION_DIR=${config.system.path}/lib/nautilus/extensions-3.0/
     ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
+    # Next / Previous
+    xmodmap -e 'keycode 166=Prior'
+    xmodmap -e 'keycode 167=Next'
   '';
 
   services.xserver.desktopManager.xterm.enable = false;
@@ -150,6 +154,7 @@ in
   services.tarsnap.enable = true;
   services.tarsnap.archives.data.directories = [
     "/var/lib"
+    "/home/datakurre/Work/robotkernel"
   ];
 
   system.stateVersion = "18.03";

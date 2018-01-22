@@ -105,7 +105,10 @@
     alot-iki = "alot -n ${config.home.homeDirectory}/.notmuch-iki";
     alot-jyu = "alot -n ${config.home.homeDirectory}/.notmuch-jyu";
     tls-fingerprit = "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
-    xrandr-vga = "xrandr --output VGA1 --scale 1.333x1";
+    xrandr-vga-on = "xrandr --output VGA1 --auto --scale 1.333x1 --output LVDS1 --scale 1x1";
+    xrandr-vga-off = "xrandr --output VGA1 --off";
+    xrandr-hdmi1-on = "xrandr --output HDMI1 --auto --scale 0.71147x0.71112 --output LVDS1 --scale 1x1";
+    xrandr-hdmi1-off = "xrandr --output HDMI1 --off";
   };
   programs.zsh.oh-my-zsh.plugins = [
     "cpv" "git" "pass" "pip" "python" "coffee" "colorize"
