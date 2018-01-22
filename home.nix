@@ -37,6 +37,7 @@
     pythonPackages.alot
     pythonPackages.docker_compose
     rfkill
+    sikulix
     trayer
     unzip
     vagrant
