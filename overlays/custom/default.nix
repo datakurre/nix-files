@@ -9,7 +9,7 @@ self: super:
 
   aspellDicts = super.recurseIntoAttrs (super.callPackages ./aspell/dictionaries.nix {});
 
-  sikulix = super.callPackage ./sikuli {};
+  sikulix = super.callPackage ./sikulix {};
 
   findimagedupes = super.callPackage ./findimagedupes {};
 
