@@ -11,6 +11,10 @@ self: super:
 
   sikulix = super.callPackage ./sikulix {};
 
+  robotframework-sikulilibrary = super.callPackage ./sikulilibrary {
+    pythonPackages = self.python3Packages;
+  };
+
   findimagedupes = super.callPackage ./findimagedupes {};
 
   zest-releaser-python2 = (super.callPackage ./zest-releaser {
