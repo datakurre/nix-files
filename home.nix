@@ -32,6 +32,7 @@
     phantomjs2
     psmisc
     pythonFull
+    pidgin-with-plugins
     pythonPackages.alot
     pythonPackages.docker_compose
     rfkill
