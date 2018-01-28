@@ -133,7 +133,7 @@ in
 
   nix.package = pkgs.nixUnstable;
   nix.useSandbox = true;
-  nix.sandboxPaths = [ "/etc/ssl/certs/ca-certificates.crt" ];
+  nix.sandboxPaths = [ "/dev/urandom" "/etc/ssl/certs/ca-certificates.crt" ];
   nix.binaryCaches = [ https://cache.nixos.org ];
   nix.extraOptions = ''
     auto-optimise-store = true
@@ -155,6 +155,7 @@ in
   services.tarsnap.archives.data.directories = [
     "/var/lib"
     "/home/datakurre/Work/robotkernel"
+    "/home/datakurre/Asiakirjat"
   ];
 
   system.stateVersion = "18.03";

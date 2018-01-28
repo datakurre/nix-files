@@ -1,7 +1,7 @@
 self: super:
 
 {
-  afew = super.pythonPackages.afew.overrideAttrs(old: {
+  afew = super.afew.overrideAttrs(old: {
     postPatch = ''
       sed -i "s|'notmuch', 'new'|'test', '1'|g" afew/MailMover.py
     '';

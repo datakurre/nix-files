@@ -16,6 +16,7 @@
     gnupg
     htop
     imagemagick
+    inkscape
     irssi
     isync
     jetbrains.pycharm-professional
