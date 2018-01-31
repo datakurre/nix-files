@@ -36,4 +36,34 @@ self: super:
   pidgin-with-plugins = super.pidgin-with-plugins.override {
     plugins = [ self.pidginsipe ];
   };
+
+  inkscape = let
+    myPython2Env = self.python2.withPackages(ps: with ps; [
+      numpy
+      lxml
+      (buildPythonPackage rec {
+        name = "${pname}-${version}";
+        pname = "scour";
+        version = "0.36";
+        src = super.fetchurl {
+          url = "https://pypi.python.org/packages/1a/9a/7e9f7a40241c1d2659655a5f10ef3d9a84b18365c845f030825d709d59b1/scour-0.36.tar.gz";
+          # url = "mirror://pypi/r/${pname}/${name}.tar.gz";
+          sha256 = "0aizn6yk1nqqz0gqj70hkynf9zgqnab552aix4svy0wygcwlksjb";
+        };
+        propagatedBuildInputs = [
+          six
+        ];
+      })
+    ]);
+  in super.inkscape.overrideAttrs(old: {
+    postPatch = ''
+      patchShebangs share/extensions
+      patchShebangs fix-roff-punct
+      # Python is used at run-time to execute scripts, e.g., those from
+      # the "Effects" menu.
+      substituteInPlace src/extension/implementation/script.cpp \
+        --replace '"python-interpreter", "python"' '"python-interpreter", "${myPython2Env}/bin/python"'
+    '';
+    buildInputs = old.buildInputs ++ [ myPython2Env ];
+  });
 }
