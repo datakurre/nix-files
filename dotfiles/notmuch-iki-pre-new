@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# afew -C $HOME/.notmuch-iki --move-mails --all
+# afew -C $prefix/.notmuch-iki --move-mails --all
 mbsync --push --pull --create --new --delete --flags --renew \
        --expunge-slave iki
 # mbsync --push --pull --create --new --delete --flags --renew \

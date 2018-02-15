@@ -1,4 +1,4 @@
-{ config, ... }:
+{ prefix, ... }:
 ''
 # .notmuch-config - Configuration file for the notmuch mail system
 #
@@ -13,7 +13,7 @@
 # configured here named ".notmuch".
 #
 [database]
-path=${config.home.homeDirectory}/.mail/iki
+path=${prefix}/.mail/iki
 
 # User configuration
 #
@@ -95,5 +95,5 @@ synchronize_flags=true
 #    gpg_path = binary name or full path to invoke gpg.
 #
 [crypto]
-gpg_path=${config.home.homeDirectory}/.nix-profile/bin/gpg
+gpg_path=${prefix}/.nix-profile/bin/gpg
 ''

@@ -1,8 +1,6 @@
-{ pkgs, config, ... }:
+{ pkgs, prefix, ... }:
 
 {
-  imports = [];
-
   home.packages = with pkgs; [
     acpi
     afew
@@ -30,8 +28,10 @@
     networkmanager_vpnc
     nixops
     nodejs
+    nodePackages.node2nix
     notmuch
     pass
+    pavucontrol
     phantomjs2
     psmisc
     pythonFull
@@ -39,10 +39,10 @@
     pythonPackages.docker_compose
     rfkill
     sikulix
-    trayer
     unzip
     vagrant
     vanilla-dmz
+    vcvrack
     vokoscreen
     vpnc
     vlc
@@ -56,9 +56,9 @@
 
   home.file.".buildout/default.cfg".text = ''
     [buildout]
-    download-cache = ${config.home.homeDirectory}/.cache/download-cache
-    eggs-directory = ${config.home.homeDirectory}/.cache/eggs-directory
-    extends-cache = ${config.home.homeDirectory}/.cache/extends-cache
+    download-cache = ${prefix}/.cache/download-cache
+    eggs-directory = ${prefix}/.cache/eggs-directory
+    extends-cache = ${prefix}/.cache/extends-cache
   '';
   home.file.".docutils.conf".source = ./dotfiles/docutils.conf;
   home.file.".editorconfig".source = ./dotfiles/editorconfig.conf;
@@ -71,18 +71,15 @@
   home.file.".irssi/secrets".source = ./dotfiles/irssi.secrets;
   home.file.".irssi/startup".source = ./dotfiles/irssi.startup;
   home.file.".config/afew/config".source = ./dotfiles/afew.conf;
-  home.file.".config/alot/config".text = import ./dotfiles/alot.nix { inherit config; };
+  home.file.".config/alot/config".text = import ./dotfiles/alot.nix { inherit prefix; };
   home.file.".config/alot/signature-jyu".source = ./dotfiles/alot.signature-jyu;
   home.file.".config/alot/themes/solarized_dark".source = ./dotfiles/alot.theme;
-  home.file.".notmuch-iki".text = import ./dotfiles/notmuch-iki.nix { inherit config; };
-  home.file.".notmuch-jyu".text = import ./dotfiles/notmuch-jyu.nix { inherit config; };
+  home.file.".notmuch-iki".text = import ./dotfiles/notmuch-iki.nix { inherit prefix; };
+  home.file.".notmuch-jyu".text = import ./dotfiles/notmuch-jyu.nix { inherit prefix; };
   home.file.".mail/iki/.notmuch/hooks/pre-new".source = ./dotfiles/notmuch-iki-pre-new;
   home.file.".mail/iki/.notmuch/hooks/pre-new".executable = true;
   home.file.".mail/jyu/.notmuch/hooks/pre-new".source = ./dotfiles/notmuch-jyu-pre-new;
   home.file.".mail/jyu/.notmuch/hooks/pre-new".executable = true;
-
-  programs.home-manager.enable = true;
-  programs.home-manager.path = "https://github.com/rycee/home-manager/archive/master.tar.gz";
 
   programs.git.enable = true;
   programs.git.userName = "Asko Soukka";
@@ -100,12 +97,10 @@
   programs.zsh.oh-my-zsh.enable = true;
   programs.zsh.shellAliases = {
     vi = "vim";
-    tray = "${pkgs.trayer}/bin/trayer --edge top --align right --SetDockType true --SetPartialStrut true --widthtype pixel --width 32 --expand false";
-    notmuch-iki = "notmuch --config=${config.home.homeDirectory}/.notmuch-iki";
-    notmuch-jyu = "notmuch --config=${config.home.homeDirectory}/.notmuch-jyu";
-
-    alot-iki = "alot -n ${config.home.homeDirectory}/.notmuch-iki";
-    alot-jyu = "alot -n ${config.home.homeDirectory}/.notmuch-jyu";
+    notmuch-iki = "notmuch --config=${prefix}/.notmuch-iki";
+    notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
+    alot-iki = "alot -n ${prefix}/.notmuch-iki";
+    alot-jyu = "alot -n ${prefix}/.notmuch-jyu";
     tls-fingerprit = "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
     xrandr-vga-on = "xrandr --output VGA1 --auto --scale 1.333x1 --output LVDS1 --scale 1x1";
     xrandr-vga-off = "xrandr --output VGA1 --off";
@@ -120,19 +115,27 @@
     function dot2pdf() { nix-shell -p graphviz --run "dot -Tps $1"|ps2pdf - }
     function gitlog() { git log --pretty=format:"- %s%n  [%an]" "`git describe --tags|grep -o '^[^-]*'`"..HEAD; }
     function gitclog() { head -n 6 $1 >> $1.new && gitlog >> $1.new && tail -n +8 $1 >> $1.new && mv $1.new $1; }
+    export NIX_REMOTE="daemon";
     export EDITOR="vim";
     export GS_OPTIONS="-sPAPERSIZE=a4";
     export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
-    export NIX_PATH="nixpkgs=${config.home.homeDirectory}/.nix-defexpr/channels/nixos/nixpkgs";
   '';
 
-  services.network-manager-applet.enable = true;
-
-  services.polybar.enable = false;
-  services.polybar.script = "polybar default &";
-  services.polybar.config = {
-    "section/base" = { include-file = ./dotfiles/polybar.conf; };
+  services.stalonetray.enable = false;
+  services.stalonetray.config = {
+    decorations = null;
+    dockapp_mode = null;
+    geometry = "2x1-0+0";
+    max_geometry = "5x1-0+0";
+    grow_gravity = "SW";
+    icon_gravity = "SW";
+    icon_size = 24;
+    kludges = "force_icons_size";
+    skip_taskbar = true;
+    sticky = true;
   };
+  services.blueman-applet.enable = false;
+  services.network-manager-applet.enable = false;
 
   programs.ssh.enable = true;
   services.gpg-agent.enable = true;

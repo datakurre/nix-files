@@ -1,6 +1,5 @@
 /configuration.nix
-/nixos/private-configuration
-/nixos/hydra-configuration
-*.swp
+/overlays/mrvandalo
+/private
 /.idea
-/factorio.nix
+*.swp

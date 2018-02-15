@@ -1,4 +1,4 @@
-{ config, ... }:
+{ prefix, ... }:
 
 ''
 theme = solarized_dark
@@ -9,16 +9,16 @@ auto_replyto_mailinglist = True
 realname = Asko Soukka
 address = asko.soukka@jyu.fi
 sendmail_command = msmtp --account=jyu -t
-sent_box = maildir://${config.home.homeDirectory}/.mail/jyu/Sent
-draft_box = maildir://${config.home.homeDirectory}/.mail/jyu/Drafts
+sent_box = maildir://${prefix}/.mail/jyu/Sent
+draft_box = maildir://${prefix}/.mail/jyu/Drafts
 signature = ~/.config/alot/signature-jyu
 
 [[iki]]
 realname = Asko Soukka
 address = asko.soukka@iki.fi
 sendmail_command = msmtp --account=iki -t
-sent_box = maildir://${config.home.homeDirectory}/.mail/iki/Sent
-draft_box = maildir://${config.home.homeDirectory}/.mail/iki/Drafts
+sent_box = maildir://${prefix}/.mail/iki/Sent
+draft_box = maildir://${prefix}/.mail/iki/Drafts
 
 [bindings]
 up = move up

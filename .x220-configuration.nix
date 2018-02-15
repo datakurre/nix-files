@@ -1,1 +1,1 @@
-{ ... }: { imports = [ ./nixos/x220-hardware.nix ./nixos/x220-configuration.nix ]; }
+{ ... }: { imports = [ ./x220-hardware.nix ./x220-configuration.nix ]; }

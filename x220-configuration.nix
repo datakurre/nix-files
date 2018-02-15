@@ -15,15 +15,37 @@ let
 in
 
 {
-  boot.kernelPackages = pkgs.linuxPackages_4_14;
+
+  imports = [
+    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
+    ./modules/battery-notifier.nix
+  ];
+
+  boot.kernelPackages = pkgs.linuxPackages_4_15;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
 
-  hardware.bluetooth.enable = false;
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.extraConfig = ''
+    [general]
+    Enable=Source,Sink,Media,Socket
+    Disable=Headset
+  '';
   hardware.opengl.driSupport32Bit = true;
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
+  hardware.pulseaudio.package = pkgs.pulseaudioFull;
+  hardware.pulseaudio.configFile = ./dotfiles/pulseaudio.conf;
+
+  services.batteryNotifier.enable = true;
+
+  services.mopidy.enable = true;
+  services.mopidy.extensionPackages = with pkgs; [
+    mopidy-spotify
+    mopidy-soundcloud
+  ];
+  services.mopidy.configuration = builtins.readFile ./private/mopidy.conf;
 
   time.timeZone = "Europe/Helsinki";
 
@@ -131,7 +153,10 @@ in
   users.users.datakurre.uid = 1000;
   users.users.datakurre.shell = "/run/current-system/sw/bin/zsh";
 
-  nix.package = pkgs.nixUnstable;
+  home-manager.users.datakurre = import ./this-is-my-home.nix {
+    inherit pkgs; prefix = config.users.users.datakurre.home;
+  };
+
   nix.useSandbox = true;
   nix.sandboxPaths = [ "/dev/urandom" "/etc/ssl/certs/ca-certificates.crt" ];
   nix.binaryCaches = [ https://cache.nixos.org ];
@@ -141,6 +166,10 @@ in
     gc-keep-outputs = true
   '';
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.overlays = [
+    (import ./overlays/custom)
+    (import ./overlays/mrvandalo)
+  ];
 
   services.nixosManual.showManual = false;
 
@@ -153,9 +182,11 @@ in
 
   services.tarsnap.enable = true;
   services.tarsnap.archives.data.directories = [
-    "/var/lib"
-    "/home/datakurre/Work/robotkernel"
     "/home/datakurre/Asiakirjat"
+    "/home/datakurre/Work/collective.flow"
+    "/home/datakurre/Work/pwa"
+    "/home/datakurre/Work/robotkernel"
+    "/var/lib"
   ];
 
   system.stateVersion = "18.03";
