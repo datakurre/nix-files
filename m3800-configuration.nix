@@ -85,6 +85,7 @@ in
   programs.ssh.startAgent = false;
   programs.zsh.enable = true;
   services.memcached.enable = true;
+  services.redis.enable = true;
   services.mopidy.enable = true;
   services.pcscd.enable = true;
   services.mopidy.extensionPackages = with pkgs; [
