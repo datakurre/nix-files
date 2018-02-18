@@ -123,11 +123,10 @@
     export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
   '';
 
-  services.stalonetray.enable = false;
   services.stalonetray.config = {
     decorations = null;
     dockapp_mode = null;
-    geometry = "2x1-0+0";
+    geometry = "1x1-0+0";
     max_geometry = "5x1-0+0";
     grow_gravity = "SW";
     icon_gravity = "SW";
@@ -136,8 +135,9 @@
     skip_taskbar = true;
     sticky = true;
   };
+  services.stalonetray.enable = true;
   services.blueman-applet.enable = false;
-  services.network-manager-applet.enable = false;
+  services.network-manager-applet.enable = true;
 
   programs.ssh.enable = true;
   services.gpg-agent.enable = true;
