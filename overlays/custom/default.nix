@@ -9,6 +9,8 @@ self: super:
 
   aspellDicts = super.recurseIntoAttrs (super.callPackages ./aspell/dictionaries.nix {});
 
+  camunda-modeler = super.callPackage ./camunda-modeler {};
+
   sikulix = super.callPackage ./sikulix {};
 
   robotframework-sikulilibrary = super.callPackage ./sikulilibrary {

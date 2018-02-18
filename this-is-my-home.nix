@@ -4,6 +4,7 @@
   home.packages = with pkgs; [
     acpi
     afew
+    camunda-modeler
     chromium
     evince
     firefox-devedition-bin
