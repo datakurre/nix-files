@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, makeWrapper, utillinux, jre, jdk, opencv, tesseract,
-  xdotool, wmctrl }:
+{ stdenv, fetchurl, makeWrapper, utillinux, jre, jdk, lsb-release, opencv,
+  tesseract, xdotool, wmctrl }:
 
 stdenv.mkDerivation rec {
   name = "sikulix-${version}";
