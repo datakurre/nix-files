@@ -41,6 +41,7 @@
     pythonPackages.docker_compose
     rfkill
     sikulix
+    skype
     unzip
     vagrant
     vanilla-dmz
