@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
     sha256 = "0rwll7rl51ry8nirl91znsvjh6s5agal0wxzqpisr907g1l1vp12";
   };
 
-  buildInputs = [ makeWrapper jre jdk opencv tesseract xdotool wmctrl ];
+  buildInputs = [ makeWrapper jre jdk lsb-release opencv tesseract xdotool wmctrl ];
 
   unpackPhase = "true";
 
