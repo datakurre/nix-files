@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, makeWrapper, utillinux, jre, jdk, lsb-release, opencv,
-  tesseract, xdotool, wmctrl }:
+{ stdenv, fetchurl, makeWrapper, utillinux, jre, jdk, opencv, tesseract,
+  xdotool, wmctrl }:
 
 stdenv.mkDerivation rec {
   name = "sikulix-${version}";
@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
     sha256 = "0rwll7rl51ry8nirl91znsvjh6s5agal0wxzqpisr907g1l1vp12";
   };
 
-  buildInputs = [ makeWrapper jre jdk lsb-release opencv tesseract xdotool wmctrl ];
+  buildInputs = [ makeWrapper jre jdk opencv tesseract xdotool wmctrl ];
 
   unpackPhase = "true";
 
@@ -67,7 +67,8 @@ stdenv.mkDerivation rec {
       sikulixlibs/linux/libs64/libVisionProxy.so
     rm -r *.o *.o.d srcnativelibs sikulixlibs
 
-    java -jar sikulixsetup-${version}.jar options 1.1
+    mkdir tmp
+    java -Djava.io.tmpdir=$(pwd)/tmp -Duser.home=$(pwd) -jar sikulixsetup-${version}.jar options 1.1
   '';
 
   installPhase = ''
