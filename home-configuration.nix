@@ -11,6 +11,8 @@
     findimagedupes
     gimp
     git
+    gitlog
+    gitclog
     gnumake
     gnupg
     htop
@@ -99,7 +101,6 @@
   programs.zsh.enableCompletion = true;
   programs.zsh.oh-my-zsh.enable = true;
   programs.zsh.shellAliases = {
-    vi = "vim";
     notmuch-iki = "notmuch --config=${prefix}/.notmuch-iki";
     notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
     alot-iki = "alot -n ${prefix}/.notmuch-iki";
@@ -111,15 +112,12 @@
     xrandr-hdmi1-off = "xrandr --output HDMI1 --off";
   };
   programs.zsh.oh-my-zsh.plugins = [
-    "cpv" "git" "pass" "pip" "python" "coffee" "colorize"
+    "cpv" "colorize" "docker" "git" "pip" "python" "yarn"
   ];
   programs.zsh.oh-my-zsh.theme = "robbyrussell";
   programs.zsh.initExtra = ''
-    function dot2pdf() { nix-shell -p graphviz --run "dot -Tps $1"|ps2pdf - }
-    function gitlog() { git log --pretty=format:"- %s%n  [%an]" "`git describe --tags|grep -o '^[^-]*'`"..HEAD; }
-    function gitclog() { head -n 6 $1 >> $1.new && gitlog >> $1.new && tail -n +8 $1 >> $1.new && mv $1.new $1; }
-    export NIX_REMOTE="daemon";
     export EDITOR="vim";
+    export NIX_REMOTE="daemon";
     export GS_OPTIONS="-sPAPERSIZE=a4";
     export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
   '';

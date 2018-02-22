@@ -153,7 +153,7 @@ in
   users.users.datakurre.uid = 1000;
   users.users.datakurre.shell = "/run/current-system/sw/bin/zsh";
 
-  home-manager.users.datakurre = import ./this-is-my-home.nix {
+  home-manager.users.datakurre = import ./home-configuration.nix {
     inherit pkgs; prefix = config.users.users.datakurre.home;
   };
 
@@ -161,7 +161,7 @@ in
   nix.sandboxPaths = [ "/dev/urandom" "/etc/ssl/certs/ca-certificates.crt" ];
   nix.binaryCaches = [ https://cache.nixos.org ];
   nix.extraOptions = ''
-    auto-optimise-store = true
+    auto-optimise-store = false
     gc-keep-derivations = true
     gc-keep-outputs = true
   '';
@@ -170,6 +170,10 @@ in
     (import ./overlays/custom)
     (import ./overlays/mrvandalo)
   ];
+
+  environment.shellAliases = {
+    "vi" = "vim";
+  };
 
   services.nixosManual.showManual = false;
 
