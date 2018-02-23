@@ -69,6 +69,8 @@ self: super:
     plugins = [ self.pidginsipe ];
   };
 
+  plonetheme-upload = (super.callPackage ./plonetheme-upload {}).package;
+
   inkscape = let
     myPython2Env = self.python2.withPackages(ps: with ps; [
       numpy
