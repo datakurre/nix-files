@@ -41,6 +41,8 @@ self: super:
     '';
   };
 
+  jupyter-env = super.callPackage ./jupyter-env {};
+
   sikulix = super.callPackage ./sikulix {};
 
   robotframework-sikulilibrary = super.callPackage ./sikulilibrary {
@@ -68,6 +70,8 @@ self: super:
   pidgin-with-plugins = super.pidgin-with-plugins.override {
     plugins = [ self.pidginsipe ];
   };
+
+  plone-env = super.callPackage ./plone-env {};
 
   plonetheme-upload = (super.callPackage ./plonetheme-upload {}).package;
 
