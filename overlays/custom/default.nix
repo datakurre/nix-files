@@ -75,7 +75,7 @@ self: super:
 
   plonetheme-upload = (super.callPackage ./plonetheme-upload {}).package;
 
-  inkscape = let
+  inkscapeFull = let
     myPython2Env = self.python2.withPackages(ps: with ps; [
       numpy
       lxml
