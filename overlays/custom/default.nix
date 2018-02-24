@@ -52,7 +52,7 @@ self: super:
     '';
   };
 
-  jupyter-env = super.callPackage ./jupyter-env {};
+  jupyter = super.callPackage ./jupyter-env {};
 
   sikulix = super.callPackage ./sikulix {};
 
@@ -82,7 +82,7 @@ self: super:
     plugins = [ self.pidginsipe ];
   };
 
-  plone-env = super.callPackage ./plone-env {};
+  buildout = super.callPackage ./plone-env {};
 
   plonetheme-upload = (super.callPackage ./plonetheme-upload {}).package;
 
