@@ -74,7 +74,7 @@ let self = rec {
       python2Packages.pillow
       python2Packages.python_magic
       python2Packages.watchdog
-      pkgs.readline
+      python2Packages.gnureadline
       robotframework-selenium2library
     ];
   });
