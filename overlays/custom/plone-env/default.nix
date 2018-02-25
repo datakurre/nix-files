@@ -68,6 +68,7 @@ let self = rec {
       dataflake-fakeldap
       python2Packages.pycrypto
       python2Packages.cryptography
+      python2Packages.ipython
       python2Packages.kerberos
       python2Packages.ldap
       python2Packages.lxml
