@@ -66,6 +66,7 @@ let self = rec {
     postInstall = "";
     propagatedBuildInputs = [
       dataflake-fakeldap
+      python2Packages.pycrypto
       python2Packages.cryptography
       python2Packages.kerberos
       python2Packages.ldap

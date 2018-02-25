@@ -82,7 +82,7 @@ self: super:
     plugins = [ self.pidginsipe ];
   };
 
-  buildout = super.callPackage ./plone-env {};
+  plone = super.callPackage ./plone-env {};
 
   plonetheme-upload = (super.callPackage ./plonetheme-upload {}).package;
 
