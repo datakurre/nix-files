@@ -72,6 +72,7 @@ in
     gentium
     inconsolata
     liberation_ttf
+    powerline-fonts
     terminus_font
     ubuntu_font_family
   ];
