@@ -76,6 +76,7 @@ in
     gentium
     inconsolata
     liberation_ttf
+    powerline-fonts
     terminus_font
     ubuntu_font_family
   ];
@@ -223,7 +224,7 @@ in
   users.users.atsoukka.uid = 1000;
   users.users.atsoukka.shell = "/run/current-system/sw/bin/zsh";
 
-  home-manager.users.atsoukka = import ./home-manager.nix {
+  home-manager.users.atsoukka = import ./home-configuration.nix {
     inherit pkgs; prefix = config.users.users.atsoukka.home;
   };
 

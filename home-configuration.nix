@@ -119,15 +119,26 @@
     export SPACESHIP_DIR_TRUNC=0
     export SPACESHIP_DIR_TRUNC_REPO=false
   '';
-  programs.zsh.plugins = [{
-    name = "spaceship";
-    file = "spaceship.zsh";
-    src = pkgs.fetchgit {
-      url = "https://github.com/denysdovhan/spaceship-prompt";
-      rev = "v3.2.0";
-      sha256 = "1x4cqlcm985lcy1q9fqh1dd6dj0gvnr58jz7l416h7mr4a5b2r9m";
-    };
-  }];
+  programs.zsh.plugins = [
+    {
+      name = "spaceship";
+      file = "spaceship.zsh";
+      src = pkgs.fetchgit {
+        url = "https://github.com/denysdovhan/spaceship-prompt";
+        rev = "v3.2.0";
+        sha256 = "1x4cqlcm985lcy1q9fqh1dd6dj0gvnr58jz7l416h7mr4a5b2r9m";
+      };
+    }
+    {
+      name = "zsh-nix-shell";
+      file = "nix-shell.plugin.zsh";
+      src = pkgs.fetchgit {
+        url = "https://github.com/chisui/zsh-nix-shell";
+        rev = "fdf2899ac5e0623af97b4c7efaa312860f73964a";
+        sha256 = "172p7fzg5rwc26wkr0zdc3rmyx9cl8k6dqwp72pn4ayv1j3y59r9";
+      };
+    }
+  ];
 
   services.stalonetray.config = {
     decorations = null;
