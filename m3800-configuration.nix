@@ -98,6 +98,10 @@ in
     pkgs.vim
   ];
 
+  environment.shellAliases = {
+    "vi" = "vim";
+  };
+
   services.dbus.packages = with pkgs; [ gnome3.sushi ];
 
   programs.gnupg.agent.enableSSHSupport = true;

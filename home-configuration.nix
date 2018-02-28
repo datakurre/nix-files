@@ -11,11 +11,13 @@
     findimagedupes
     gimp
     git
+    gitlog
+    gitclog
     gnumake
     gnupg
     htop
     imagemagick
-    inkscape
+    inkscapeFull
     irssi
     isync
     jetbrains.pycharm-professional
@@ -97,9 +99,7 @@
 
   programs.zsh.enable = true;
   programs.zsh.enableCompletion = true;
-  programs.zsh.oh-my-zsh.enable = true;
   programs.zsh.shellAliases = {
-    vi = "vim";
     notmuch-iki = "notmuch --config=${prefix}/.notmuch-iki";
     notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
     alot-iki = "alot -n ${prefix}/.notmuch-iki";
@@ -110,19 +110,24 @@
     xrandr-hdmi1-on = "xrandr --output HDMI1 --auto --scale 0.71147x0.71112 --output LVDS1 --scale 1x1";
     xrandr-hdmi1-off = "xrandr --output HDMI1 --off";
   };
-  programs.zsh.oh-my-zsh.plugins = [
-    "cpv" "git" "pass" "pip" "python" "coffee" "colorize"
-  ];
-  programs.zsh.oh-my-zsh.theme = "robbyrussell";
   programs.zsh.initExtra = ''
-    function dot2pdf() { nix-shell -p graphviz --run "dot -Tps $1"|ps2pdf - }
-    function gitlog() { git log --pretty=format:"- %s%n  [%an]" "`git describe --tags|grep -o '^[^-]*'`"..HEAD; }
-    function gitclog() { head -n 6 $1 >> $1.new && gitlog >> $1.new && tail -n +8 $1 >> $1.new && mv $1.new $1; }
-    export NIX_REMOTE="daemon";
     export EDITOR="vim";
+    export NIX_REMOTE="daemon";
     export GS_OPTIONS="-sPAPERSIZE=a4";
     export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
+    export SPACESHIP_EXIT_CODE_SHOW=true
+    export SPACESHIP_DIR_TRUNC=0
+    export SPACESHIP_DIR_TRUNC_REPO=false
   '';
+  programs.zsh.plugins = [{
+    name = "spaceship";
+    file = "spaceship.zsh";
+    src = pkgs.fetchgit {
+      url = "https://github.com/denysdovhan/spaceship-prompt";
+      rev = "v3.2.0";
+      sha256 = "1x4cqlcm985lcy1q9fqh1dd6dj0gvnr58jz7l416h7mr4a5b2r9m";
+    };
+  }];
 
   services.stalonetray.config = {
     decorations = null;
@@ -163,10 +168,10 @@
 
   xresources.properties = {
     "Xcursor.theme" = "Vanilla-DMZ";
-    "Xcursor.size" = "24";
+    "Xcursor.size" = "32";
 
     "XTerm*selectToClipboard" = "true";
-    "XTerm*faceName" = "DejaVuSansMonoBook";
+    "XTerm*faceName" = "DejaVuSansMono for Powerline";
     "XTerm*faceSize" = "11";
     "XTerm*saveLines" = "1024";
 

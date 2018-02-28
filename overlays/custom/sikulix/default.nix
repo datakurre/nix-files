@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, makeWrapper, utillinux, jre, jdk, opencv, tesseract,
-  xdotool, wmctrl }:
+{ stdenv, fetchurl, makeWrapper, utillinux, jre, jdk, opencv,
+  lsb-release, tesseract, xdotool, wmctrl }:
 
 stdenv.mkDerivation rec {
   name = "sikulix-${version}";
@@ -35,7 +35,8 @@ stdenv.mkDerivation rec {
     sha256 = "0rwll7rl51ry8nirl91znsvjh6s5agal0wxzqpisr907g1l1vp12";
   };
 
-  buildInputs = [ makeWrapper jre jdk opencv tesseract xdotool wmctrl ];
+  buildInputs = [ makeWrapper jre jdk opencv lsb-release tesseract xdotool wmctrl ];
+  propagatedBuildInputs = [ lsb-release ];
 
   unpackPhase = "true";
 
