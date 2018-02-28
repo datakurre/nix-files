@@ -15,19 +15,41 @@ let
 in
 
 {
-  boot.kernelPackages = pkgs.linuxPackages_4_14;
+  imports = [
+    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
+    ./modules/battery-notifier.nix
+  ];
+
+  boot.kernelPackages = pkgs.linuxPackages_4_15;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
 
-  hardware.bluetooth.enable = false;
   hardware.bumblebee.connectDisplay = true;
   hardware.bumblebee.enable = true;
   hardware.opengl.driSupport32Bit = true;
   hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
-  hardware.pulseaudio.configFile = ./dotfiles/pulseaudio.conf;
+
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.extraConfig = ''
+    [general]
+    Enable=Source,Sink,Media,Socket
+    Disable=Headset
+  '';
+
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
+  hardware.pulseaudio.package = pkgs.pulseaudioFull;
+  hardware.pulseaudio.configFile = ./dotfiles/pulseaudio.conf;
+
+  services.batteryNotifier.enable = true;
+
+  services.mopidy.enable = true;
+  services.mopidy.extensionPackages = with pkgs; [
+    mopidy-spotify
+    mopidy-soundcloud
+  ];
+  services.mopidy.configuration = builtins.readFile ./private/mopidy.conf;
 
   time.timeZone = "Europe/Helsinki";
 
@@ -37,7 +59,6 @@ in
   networking.firewall.trustedInterfaces = [
     "docker0"
     "vboxnet0"
-    "br-0875c46de2b1"
   ];
 
   i18n.consoleFont = "Lat2-Terminus16";
@@ -67,15 +88,14 @@ in
 
   services.gnome3.at-spi2-core.enable = true;
   services.gnome3.gvfs.enable = true;
-  services.udisks2.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    gnome3.nautilus
-    gnome3.sushi
-    rfkill
-    xlockmore
-    xorg.xbacklight
-    xss-lock
+  environment.systemPackages = [
+    pkgs.gnome3.nautilus
+    pkgs.gnome3.sushi
+    pkgs.xlockmore
+    pkgs.xss-lock
+    pkgs.xorg.xbacklight
+    pkgs.vim
   ];
 
   services.dbus.packages = with pkgs; [ gnome3.sushi ];
@@ -84,14 +104,10 @@ in
   programs.gnupg.agent.enable = true;
   programs.ssh.startAgent = false;
   programs.zsh.enable = true;
+  services.pcscd.enable = true;
+
   services.memcached.enable = true;
   services.redis.enable = true;
-  services.mopidy.enable = true;
-  services.pcscd.enable = true;
-  services.mopidy.extensionPackages = with pkgs; [
-    mopidy-spotify
-    mopidy-soundcloud
-  ];
 
   services.logind.extraConfig = ''
     HandlePowerKey=ignore
@@ -143,16 +159,14 @@ in
     ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
     # XLock
     xss-lock -- xlock -mode xjack -erasedelay 0 &
-    rfkill block bluetooth &
     # xrandr
-    # xrandr --output eDP1 --auto --output DP1 --auto --scale 2x2 --right-of eDP1
     xrandr --output eDP1 --auto --output DP1 --auto --panning 3840x2160+3840+0 --scale 2x2 --right-of eDP1
   '';
+
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.updateDbusEnvironment = true;
   services.xserver.videoDrivers = [ "intel" "vesa" ];
   services.xserver.windowManager.default = "xmonad";
-  services.xserver.windowManager.xmonad.enableContribAndExtras = true;
   services.xserver.windowManager.xmonad.enable = true;
 
   services.xserver.libinput.enable = true;
@@ -205,7 +219,10 @@ in
   users.users.atsoukka.uid = 1000;
   users.users.atsoukka.shell = "/run/current-system/sw/bin/zsh";
 
-  nix.package = pkgs.nixUnstable;
+  home-manager.users.atsoukka = import ./home-manager.nix {
+    inherit pkgs; prefix = config.users.users.atsoukka.home;
+  };
+
   nix.useSandbox = true;
   nix.sandboxPaths = [ "/etc/ssl/certs/ca-certificates.crt" ];
   nix.binaryCaches = [ https://cache.nixos.org ];
@@ -215,6 +232,9 @@ in
     gc-keep-outputs = true
   '';
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.overlays = [
+    (import ./overlays/custom)
+  ];
 
   services.nixosManual.showManual = false;
 

@@ -15,7 +15,6 @@ let
 in
 
 {
-
   imports = [
     "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
     ./modules/battery-notifier.nix
@@ -26,13 +25,14 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
 
+  hardware.opengl.driSupport32Bit = true;
+
   hardware.bluetooth.enable = true;
   hardware.bluetooth.extraConfig = ''
     [general]
     Enable=Source,Sink,Media,Socket
     Disable=Headset
   '';
-  hardware.opengl.driSupport32Bit = true;
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
   hardware.pulseaudio.package = pkgs.pulseaudioFull;
@@ -153,7 +153,7 @@ in
   users.users.datakurre.uid = 1000;
   users.users.datakurre.shell = "/run/current-system/sw/bin/zsh";
 
-  home-manager.users.datakurre = import ./this-is-my-home.nix {
+  home-manager.users.datakurre = import ./home-manager.nix {
     inherit pkgs; prefix = config.users.users.datakurre.home;
   };
 
