@@ -74,6 +74,7 @@ let self = rec {
       python2Packages.lxml
       python2Packages.pillow
       python2Packages.python_magic
+      python2Packages.pyscss
       python2Packages.watchdog
       python2Packages.gnureadline
       robotframework-selenium2library
