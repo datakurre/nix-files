@@ -20,10 +20,15 @@ in
     ./modules/battery-notifier.nix
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_4_15;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
+
+  boot.loader.grub.enable = true;
+  boot.loader.grub.version = 2;
+  boot.loader.grub.device = "nodev";
+  boot.loader.grub.efiSupport = true;
 
   hardware.opengl.driSupport32Bit = true;
 
