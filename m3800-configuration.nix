@@ -25,6 +25,12 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
 
+  boot.loader.grub.enable = true;
+  boot.loader.grub.version = 2;
+  boot.loader.grub.device = "nodev";
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.gfxmodeEfi = "1024x768";
+
   hardware.bumblebee.connectDisplay = true;
   hardware.bumblebee.enable = true;
   hardware.opengl.driSupport32Bit = true;
@@ -170,7 +176,7 @@ in
 
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.updateDbusEnvironment = true;
-  services.xserver.videoDrivers = [ "intel" "vesa" ];
+  services.xserver.videoDrivers = [ "intel" "nvidia" ];
   services.xserver.windowManager.default = "xmonad";
   services.xserver.windowManager.xmonad.enable = true;
 
