@@ -99,7 +99,6 @@ let self = rec {
   robot_with_packages = buildEnv {
     name = "robotkernel";
     paths = [
-      pkgs.geckodriver
       (python36.buildEnv.override {
         extraLibs = with python36Packages; [
           ipykernel
@@ -274,6 +273,7 @@ stdenv.mkDerivation rec {
     jupyter
     jupyter_config_dir
     geckodriver
+    chromedriver
     plantweb
     plantuml
     pandoc

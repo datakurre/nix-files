@@ -98,7 +98,7 @@
   };
 
   programs.zsh.enable = true;
-  programs.zsh.enableCompletion = true;
+  programs.zsh.history.share = false;
   programs.zsh.shellAliases = {
     notmuch-iki = "notmuch --config=${prefix}/.notmuch-iki";
     notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
