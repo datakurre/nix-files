@@ -159,7 +159,7 @@ in
   services.xserver.enableTCP = false;
   services.xserver.layout = "fi";
   services.xserver.xrandrHeads = [ "eDP1" "DP1" ];
-  services.xserver.xkbOptions = "eurosign:e,caps:escape";
+  services.xserver.xkbOptions = "eurosign:e,caps:escape,nbsp:none";
   services.xserver.displayManager.slim.defaultUser = "atsoukka";
   services.xserver.displayManager.slim.enable = true;
   services.xserver.displayManager.xserverArgs = [ "-dpi 192" ];

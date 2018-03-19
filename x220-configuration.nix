@@ -109,7 +109,7 @@ in
   services.xserver.enable = true;
   services.xserver.enableTCP = false;
   services.xserver.layout = "fi";
-  services.xserver.xkbOptions = "eurosign:e,caps:escape";
+  services.xserver.xkbOptions = "eurosign:e,caps:escape,nbsp:none";
   services.xserver.displayManager.slim.enable = true;
   services.xserver.displayManager.slim.defaultUser = "datakurre";
   services.xserver.displayManager.sessionCommands = with pkgs; with lib;''
