@@ -86,6 +86,8 @@ self: super:
 
   plonetheme-upload = (super.callPackage ./plonetheme-upload {}).package;
 
+  powerline-fonts = super.callPackage ./powerline-fonts {};
+
   inkscapeFull = let
     myPython2Env = self.python2.withPackages(ps: with ps; [
       numpy
