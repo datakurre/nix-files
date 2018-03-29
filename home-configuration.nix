@@ -105,10 +105,6 @@
     alot-iki = "alot -n ${prefix}/.notmuch-iki";
     alot-jyu = "alot -n ${prefix}/.notmuch-jyu";
     tls-fingerprit = "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
-    xrandr-vga-on = "xrandr --output VGA1 --auto --scale 1.333x1 --output LVDS1 --scale 1x1";
-    xrandr-vga-off = "xrandr --output VGA1 --off";
-    xrandr-hdmi1-on = "xrandr --output HDMI1 --auto --scale 0.71147x0.71112 --output LVDS1 --scale 1x1";
-    xrandr-hdmi1-off = "xrandr --output HDMI1 --off";
   };
   programs.zsh.initExtra = ''
     export EDITOR="vim";
@@ -125,17 +121,8 @@
       file = "spaceship.zsh";
       src = pkgs.fetchgit {
         url = "https://github.com/denysdovhan/spaceship-prompt";
-        rev = "v3.2.0";
-        sha256 = "1x4cqlcm985lcy1q9fqh1dd6dj0gvnr58jz7l416h7mr4a5b2r9m";
-      };
-    }
-    {
-      name = "zsh-nix-shell";
-      file = "nix-shell.plugin.zsh";
-      src = pkgs.fetchgit {
-        url = "https://github.com/chisui/zsh-nix-shell";
-        rev = "fdf2899ac5e0623af97b4c7efaa312860f73964a";
-        sha256 = "172p7fzg5rwc26wkr0zdc3rmyx9cl8k6dqwp72pn4ayv1j3y59r9";
+        rev = "v3.3.0";
+        sha256 = "1fp0qs50jhqffkgk9b65fclz7vcxcm97s8i1wxry0z9vky8zbna5";
       };
     }
   ];
@@ -182,9 +169,12 @@
     "Xcursor.size" = "32";
 
     "XTerm*selectToClipboard" = "true";
-    "XTerm*faceName" = "DejaVuSansMono for Powerline";
+    "XTerm*faceName" = "DejaVu Sans Mono for Powerline";
     "XTerm*faceSize" = "11";
     "XTerm*saveLines" = "1024";
+
+    "UXTerm*faceName" = "DejaVu Sans Mono for Powerline";
+    "UXTerm*faceSize" = "11";
 
     "*background" = "#002b36";
     "*foreground" = "#839496";
