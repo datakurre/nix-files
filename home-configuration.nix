@@ -6,6 +6,7 @@
     afew
     camunda-modeler
     chromium
+    elmPackages.elm-format
     evince
     firefox-devedition-bin
     findimagedupes
