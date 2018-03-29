@@ -108,13 +108,14 @@
     tls-fingerprit = "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
   };
   programs.zsh.initExtra = ''
-    export EDITOR="vim";
-    export NIX_REMOTE="daemon";
-    export GS_OPTIONS="-sPAPERSIZE=a4";
-    export SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
-    export SPACESHIP_EXIT_CODE_SHOW=true
-    export SPACESHIP_DIR_TRUNC=0
-    export SPACESHIP_DIR_TRUNC_REPO=false
+    EDITOR="vim";
+    NIX_REMOTE="daemon";
+    GS_OPTIONS="-sPAPERSIZE=a4";
+    SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
+    SPACESHIP_EXIT_CODE_SHOW=true;
+    SPACESHIP_DIR_TRUNC=0;
+    SPACESHIP_DIR_TRUNC_REPO=false;
+    SPACESHIP_PROMPT_ORDER=(time user dir host git exec_time line_sep battery jobs exit_code char);
   '';
   programs.zsh.plugins = [
     {
