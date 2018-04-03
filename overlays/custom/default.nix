@@ -22,6 +22,9 @@ self: super:
 
   camunda-modeler = super.callPackage ./camunda-modeler {};
 
+  fuzzylite = super.callPackage ./fuzzylite {};
+  vcmi = super.callPackage ./vcmi {};
+
   gitlog = super.stdenv.mkDerivation {
     name = "gitlog";
     builder = builtins.toFile "builder.sh" ''
