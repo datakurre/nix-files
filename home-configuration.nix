@@ -117,6 +117,7 @@
     SPACESHIP_DIR_TRUNC=0;
     SPACESHIP_DIR_TRUNC_REPO=false;
     SPACESHIP_PROMPT_ORDER=(time user dir host git exec_time line_sep battery jobs exit_code char);
+    bindkey -e
   '';
   programs.zsh.plugins = [
     {
