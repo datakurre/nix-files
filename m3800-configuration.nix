@@ -122,7 +122,7 @@ in
 
   services.logind.extraConfig = ''
     HandlePowerKey=ignore
-    HandeSuspendKey=ignore
+    HandleSuspendKey=ignore
     HandleHibernateKey=ignore
     HandleLidSwitch=ignore
   '';
@@ -170,8 +170,6 @@ in
     ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
     # XLock
     xss-lock -- xlock -mode xjack -erasedelay 0 &
-    # xrandr
-    xrandr --output eDP1 --auto --output DP1 --auto --panning 3840x2160+3840+0 --scale 2x2 --right-of eDP1
   '';
 
   services.xserver.desktopManager.xterm.enable = false;

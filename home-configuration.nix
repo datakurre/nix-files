@@ -48,7 +48,6 @@
     unzip
     vagrant
     vanilla-dmz
-    vcvrack
     vokoscreen
     vpnc
     vlc
