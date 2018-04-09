@@ -37,6 +37,7 @@
     pass
     pavucontrol
     phantomjs2
+    postman
     psmisc
     pythonFull
     pidgin-with-plugins
