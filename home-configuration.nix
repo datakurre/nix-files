@@ -4,6 +4,7 @@
   home.packages = with pkgs; [
     acpi
     afew
+    autorandr
     camunda-modeler
     chromium
     elmPackages.elm-format
