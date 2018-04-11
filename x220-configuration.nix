@@ -86,7 +86,7 @@ in
   powerManagement.enable = true;
 
   virtualisation.docker.enable = true;
-  virtualisation.docker.storageDriver = "btrfs"
+  virtualisation.docker.storageDriver = "btrfs";
   virtualisation.virtualbox.host.enable = true;
 
   services.gnome3.at-spi2-core.enable = true;
