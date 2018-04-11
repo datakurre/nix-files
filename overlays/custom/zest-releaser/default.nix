@@ -5,8 +5,8 @@ let
   setup = import (pkgs.fetchFromGitHub {
     owner = "datakurre";
     repo = "setup.nix";
-    rev = "506afc61cd923d90ef1910337ccf87ee9786d736";
-    sha256 = "057g8vbz9knvlbs94dlxsb5jii9x3p2cx5xzrx09cicq2227fqnz";
+    rev = "4ca906f296ab62345f6b4afa2b5e9acc2d417302";
+    sha256 = "0fkvazlmps6isy5j328xp9pd7gh9r0nj4sm4xb2rcwywmwkb9pc6";
   });
 
   manifest_python = pythonPackages.python.withPackages(ps: [
