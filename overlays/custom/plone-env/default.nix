@@ -57,13 +57,16 @@ let self = rec {
   };
   buildout = python2Packages.zc_buildout_nix.overridePythonAttrs (old: rec {
     pname = "zc.buildout";
-    version = "2.11.0";
+    version = "2.11.3";
     name = "${pname}-nix-${version}";
     src = pkgs.fetchurl {
       url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${pname}-${version}.tar.gz";
-      sha256 = "092b0a147d5fb4e79ee0afde665570f85738e714463854f9e4f7f38d0b27ea82";
+      sha256 = "0k2l6pvz6y37x4q88sdvx70p6jr9z5v4psd3a9zgcdxrwz6y5zgp";
     };
-    postInstall = "";
+    postInstall = ''
+      sed -i "s|import sys|import sys\nimport os\nsys.executable = os.path.join(sys.prefix, 'bin', os.path.basename(sys.executable))|" $out/bin/buildout
+      cat $out/bin/buildout
+    '';
     propagatedBuildInputs = [
       dataflake-fakeldap
       python2Packages.pycrypto
