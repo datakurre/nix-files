@@ -25,6 +25,7 @@
     jetbrains.pycharm-professional
     jq
     lastpass-cli
+    lessc
     libreoffice
     lynx
     msmtp
