@@ -119,7 +119,6 @@ in
   services.pcscd.enable = true;
 
   services.memcached.enable = true;
-  services.redis.enable = true;
 
   services.logind.extraConfig = ''
     HandlePowerKey=ignore
