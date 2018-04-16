@@ -45,6 +45,7 @@
     pythonPackages.alot
     pythonPackages.docker_compose
     rfkill
+    sass
     sikulix
     skype
     unzip
