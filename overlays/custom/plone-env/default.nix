@@ -92,7 +92,7 @@ in pkgs.stdenv.mkDerivation rec {
     buildout
     pkgs.geckodriver
     (pkgs.pythonFull.buildEnv.override {
-      extraLibs = buildout.propagatedNativeBuildInputs;
+      extraLibs = [ buildout ] ++ buildout.propagatedNativeBuildInputs;
     })
   ];
 }

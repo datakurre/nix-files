@@ -85,6 +85,8 @@
   home.file.".notmuch-jyu".text = import ./dotfiles/notmuch-jyu.nix { inherit prefix; };
   home.file.".mail/iki/.notmuch/hooks/pre-new".source = ./dotfiles/notmuch-iki-pre-new;
   home.file.".mail/iki/.notmuch/hooks/pre-new".executable = true;
+  home.file.".mail/iki/.notmuch/hooks/post-new".source = ./dotfiles/notmuch-iki-post-new;
+  home.file.".mail/iki/.notmuch/hooks/post-new".executable = true;
   home.file.".mail/jyu/.notmuch/hooks/pre-new".source = ./dotfiles/notmuch-jyu-pre-new;
   home.file.".mail/jyu/.notmuch/hooks/pre-new".executable = true;
 

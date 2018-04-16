@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# afew -C $prefix/.notmuch-iki --move-mails --all
-mbsync --push --pull --create --new --delete --flags --renew \
-       --expunge-slave iki
-# mbsync --push --pull --create --new --delete --flags --renew \
-#        --expunge-slave --expunge-master iki
+mbsync --pull --create --new --delete --flags --renew --expunge-slave iki
+afew -C $prefix/.notmuch-iki --move-mails --all
+mbsync --push  --create --new --delete --flags --renew --expunge-master iki
