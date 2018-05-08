@@ -23,6 +23,7 @@
     irssi
     isync
     jetbrains.pycharm-professional
+    jfrog-cli
     jq
     lastpass-cli
     lessc
