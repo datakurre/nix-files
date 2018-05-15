@@ -74,7 +74,13 @@ let self = rec {
       python2Packages.ipdb
       python2Packages.kerberos
       python2Packages.ldap
-      python2Packages.lxml
+      (python2Packages.lxml.overridePythonAttrs(old: {
+        name = "lxml-3.5.0";
+        src = pkgs.fetchurl {
+          url = "https://files.pythonhosted.org/packages/8b/be/ed850baac891aca25c832fb8d7b9c0e7a5077a30e336d95ffc7d649aaa06/lxml-3.5.0.tar.gz";
+          sha256 = "349f93e3a4b09cc59418854ab8013d027d246757c51744bf20069bc89016f578";
+        };
+      }))
       python2Packages.pillow
       python2Packages.python_magic
       python2Packages.pyscss
