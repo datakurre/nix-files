@@ -55,6 +55,8 @@ self: super:
     '';
   };
 
+  jfrog-cli = super.callPackage ./jfrog-cli {};
+
   jupyter-env = super.callPackage ./jupyter-env {};
 
   sikulix = super.callPackage ./sikulix {};
