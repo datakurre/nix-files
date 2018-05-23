@@ -99,6 +99,7 @@ in pkgs.stdenv.mkDerivation rec {
   '';
   buildInputs = with self; [
     buildout
+    pkgs.firefox
     pkgs.geckodriver
     (pkgs.pythonFull.buildEnv.override {
       extraLibs = [ buildout ] ++ buildout.propagatedNativeBuildInputs;
