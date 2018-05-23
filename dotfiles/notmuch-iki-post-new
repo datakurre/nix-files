@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-afew -C $prefix/.notmuch-iki --tag -- folder:INBOX
-afew -C $prefix/.notmuch-iki --tag --new
-alot -n $prefix/.notmuch-iki
+afew -C $HOME/.notmuch-iki --tag -- folder:INBOX
+afew -C $HOME/.notmuch-iki --tag --new
+alot -n $HOME/.notmuch-iki
 # afew -C $prefix/.notmuch-iki --tag --all
 # afew -C $prefix/.notmuch-iki --learn tag -- folder:
 # afew -C $prefix/.notmuch-iki --learn tag -- from:
