@@ -238,12 +238,12 @@ in
 
   clion = buildClion rec {
     name = "clion-${version}";
-    version = "2018.1.2"; /* updated by script */
+    version = "2018.1.3"; /* updated by script */
     description  = "C/C++ IDE. New. Intelligent. Cross-platform";
     license = stdenv.lib.licenses.unfree;
     src = fetchurl {
       url = "https://download.jetbrains.com/cpp/CLion-${version}.tar.gz";
-      sha256 = "158ydbr0bbzm1nqi4xhrcp6bwk7kmiw78v959h7bxg3y7z55hbwa"; /* updated by script */
+      sha256 = "0daj1ha7d9kxgb60mx2yzyj01m6ahw5d6wzs0vvwp5fh5qf4mpw5"; /* updated by script */
     };
     wmClass = "jetbrains-clion";
     update-channel = "CLion_Release"; # channel's id as in http://www.jetbrains.com/updates/updates.xml
@@ -264,12 +264,12 @@ in
 
   goland = buildGoland rec {
     name = "goland-${version}";
-    version = "2018.1.3"; /* updated by script */
+    version = "2018.1.4"; /* updated by script */
     description = "Up and Coming Go IDE";
     license = stdenv.lib.licenses.unfree;
     src = fetchurl {
       url = "https://download.jetbrains.com/go/${name}.tar.gz";
-      sha256 = "02nl6dssf2r4lk0fy40cvgm1m0nnfvaz2k6yygwzr35qmbsw2xjq"; /* updated by script */
+      sha256 = "1ipib91443sb27snnqik8rm3bm9w6gb5niildbd538lhc9agc9xb"; /* updated by script */
     };
     wmClass = "jetbrains-goland";
     update-channel = "goland_release";
@@ -316,12 +316,12 @@ in
 
   pycharm-community = buildPycharm rec {
     name = "pycharm-community-${version}";
-    version = "2018.1.3"; /* updated by script */
+    version = "2018.1.4"; /* updated by script */
     description = "PyCharm Community Edition";
     license = stdenv.lib.licenses.asl20;
     src = fetchurl {
       url = "https://download.jetbrains.com/python/${name}.tar.gz";
-      sha256 = "1cwrqdcp6hwr8wd234g120bblc4bjmhwxwsgj9mmxblj31c7c6an"; /* updated by script */
+      sha256 = "0frzasqh3jx7wcip4dnwdl9ap2g1nkx7anapwd416cxv4jj3r5ch"; /* updated by script */
     };
     wmClass = "jetbrains-pycharm-ce";
     update-channel = "PyCharm_Release";
@@ -329,12 +329,12 @@ in
 
   pycharm-professional = buildPycharm rec {
     name = "pycharm-professional-${version}";
-    version = "2018.1.3"; /* updated by script */
+    version = "2018.1.4"; /* updated by script */
     description = "PyCharm Professional Edition";
     license = stdenv.lib.licenses.unfree;
     src = fetchurl {
       url = "https://download.jetbrains.com/python/${name}.tar.gz";
-      sha256 = "1chri4cknfvvqhxy973dyf7dl5linqdxc97zshrzdqhmwq6y7580"; /* updated by script */
+      sha256 = "1kv1d5y2ph36aq91sq08lbz8hvfp765xi7m0hdwkhqdi2wkrpnkc"; /* updated by script */
     };
     wmClass = "jetbrains-pycharm";
     update-channel = "PyCharm_Release";
@@ -368,12 +368,12 @@ in
 
   webstorm = buildWebStorm rec {
     name = "webstorm-${version}";
-    version = "2018.1.3"; /* updated by script */
+    version = "2018.1.4"; /* updated by script */
     description = "Professional IDE for Web and JavaScript development";
     license = stdenv.lib.licenses.unfree;
     src = fetchurl {
       url = "https://download.jetbrains.com/webstorm/WebStorm-${version}.tar.gz";
-      sha256 = "03nhs4vmqbm5s4ykjz475nvcbwvp2hb0bq5ijfjxwayj3jgv0zbm"; /* updated by script */
+      sha256 = "04ax5k4jl2ag82rw62mn9fzvhxbj4k44ain213rw1c7dxk58zi12"; /* updated by script */
     };
     wmClass = "jetbrains-webstorm";
     update-channel = "WS_Release";
