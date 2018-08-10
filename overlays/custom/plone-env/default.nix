@@ -3,23 +3,24 @@
 let self = rec {
   selenium = python2Packages.selenium.overridePythonAttrs (old: rec {
     pname = "selenium";
-    version = "3.9.0";
+    version = "3.14.0";
     name = "${pname}-${version}";
     src = pkgs.fetchurl {
       url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${name}.tar.gz";
-      sha256 = "a34a833d89bcfb463bfba5e5515a9276bb94221787b409f0ad28d2f91903e31d";
+      sha256 = "0h3w592r40bidq40fhjp99yg79z34dwiglic0630ljjnkf8j3jpr";
     };
     propagatedBuildInputs = old.propagatedBuildInputs ++ [
       pkgs.geckodriver
+      python2Packages.urllib3
     ];
   });
   robotframework-seleniumlibrary = python2Packages.robotframework-selenium2library.overridePythonAttrs(old: rec {
     pname = "robotframework-seleniumlibrary";
-    version = "3.1.0";
+    version = "3.1.1";
     name = "${pname}-${version}";
     src = pkgs.fetchurl {
       url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${name}.tar.gz";
-      sha256 = "0zql4dvnbv2z7lf055nk6cwagrmp0yhxb3pm17irw0flxj2b87pc";
+      sha256 = "0k42g313mqdgmj80hfayks4qshknps0wadizk37m48x273zi74nj";
     };
     propagatedBuildInputs = [
       python2Packages.decorator
