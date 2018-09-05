@@ -238,12 +238,12 @@ in
 
   clion = buildClion rec {
     name = "clion-${version}";
-    version = "2018.2.1"; /* updated by script */
+    version = "2018.2.3"; /* updated by script */
     description  = "C/C++ IDE. New. Intelligent. Cross-platform";
     license = stdenv.lib.licenses.unfree;
     src = fetchurl {
       url = "https://download.jetbrains.com/cpp/CLion-${version}.tar.gz";
-      sha256 = "16fr5760nkzgx8785x6hh7s96x097y6vdx7w1f9ipg71vv25cscq"; /* updated by script */
+      sha256 = "00a3wdzqvzv15kcy3sckxmf1avpircvd66id0wrwkwwqawdhfqdb"; /* updated by script */
     };
     wmClass = "jetbrains-clion";
     update-channel = "CLion_Release"; # channel's id as in http://www.jetbrains.com/updates/updates.xml
@@ -316,12 +316,12 @@ in
 
   pycharm-community = buildPycharm rec {
     name = "pycharm-community-${version}";
-    version = "2018.2.1"; /* updated by script */
+    version = "2018.2.2"; /* updated by script */
     description = "PyCharm Community Edition";
     license = stdenv.lib.licenses.asl20;
     src = fetchurl {
       url = "https://download.jetbrains.com/python/${name}.tar.gz";
-      sha256 = "14vnwqk0x0anvzmdv2ddc3qc9g5fll2ql02mi12k425j30fl2z2q"; /* updated by script */
+      sha256 = "0nq4xwqczppdrswi826yzjdzqpiwl4iyi70d7g6ncqd9wyiay4z4"; /* updated by script */
     };
     wmClass = "jetbrains-pycharm-ce";
     update-channel = "PyCharm_Release";
@@ -329,12 +329,12 @@ in
 
   pycharm-professional = buildPycharm rec {
     name = "pycharm-professional-${version}";
-    version = "2018.2.1"; /* updated by script */
+    version = "2018.2.2"; /* updated by script */
     description = "PyCharm Professional Edition";
     license = stdenv.lib.licenses.unfree;
     src = fetchurl {
       url = "https://download.jetbrains.com/python/${name}.tar.gz";
-      sha256 = "1h4f9l577w2ps0y79x79yhpbrsv3j5nwr1lr1890phmp6zri6wyf"; /* updated by script */
+      sha256 = "1cf8z1wb532qhxlf0z4d791x084drfxzlaxq28hzy4f450bqbkp7"; /* updated by script */
     };
     wmClass = "jetbrains-pycharm";
     update-channel = "PyCharm_Release";
@@ -368,12 +368,12 @@ in
 
   webstorm = buildWebStorm rec {
     name = "webstorm-${version}";
-    version = "2018.2.1"; /* updated by script */
+    version = "2018.2.3"; /* updated by script */
     description = "Professional IDE for Web and JavaScript development";
     license = stdenv.lib.licenses.unfree;
     src = fetchurl {
       url = "https://download.jetbrains.com/webstorm/WebStorm-${version}.tar.gz";
-      sha256 = "1jbzkp13qn4n58kbcsszm2gfnywjma2yvn48g0vi14v7x6zihhxd"; /* updated by script */
+      sha256 = "0y3a1p047knc598aamxxdmcf5nr86wk60w6nk2bhcasxjyqaw6r4"; /* updated by script */
     };
     wmClass = "jetbrains-webstorm";
     update-channel = "WS_Release";
