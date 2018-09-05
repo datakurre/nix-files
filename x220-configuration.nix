@@ -140,6 +140,24 @@ in
      Option          "YAxisMapping"       "4 5"
    ''];
 
+  services.xserver.config = ''
+    Section "InputClass"
+      Identifier   "Logitech USB Trackball"
+      MatchProduct "Logitech USB Trackball"
+      Driver "evdev"
+      Option "EmulateWheel"       "true"
+      Option "EmulateWheelButton" "3"
+      Option "XAxisMapping"       "6 7"
+      Option "YAxisMapping"       "4 5"
+      Option "DeviceAccelProfile" "3"
+      Option "AccelerationProfile"     "2"
+      Option "AdaptiveDeceleration"    "2"
+      Option "AccelerationNumerator"   "2"
+      Option "AccelerationDenominator" "1"
+      Option "AccelerationThreshold"   "4"
+    EndSection
+  '';
+
   security.pam.enableU2F = true;
   security.pam.services.datakurre.u2fAuth = true;
   security.sudo.enable = true;
