@@ -30,6 +30,7 @@ in
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
 
+  hardware.opengl.enable = true;
   hardware.opengl.driSupport32Bit = true;
 
   hardware.bluetooth.enable = true;
@@ -218,5 +219,5 @@ in
     "/var/lib"
   ];
 
-  system.stateVersion = "18.03";
+  system.stateVersion = "18.09";
 }

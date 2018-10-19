@@ -2,11 +2,9 @@
 
 let
 
-  setup = import (pkgs.fetchFromGitHub {
-    owner = "datakurre";
-    repo = "setup.nix";
-    rev = "4ca906f296ab62345f6b4afa2b5e9acc2d417302";
-    sha256 = "0fkvazlmps6isy5j328xp9pd7gh9r0nj4sm4xb2rcwywmwkb9pc6";
+  setup = import (fetchTarball {
+    url = "https://github.com/datakurre/setup.nix/archive/d3025ac35cc348d7bb233ee171629630bb4d6864.tar.gz";
+    sha256 = "09czivsv81y1qydl7jnqa634bili8z9zvzsj0h3snbr8pk5dzwkj";
   });
 
   manifest_python = pythonPackages.python.withPackages(ps: [
@@ -35,6 +33,8 @@ let
       done
     '';
   });
+
+  "wheel" = null;  # wheel is implicit in nixpkgs and cannot be installed
 };
 
 in setup {

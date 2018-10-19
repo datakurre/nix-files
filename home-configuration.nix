@@ -40,7 +40,7 @@
     pass
     pavucontrol
     phantomjs2
-    postman
+#   postman
     psmisc
     pythonFull
     pidgin-with-plugins
@@ -49,7 +49,7 @@
     rfkill
     sass
     sikulix
-    skype
+#   skype
     unzip
     vagrant
     vanilla-dmz
