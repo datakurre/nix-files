@@ -31,7 +31,6 @@ in
   boot.loader.grub.efiSupport = true;
 
   hardware.opengl.enable = true;
-  hardware.opengl.driSupport32Bit = true;
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.extraConfig = ''
@@ -43,6 +42,10 @@ in
   hardware.pulseaudio.support32Bit = true;
   hardware.pulseaudio.package = pkgs.pulseaudioFull;
   hardware.pulseaudio.configFile = ./dotfiles/pulseaudio.conf;
+
+  services.logind.extraConfig = ''
+    RuntimeDirectorySize=7.8G
+  '';
 
   services.batteryNotifier.enable = true;
 
@@ -194,7 +197,7 @@ in
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [
     (import ./overlays/custom)
-    (import ./overlays/mrvandalo)
+#   (import ./overlays/mrvandalo)
   ];
 
   environment.shellAliases = {
