@@ -49,6 +49,7 @@ let self = rec {
       url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${name}.tar.gz";
       sha256 = "521e1f302f2cebd8da39e06b429ec9630cc40622d06ff095606adb06091c85d2";
     };
+    doCheck = false;
     buildInputs = [
       python2Packages.setuptools-git
     ];
