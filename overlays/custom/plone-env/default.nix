@@ -59,11 +59,11 @@ let self = rec {
   };
   buildout = python2Packages.zc_buildout_nix.overridePythonAttrs (old: rec {
     pname = "zc.buildout";
-    version = "2.11.3";
+    version = "2.12.2";
     name = "${pname}-nix-${version}";
     src = pkgs.fetchurl {
       url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${pname}-${version}.tar.gz";
-      sha256 = "0k2l6pvz6y37x4q88sdvx70p6jr9z5v4psd3a9zgcdxrwz6y5zgp";
+      sha256 = "0hx0a24r8b6gl48silhqhpfjksamrvv5xlr523z8vnk12f57wpgz";
     };
     postInstall = ''
       sed -i "s|import sys|import sys\nimport os\nsys.executable = os.path.join(sys.prefix, 'bin', os.path.basename(sys.executable))|" $out/bin/buildout
