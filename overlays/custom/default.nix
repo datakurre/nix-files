@@ -2,15 +2,15 @@ self: super:
 
 {
 
-  geckodriver = let
-    path = super.fetchFromGitHub {
-      owner = "NixOS";
-      repo = "nixpkgs";
-      rev = "e46553bc72f1044eecbfa6dd7b6ac61231ebd77a";
-      sha256 = "11f20h0d123mfc34swcwgns60qa4s22h3n8silr7d4ahmywwnfri";
-    };
-    pkgs = import path {};
-  in pkgs.callPackage "${path}/pkgs/development/tools/geckodriver" {};
+# geckodriver = let
+#   path = super.fetchFromGitHub {
+#     owner = "NixOS";
+#     repo = "nixpkgs";
+#     rev = "e46553bc72f1044eecbfa6dd7b6ac61231ebd77a";
+#     sha256 = "11f20h0d123mfc34swcwgns60qa4s22h3n8silr7d4ahmywwnfri";
+#   };
+#   pkgs = import path {};
+# in pkgs.callPackage "${path}/pkgs/development/tools/geckodriver" {};
 
   afew = super.afew.overrideAttrs(old: {
     postPatch = ''
