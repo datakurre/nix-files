@@ -22,6 +22,10 @@ self: super:
 
   camunda-modeler = super.callPackage ./camunda-modeler {};
 
+  subversion_1_7_14 = super.callPackage ./subversion {
+    sqlite = super.callPackage ./subversion/sqlite.nix {};
+  };
+
   fuzzylite = super.callPackage ./fuzzylite {};
   vcmi = super.callPackage ./vcmi {};
 
