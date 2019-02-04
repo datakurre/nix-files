@@ -10,6 +10,7 @@
 , stdenv, fetchurl, apr, aprutil, neon, zlib, sqlite
 , httpd ? null, expat, swig ? null, jdk ? null, python ? null, perl ? null
 , sasl ? null
+, darwin ? null
 }:
 
 assert bdbSupport -> aprutil.bdbSupport;
@@ -34,7 +35,9 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional httpSupport neon
     ++ stdenv.lib.optional pythonBindings python
     ++ stdenv.lib.optional perlBindings perl
-    ++ stdenv.lib.optional saslSupport sasl;
+    ++ stdenv.lib.optional saslSupport sasl
+    ++ stdenv.lib.optional stdenv.isDarwin darwin.apple_sdk.frameworks.Security
+    ++ stdenv.lib.optional stdenv.isDarwin darwin.apple_sdk.frameworks.CoreServices;
 
   configureFlags = ''
     ${if bdbSupport then "--with-berkeley-db" else "--without-berkeley-db"}
@@ -43,8 +46,12 @@ stdenv.mkDerivation rec {
     ${if javahlBindings then "--enable-javahl --with-jdk=${jdk}" else ""}
     ${if stdenv.isDarwin then "--enable-keychain" else "--disable-keychain"}
     ${if saslSupport then "--enable-sasl --with-sasl=${sasl}" else "--disable-sasl"}
-    --with-zlib=${zlib}
+    --with-zlib=${zlib.dev}
     --with-sqlite=${sqlite}
+  '';
+
+  postPatch = ''
+    sed -i "s|ac_cv_lib_z_inflate=no|ac_cv_lib_z_inflate=yes|g" configure
   '';
 
   preBuild = ''
