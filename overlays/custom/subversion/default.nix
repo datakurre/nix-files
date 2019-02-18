@@ -7,7 +7,7 @@
 , perlBindings ? false
 , javahlBindings ? false
 , saslSupport ? false
-, stdenv, fetchurl, apr, aprutil, neon, zlib, sqlite
+, stdenv, fetchurl, apr, aprutil, neon, zlib, sqlite, serf
 , httpd ? null, expat, swig ? null, jdk ? null, python ? null, perl ? null
 , sasl ? null
 , darwin ? null
@@ -48,6 +48,7 @@ stdenv.mkDerivation rec {
     ${if saslSupport then "--enable-sasl --with-sasl=${sasl}" else "--disable-sasl"}
     --with-zlib=${zlib.dev}
     --with-sqlite=${sqlite}
+    --with-serf=${serf}
   '';
 
   postPatch = ''
