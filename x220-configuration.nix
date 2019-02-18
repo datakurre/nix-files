@@ -21,6 +21,7 @@ in
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelModules = [ "kvm-intel" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
@@ -92,6 +93,7 @@ in
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "btrfs";
   virtualisation.virtualbox.host.enable = true;
+  virtualisation.libvirtd.enable = true;
 
   services.gnome3.at-spi2-core.enable = true;
   services.gnome3.gvfs.enable = true;
