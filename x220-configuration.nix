@@ -197,6 +197,7 @@ in
     gc-keep-outputs = true
   '';
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.oraclejdk.accept_license = true;
   nixpkgs.overlays = [
     (import ./overlays/custom)
 #   (import ./overlays/mrvandalo)
