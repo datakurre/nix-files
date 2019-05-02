@@ -44,7 +44,7 @@ let username = "atsoukka"; in
     phantomjs2
 #   postman
     psmisc
-    pythonFull
+    python3Full
     pidgin-with-plugins
     python3Packages.alot
     docker_compose

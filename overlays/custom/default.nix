@@ -82,6 +82,8 @@ self: super:
   };
 
   plone-env = super.callPackage ./plone-env/setup.nix {};
+  plone-env = super.callPackage ./plone-env {};
+  plone6-env = super.callPackage ./plone6-env {};
 
   plonetheme-upload = (super.callPackage ./plonetheme-upload {}).package;
 

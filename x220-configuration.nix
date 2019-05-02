@@ -18,6 +18,7 @@ in
   imports = [
     "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
     ./modules/battery-notifier.nix
+#   ./modules/jenkins-local.nix
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -50,7 +51,7 @@ in
 
   services.batteryNotifier.enable = true;
 
-  services.mopidy.enable = true;
+  services.mopidy.enable = false;
   services.mopidy.extensionPackages = with pkgs; [
     mopidy-spotify
     mopidy-soundcloud
