@@ -3,8 +3,8 @@
 let
 
   setup = import (fetchTarball {
-    url = "https://github.com/datakurre/setup.nix/archive/d3025ac35cc348d7bb233ee171629630bb4d6864.tar.gz";
-    sha256 = "09czivsv81y1qydl7jnqa634bili8z9zvzsj0h3snbr8pk5dzwkj";
+    url = "https://github.com/datakurre/setup.nix/archive/a05ef605ae476a07ba1f8b0c2e1ce95d0eca8355.tar.gz";
+    sha256 = "0ih9ccy54hcij7z49mfxpyvl1wdsh00kr9714scza9b101s4gpap";
   });
 
   manifest_python = pythonPackages.python.withPackages(ps: [
@@ -27,8 +27,8 @@ let
   "zest.releaser" = super."zest.releaser".overridePythonAttrs(old: {
     postInstall = ''
       for prog in $out/bin/*; do
-        mv $prog $prog-python${pythonPackages.python.majorVersion}
-        wrapProgram $prog-python${pythonPackages.python.majorVersion} \
+        mv $prog $prog-python${pythonPackages.python.pythonVersion}
+        wrapProgram $prog-python${pythonPackages.python.pythonVersion} \
           --set SOURCE_DATE_EPOCH 315532800
       done
     '';

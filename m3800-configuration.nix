@@ -25,15 +25,23 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.cleanTmpDir = true;
 
+  boot.extraModprobeConfig = ''
+    # Handle NVIDIA Optimus power management quirk
+    options bbswitch load_state=-1 unload_state=1
+  '';
+
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.gfxmodeEfi = "1024x768";
 
-  hardware.bumblebee.connectDisplay = true;
   hardware.bumblebee.enable = true;
-  hardware.opengl.driSupport32Bit = true;
+  hardware.bumblebee.group = "video";
+  hardware.bumblebee.connectDisplay = true;
+
+  hardware.opengl.enable = true;
+  hardware.opengl.driSupport = true;
   hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
 
   hardware.bluetooth.enable = true;
@@ -50,7 +58,7 @@ in
 
   services.batteryNotifier.enable = true;
 
-  services.mopidy.enable = true;
+  services.mopidy.enable = false;
   services.mopidy.extensionPackages = with pkgs; [
     mopidy-spotify
     mopidy-soundcloud
@@ -174,7 +182,7 @@ in
 
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.updateDbusEnvironment = true;
-  services.xserver.videoDrivers = [ "intel" "nvidia" ];
+  services.xserver.videoDrivers = [ "nvidia" "intel" ];
   services.xserver.windowManager.default = "xmonad";
   services.xserver.windowManager.xmonad.enable = true;
 
@@ -208,7 +216,7 @@ in
     EndSection
   '';
 
-  security.pam.enableU2F = true;
+  security.pam.u2f.enable = true;
   security.pam.services.atsoukka.u2fAuth = true;
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = true;
@@ -244,6 +252,7 @@ in
   nixpkgs.overlays = [
     (import ./overlays/custom)
   ];
+  nixpkgs.config.oraclejdk.accept_license = true;
 
   services.nixosManual.showManual = false;
 
@@ -254,5 +263,5 @@ in
     ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
 
-  system.stateVersion = "18.03";
+  system.stateVersion = "19.03";
 }
