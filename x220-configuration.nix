@@ -165,7 +165,7 @@ in
     EndSection
   '';
 
-  security.pam.enableU2F = true;
+  security.pam.u2f.enable = true;
   security.pam.services.datakurre.u2fAuth = true;
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = true;
@@ -226,5 +226,5 @@ in
     "/var/lib"
   ];
 
-  system.stateVersion = "18.09";
+  system.stateVersion = "19.03";
 }
