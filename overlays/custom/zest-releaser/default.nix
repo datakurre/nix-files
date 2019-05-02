@@ -13,6 +13,18 @@ let
 
   overrides = self: super: {
 
+  "colorama" = super."colorama".overridePythonAttrs(old: {
+    nativeBuildInputs = [ pkgs.unzip ];
+  });
+
+  "python-gettext" = super."python-gettext".overridePythonAttrs(old: {
+    nativeBuildInputs = [ pkgs.unzip ];
+  });
+
+  "zest.pocompile" = super."zest.pocompile".overridePythonAttrs(old: {
+    nativeBuildInputs = [ pkgs.unzip ];
+  });
+
   # check-manifest requires Python interpreter able to import setup.py
   "check-manifest" = super."check-manifest".overridePythonAttrs(old: {
     postPatch = ''
