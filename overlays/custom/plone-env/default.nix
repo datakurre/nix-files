@@ -105,6 +105,7 @@ in pkgs.stdenv.mkDerivation rec {
     pkgs.geckodriver
     (pkgs.pythonFull.buildEnv.override {
       extraLibs = [ buildout ] ++ buildout.propagatedNativeBuildInputs;
+      ignoreCollisions = true;
     })
   ];
 }
