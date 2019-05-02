@@ -1,5 +1,7 @@
 { pkgs, prefix, ... }:
 
+let username = "atsoukka"; in
+
 {
   home.packages = with pkgs; [
     acpi
@@ -154,6 +156,15 @@
   services.network-manager-applet.enable = true;
 
   programs.ssh.enable = true;
+  programs.ssh.extraConfig = ''
+    CanonicalizeHostname yes
+    CanonicalDomains cc.jyu.fi jyu.fi
+    CanonicalizeMaxDots 2
+  '';
+  programs.ssh.matchBlocks = [
+    { host = "jalava.cc.jyu.fi"; user = username; }
+    { host = "*.jyu.fi"; user = builtins.substring 0 ((builtins.stringLength username) - 1) username + "_"; }
+  ];
   services.gpg-agent.enable = true;
   services.gpg-agent.defaultCacheTtl = 1800;
   services.gpg-agent.enableSshSupport = true;
