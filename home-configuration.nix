@@ -3,6 +3,8 @@
 let username = "atsoukka"; in
 
 {
+  programs.home-manager.enable = true;
+
   home.packages = with pkgs; [
     acpi
     afew
@@ -73,6 +75,7 @@ let username = "atsoukka"; in
     extends-cache = ${prefix}/.cache/extends-cache
   '';
   home.file.".docutils.conf".source = ./dotfiles/docutils.conf;
+  home.file.".gitconfig".source = ./dotfiles/gitconfig;
   home.file.".editorconfig".source = ./dotfiles/editorconfig.conf;
   home.file.".mailcap".source = ./dotfiles/mailcap;
   home.file.".mbsyncrc".source = ./dotfiles/mbsyncrc;

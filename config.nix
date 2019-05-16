@@ -1,1 +1,5 @@
-{ allowUnfree = true; allowBroken = true; }
+{
+  allowUnfree = true;
+  allowBroken = true;
+  oraclejdk.accept_license = true;
+}
