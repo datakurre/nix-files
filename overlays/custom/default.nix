@@ -12,6 +12,8 @@ self: super:
 
   camunda-modeler = super.callPackage ./camunda-modeler {};
 
+  zeebe-modeler = super.callPackage ./zeebe-modeler {};
+
   subversion_1_7_14 = super.callPackage ./subversion {
     sqlite = super.callPackage ./subversion/sqlite.nix {};
   };
