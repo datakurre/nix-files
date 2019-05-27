@@ -39,6 +39,21 @@ self: super: {
       sha256 = "0x075521fxwv0mfp4cqzk7lvmw4n94bjw601qkcv314z5s182704";
     };
   };
+  "cryptography" = super.buildPythonPackage {
+    name = "cryptography-2.6.1";
+    doCheck = false;
+    propagatedBuildInputs = [
+      self."asn1crypto"
+      self."cffi"
+      self."enum34"
+      self."ipaddress"
+      self."six"
+    ];
+    src = fetchurl {
+      url = "https://files.pythonhosted.org/packages/07/ca/bc827c5e55918ad223d59d299fff92f3563476c3b00d0a9157d9c0217449/cryptography-2.6.1.tar.gz";
+      sha256 = "19iwz5avym5zl6jrrrkym1rdaa9h61j20ph4cswsqgv8xg5j3j16";
+    };
+  };
   "dataflake-fakeldap" = super.buildPythonPackage {
     name = "dataflake-fakeldap-1.0";
     doCheck = false;
@@ -282,11 +297,11 @@ self: super: {
     };
   };
   "setuptools-scm" = super.buildPythonPackage {
-    name = "setuptools-scm-3.2.0";
+    name = "setuptools-scm-3.3.3";
     doCheck = false;
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/54/85/514ba3ca2a022bddd68819f187ae826986051d130ec5b972076e4f58a9f3/setuptools_scm-3.2.0.tar.gz";
-      sha256 = "0n3knn3p1sqlx31k2lahn7z9bacvlv8nhlfidj77vz50bxqlgasj";
+      url = "https://files.pythonhosted.org/packages/83/44/53cad68ce686585d12222e6769682c4bdb9686808d2739671f9175e2938b/setuptools_scm-3.3.3.tar.gz";
+      sha256 = "19cyndx23xmpbhz4qrwmfwsmnnaczd0dw7qg977ksq2dbvxy29dx";
     };
   };
   "six" = super.buildPythonPackage {
@@ -298,11 +313,11 @@ self: super: {
     };
   };
   "urllib3" = super.buildPythonPackage {
-    name = "urllib3-1.24.2";
+    name = "urllib3-1.22";
     doCheck = false;
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/fd/fa/b21f4f03176463a6cccdb612a5ff71b927e5224e83483012747c12fc5d62/urllib3-1.24.2.tar.gz";
-      sha256 = "1hwscrsw77vbkzdbw0db74zzf1135521wwccngnlz73hvxrp494s";
+      url = "https://files.pythonhosted.org/packages/ee/11/7c59620aceedcc1ef65e156cc5ce5a24ef87be4107c2b74458464e437a5d/urllib3-1.22.tar.gz";
+      sha256 = "0kyvc9zdlxr5r96bng5rhm9a6sfqidrbvvkz64s76qs5267dli6c";
     };
   };
   "watchdog" = super.buildPythonPackage {
