@@ -238,6 +238,14 @@ self: super: {
       sha256 = "13nvrhp85yr0jyxixcjj012iw8l9wynxxlykm9j3alss6waln73x";
     };
   };
+  "python-magic" = super.buildPythonPackage {
+    name = "python-magic-0.4.15";
+    doCheck = false;
+    src = fetchurl {
+      url = "https://files.pythonhosted.org/packages/84/30/80932401906eaf787f2e9bd86dc458f1d2e75b064b4c187341f29516945c/python-magic-0.4.15.tar.gz";
+      sha256 = "1mgwig9pnzgkf86q9ji9pnc99bngms15lfszq5rgqb9db07mqxpk";
+    };
+  };
   "robotframework" = super.buildPythonPackage {
     name = "robotframework-3.1.1";
     doCheck = false;

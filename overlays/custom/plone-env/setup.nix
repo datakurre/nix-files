@@ -22,6 +22,7 @@ let overrides = self: super: {
   "pycrypto" = super."pycrypto".overridePythonAttrs(old: {
     buildInputs = [ self."pycryptodome" ];
   });
+  "python-magic" = pythonPackages."magic";
   "robotframework" = super."robotframework".overridePythonAttrs(old: {
     nativeBuildInputs = [ pkgs."unzip" ];
   });
