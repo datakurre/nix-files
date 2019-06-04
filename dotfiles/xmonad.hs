@@ -7,18 +7,19 @@ import Graphics.X11.Xlib
 import XMonad.Prompt
 import XMonad.Prompt.Shell
 import XMonad.Prompt.XMonad
-import XMonad.Hooks.SetWMName
 import XMonad.Layout.ThreeColumns
+import System.Posix.Env (putEnv)
 
 main :: IO ()
-main = xmonad $ defaultConfig
-  { startupHook = setWMName "LG3D"
-  , modMask = mod4Mask
-  , focusFollowsMouse = False
-  , clickJustFocuses = True
-  , keys = myKeys <+> keys defaultConfig
-  , layoutHook = myLayout
-  }
+main = do
+  putEnv "_JAVA_AWT_WM_NONREPARENTING=1"
+  xmonad $ defaultConfig
+    { modMask = mod4Mask
+    , focusFollowsMouse = False
+    , clickJustFocuses = True
+    , keys = myKeys <+> keys defaultConfig
+    , layoutHook = myLayout
+    }
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList
   [ ((modm .|. shiftMask, xK_x), shellPrompt myXPConfig)
