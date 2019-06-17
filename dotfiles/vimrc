@@ -65,8 +65,8 @@ set foldlevel=9999  " initially open all folds
 command FoldAll set foldlevel=0
 command FoldOne set foldlevel=1
 
-" Show margin column
-set colorcolumn=80
+" Show margin column (88 after "black")
+set colorcolumn=88
 
 " Leader mappings
 let mapleader = ","

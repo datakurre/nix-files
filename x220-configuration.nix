@@ -21,6 +21,10 @@ in
 #   ./modules/jenkins-local.nix
   ];
 
+  networking.extraHosts = ''
+      130.234.9.186  studyguide.jyu.fi opinto-opas.jyu.fi
+  '';
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [ "kvm-intel" ];
   boot.loader.systemd-boot.enable = true;
@@ -220,9 +224,7 @@ in
   services.tarsnap.enable = true;
   services.tarsnap.archives.data.directories = [
     "/home/datakurre/Asiakirjat"
-    "/home/datakurre/Work/collective.flow"
-    "/home/datakurre/Work/pwa"
-    "/home/datakurre/Work/robotkernel"
+    "/home/datakurre/Work/github/datakurre"
     "/var/lib"
   ];
 

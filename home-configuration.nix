@@ -10,6 +10,7 @@ let username = "atsoukka"; in
     afew
     autorandr
     camunda-modeler
+    cookiecutter
     zeebe-modeler
     chromium
     elmPackages.elm-format
@@ -113,7 +114,8 @@ let username = "atsoukka"; in
   programs.zsh.enable = true;
   programs.zsh.history.share = false;
   programs.zsh.shellAliases = {
-    # nix-shell = "nix-shell --command \"export __ETC_ZSHENV_SOURCED=1; export SPACESHIP_CHAR_PREFIX=\\\"(nix) \\\"; exec $(which zsh); return\"";
+    vi = "vim";
+    nix-shell = "nix-shell --command \"export __ETC_ZSHENV_SOURCED=1; export SPACESHIP_CHAR_PREFIX=\\\"(nix) \\\"; exec $(which zsh); return\"";
     notmuch-iki = "notmuch --config=${prefix}/.notmuch-iki";
     notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
     alot-iki = "alot -n ${prefix}/.notmuch-iki";
