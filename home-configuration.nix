@@ -64,6 +64,7 @@ let username = "atsoukka"; in
     vlc
     xlockmore
     w3m
+    xterm
     yarn
     zest-releaser-python2
     zest-releaser-python3
