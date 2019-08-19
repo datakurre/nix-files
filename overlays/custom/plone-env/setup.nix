@@ -30,7 +30,7 @@ let overrides = self: super: {
     name = super."zc.buildout".name;
     src = super."zc.buildout".src;
     postInstall = ''
-      sed -i "s|import sys|import sys\nimport os\nsys.executable = os.path.join(sys.prefix, 'bin', os.path.basename(sys.executable))|" $out/bin/buildout
+#     sed -i "s|import sys|import sys\nimport os\nsys.executable = os.path.join(sys.prefix, 'bin', os.path.basename(sys.executable))|" $out/bin/buildout
     '';
 #   propagatedBuildInputs = [
 #     self."dataflake-fakeldap"

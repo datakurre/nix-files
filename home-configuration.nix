@@ -64,7 +64,15 @@ let username = "atsoukka"; in
     vlc
     xlockmore
     w3m
-    xterm
+    (xterm.overrideDerivation(old: {
+      # fixes issue where locales were broken on non NixOS host
+      postInstall = ''
+        for prog in $out/bin/*; do
+          wrapProgram $prog --set LOCALE_ARCHIVE ${pkgs.glibcLocales}/lib/locale/locale-archive
+        done
+    '';
+
+    }))
     yarn
     zest-releaser-python2
     zest-releaser-python3
@@ -121,9 +129,10 @@ let username = "atsoukka"; in
     notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
     alot-iki = "alot -n ${prefix}/.notmuch-iki";
     alot-jyu = "alot -n ${prefix}/.notmuch-jyu";
-    tls-fingerprit = "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
+    tls-fingerprint= "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
   };
   programs.zsh.initExtra = ''
+    LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive";
     EDITOR="vim";
     NIX_REMOTE="daemon";
     GS_OPTIONS="-sPAPERSIZE=a4";
@@ -195,6 +204,11 @@ let username = "atsoukka"; in
   xresources.properties = {
     "Xcursor.theme" = "Vanilla-DMZ";
     "Xcursor.size" = "32";
+
+    "XTerm*wideChars" = "true";
+    "XTerm*locale" = "true";
+    "XTerm*utf8" = "true";
+    "XTerm*vt100Graphics" = "true";
 
     "XTerm*selectToClipboard" = "true";
     "XTerm*faceName" = "DejaVu Sans Mono for Powerline";

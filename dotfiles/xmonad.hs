@@ -19,6 +19,7 @@ main = do
     , clickJustFocuses = True
     , keys = myKeys <+> keys defaultConfig
     , layoutHook = myLayout
+    , terminal = "xterm"
     }
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList
