@@ -38,6 +38,8 @@ SubFolders Verbatim
 Channel iki
 Master :iki-remote:
 Slave :iki-local:
+Sync All
 Create Both
+Expunge Both
 Patterns *
 SyncState *
