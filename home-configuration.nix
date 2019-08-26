@@ -70,8 +70,7 @@ let username = "atsoukka"; in
         for prog in $out/bin/*; do
           wrapProgram $prog --set LOCALE_ARCHIVE ${pkgs.glibcLocales}/lib/locale/locale-archive
         done
-    '';
-
+      '';
     }))
     yarn
     zest-releaser-python2
@@ -127,8 +126,8 @@ let username = "atsoukka"; in
     nix-shell = "nix-shell --command \"export __ETC_ZSHENV_SOURCED=1; export SPACESHIP_CHAR_PREFIX=\\\"(nix) \\\"; exec $(which zsh); return\"";
     notmuch-iki = "notmuch --config=${prefix}/.notmuch-iki";
     notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
-    alot-iki = "alot -n ${prefix}/.notmuch-iki";
-    alot-jyu = "alot -n ${prefix}/.notmuch-jyu";
+    alot-iki = "EDITOR=vim alot -n ${prefix}/.notmuch-iki";
+    alot-jyu = "EDITOR=vim alot -n ${prefix}/.notmuch-jyu";
     tls-fingerprint= "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
   };
   programs.zsh.initExtra = ''
