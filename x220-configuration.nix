@@ -19,6 +19,7 @@ in
     "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
     ./modules/battery-notifier.nix
 #   ./modules/jenkins-local.nix
+    ./cachix.nix
   ];
 
   networking.extraHosts = ''
@@ -102,6 +103,7 @@ in
 
   services.gnome3.at-spi2-core.enable = true;
   services.gnome3.gvfs.enable = true;
+# services.gvfs.enable = true;
 
   environment.systemPackages = [
     pkgs.gnome3.nautilus

@@ -319,7 +319,7 @@ let username = "atsoukka"; in
     set listchars=tab:>.,trail:.,extends:#,nbsp:.
 
     " Show margin column
-    set colorcolumn=80
+    set colorcolumn=88
 
     " Leader mappings
     let mapleader = ","
