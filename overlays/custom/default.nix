@@ -76,7 +76,7 @@ self: super:
   });
 
   jetbrains = (super.recurseIntoAttrs (super.callPackages ./jetbrains {
-#   jdk = self.oraclejdk8;
+  # jdk = self.oraclejdk8;
   }));
 
   pidgin-with-plugins = super.pidgin-with-plugins.override {
