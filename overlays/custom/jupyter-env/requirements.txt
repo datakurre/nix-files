@@ -1,0 +1,8 @@
+ipykernel
+ipywidgets
+jupyter
+jupyter-contrib-nbextensions
+jupyterlab
+nbformat
+nbimporter
+rise
