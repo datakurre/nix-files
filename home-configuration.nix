@@ -50,7 +50,11 @@ let username = "atsoukka"; in
     psmisc
     python3Full
     pidgin-with-plugins
-    python3Packages.alot
+    (python3Packages.alot.overridePythonAttrs(old: {
+      postPatch = ''
+        find alot -type f -print0|xargs -0 sed -i "s|payload.encode('raw-unicode-escape')|payload.encode('utf-8')|g"
+      '';
+    }))
     docker_compose
     rfkill
     sass
