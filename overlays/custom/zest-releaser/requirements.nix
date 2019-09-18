@@ -99,10 +99,10 @@ self: super: {
     pname = "docutils";
     version = "0.15.2";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/3a/dc/bf2b15d1fa15a6f7a9e77a61b74ecbbae7258558fcda8ffc9a6638a6b327/docutils-0.15.2-py2-none-any.whl";
-      sha256 = "09y8fl8ppm0w6vvsgl8pzbxd0byynyi12536p83qw180qv7pwkcy";
+      url = "https://files.pythonhosted.org/packages/93/22/953e071b589b0b1fee420ab06a0d15e5aa0c7470eb9966d60393ce58ad61/docutils-0.15.2.tar.gz";
+      sha256 = "168s5v7bff5ar9jspr6wn823q1sbn0jhnbp9clk41nl8j09fmbm2";
     };
-    format = "wheel";
+    format = "setuptools";
     doCheck = false;
     buildInputs = [];
     checkInputs = [];
