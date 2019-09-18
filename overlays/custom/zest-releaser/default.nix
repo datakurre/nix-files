@@ -1,10 +1,12 @@
-{ pkgs, pythonPackages }:
+{ pkgs ? import <nixpkgs> {}
+, pythonPackages ? pkgs.pythonPackages
+}:
 
 let
 
   setup = import (fetchTarball {
-    url = "https://github.com/datakurre/setup.nix/archive/a05ef605ae476a07ba1f8b0c2e1ce95d0eca8355.tar.gz";
-    sha256 = "0ih9ccy54hcij7z49mfxpyvl1wdsh00kr9714scza9b101s4gpap";
+    url = "https://github.com/nix-community/setup.nix/archive/v3.1.0.tar.gz";
+    sha256 = "1dp9bzivqaqqc2d9bnfy6jh37rfz6mvqaqbxy34l998y0khv5fpv";
   });
 
   manifest_python = pythonPackages.python.withPackages(ps: [
@@ -13,18 +15,6 @@ let
 
   overrides = self: super: {
 
-  "colorama" = super."colorama".overridePythonAttrs(old: {
-    nativeBuildInputs = [ pkgs.unzip ];
-  });
-
-  "python-gettext" = super."python-gettext".overridePythonAttrs(old: {
-    nativeBuildInputs = [ pkgs.unzip ];
-  });
-
-  "zest.pocompile" = super."zest.pocompile".overridePythonAttrs(old: {
-    nativeBuildInputs = [ pkgs.unzip ];
-  });
-
   # check-manifest requires Python interpreter able to import setup.py
   "check-manifest" = super."check-manifest".overridePythonAttrs(old: {
     postPatch = ''
@@ -32,7 +22,7 @@ let
         --replace "os.path.abspath(python)" \
                   "\"${manifest_python.interpreter}\""
     '';
-    propagatedBuildInputs = [ manifest_python ];
+    propagatedBuildInputs = old.propagatedBuildInputs ++ [ manifest_python ];
   });
 
   # building wheels require SOURCE_DATE_EPOCH
@@ -52,5 +42,4 @@ let
 in setup {
   inherit pkgs pythonPackages overrides;
   src = ./requirements.nix;
-  force = true;
 }
