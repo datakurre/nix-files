@@ -102,8 +102,8 @@ in
   virtualisation.libvirtd.enable = true;
 
   services.gnome3.at-spi2-core.enable = true;
-  services.gnome3.gvfs.enable = true;
-# services.gvfs.enable = true;
+# services.gnome3.gvfs.enable = true;
+  services.gvfs.enable = true;
 
   environment.systemPackages = [
     pkgs.gnome3.nautilus

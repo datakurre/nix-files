@@ -5,8 +5,8 @@
 let
 
   setup = import (fetchTarball {
-    url = "https://github.com/nix-community/setup.nix/archive/v3.1.0.tar.gz";
-    sha256 = "1dp9bzivqaqqc2d9bnfy6jh37rfz6mvqaqbxy34l998y0khv5fpv";
+    url = "https://github.com/nix-community/setup.nix/archive/v3.2.0.tar.gz";
+    sha256 = "0iqkrrsvp7sl9lif7rkdbam3wa8myw1b78miljrw6blk71dv47f7";
   });
 
   manifest_python = pythonPackages.python.withPackages(ps: [
@@ -35,8 +35,6 @@ let
       done
     '';
   });
-
-  "wheel" = null;  # wheel is implicit in nixpkgs and cannot be installed
 };
 
 in setup {

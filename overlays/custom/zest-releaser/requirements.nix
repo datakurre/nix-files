@@ -301,10 +301,10 @@ self: super: {
   };
   "tqdm" = super.buildPythonPackage rec {
     pname = "tqdm";
-    version = "4.36.0";
+    version = "4.36.1";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/95/6b/fe4304220f7a9800f820a6379ee9b1b87128ae8a9703cc3e1ec5171e12ac/tqdm-4.36.0-py2.py3-none-any.whl";
-      sha256 = "0140n9b9ssiq28wgk8rkckh4dnhv1xgkn603ykdyadlp75vz0d2c";
+      url = "https://files.pythonhosted.org/packages/e1/c1/bc1dba38b48f4ae3c4428aea669c5e27bd5a7642a74c8348451e0bd8ff86/tqdm-4.36.1-py2.py3-none-any.whl";
+      sha256 = "05dind2csx5hcyv8daj51hk2cbwhfzrd4sblm8bd9ccb92lcqgyx";
     };
     format = "wheel";
     doCheck = false;
@@ -336,10 +336,10 @@ self: super: {
   };
   "urllib3" = super.buildPythonPackage rec {
     pname = "urllib3";
-    version = "1.25.3";
+    version = "1.25.6";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/e6/60/247f23a7121ae632d62811ba7f273d0e58972d75e58a94d329d51550a47d/urllib3-1.25.3-py2.py3-none-any.whl";
-      sha256 = "1l8qdszclda4r5505z90ajvazwys7hp2hvswq3dbx05c4mx60imj";
+      url = "https://files.pythonhosted.org/packages/e0/da/55f51ea951e1b7c63a579c09dd7db825bb730ec1fe9c0180fc77bfb31448/urllib3-1.25.6-py2.py3-none-any.whl";
+      sha256 = "163kbfjfdkikip15l0f7i9905imaiz8981cr11k79rnnpvzlds9x";
     };
     format = "wheel";
     doCheck = false;
@@ -354,20 +354,6 @@ self: super: {
     src = fetchurl {
       url = "https://files.pythonhosted.org/packages/f4/24/2a3e3df732393fed8b3ebf2ec078f05546de641fe1b667ee316ec1dcf3b7/webencodings-0.5.1-py2.py3-none-any.whl";
       sha256 = "0y2aa53jkkcszhbbx59z817ywjvy3ah3lavym6bn88n2yc9i5bx0";
-    };
-    format = "wheel";
-    doCheck = false;
-    buildInputs = [];
-    checkInputs = [];
-    nativeBuildInputs = [];
-    propagatedBuildInputs = [];
-  };
-  "wheel" = super.buildPythonPackage rec {
-    pname = "wheel";
-    version = "0.33.6";
-    src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/00/83/b4a77d044e78ad1a45610eb88f745be2fd2c6d658f9798a15e384b7d57c9/wheel-0.33.6-py2.py3-none-any.whl";
-      sha256 = "0a5gkxdnhdn8jalrxppx6350xw7h434sf51av4n2xkxysdiignpl";
     };
     format = "wheel";
     doCheck = false;

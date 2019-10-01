@@ -264,7 +264,7 @@ let username = "atsoukka"; in
   programs.vim.enable = true;
   programs.vim.settings.tabstop = 4;
   programs.vim.settings.shiftwidth = 4;
-  programs.vim.plugins = [ "Solarized" ];
+  programs.vim.plugins = [ pkgs.vimPlugins.Solarized ];
   programs.vim.extraConfig = ''
     " Enable autoindent
     set ai
