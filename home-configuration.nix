@@ -132,7 +132,7 @@ let username = "atsoukka"; in
     notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
     alot-iki = "EDITOR=vim alot -n ${prefix}/.notmuch-iki";
     alot-jyu = "EDITOR=vim alot -n ${prefix}/.notmuch-jyu";
-    tls-fingerprint= "openssl s_client -connect $ -starttls smtp < /dev/null 2ev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
+    tls-fingerprint= "openssl s_client -connect $ -starttls smtp < /dev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
   };
   programs.zsh.initExtra = ''
     LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive";
