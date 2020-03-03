@@ -63,13 +63,15 @@ self: super:
 
   findimagedupes = super.callPackage ./findimagedupes {};
 
-  zest-releaser-python2 = (super.callPackage ./zest-releaser {
-    pythonPackages = self.python2Packages;
-  }).build."zest.releaser";
+  zest-releaser-python2 = (super.callPackage ./zest-releaser/release.nix {
+    pkgs = self;
+    python = "python27";
+  }).targetPython.pkgs."zest.releaser";
 
-  zest-releaser-python3 = (super.callPackage ./zest-releaser {
-    pythonPackages = self.python3Packages;
-  }).build."zest.releaser";
+  zest-releaser-python3 = (super.callPackage ./zest-releaser/release.nix {
+    pkgs = self;
+    python = "python37";
+  }).targetPython.pkgs."zest.releaser";
 
   gmime = super.gmime.overrideAttrs(old: {
     propagatedBuildInputs = old.propagatedBuildInputs ++ [ self.gpgme.dev ];

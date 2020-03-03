@@ -22,11 +22,13 @@ in
     ./cachix.nix
   ];
 
-  networking.extraHosts = ''
-      130.234.9.186  studyguide.jyu.fi opinto-opas.jyu.fi
-  '';
+  networking.hosts = {
+    "127.0.0.1" = [ "localhost" "keycloak" ];
+    "127.0.1.1" = [ "shangri-la" ];
+    "::1" = [ "localhost" "keycloak" ];
+  };
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [ "kvm-intel" ];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -40,11 +42,12 @@ in
   hardware.opengl.enable = true;
 
   hardware.bluetooth.enable = true;
-  hardware.bluetooth.extraConfig = ''
-    [general]
-    Enable=Source,Sink,Media,Socket
-    Disable=Headset
-  '';
+  hardware.bluetooth.config = {
+    General = {
+      Enable = "Source,Sink,Media,Soket";
+      Display = "Headset";
+    };
+  };
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
   hardware.pulseaudio.package = pkgs.pulseaudioFull;
@@ -73,12 +76,11 @@ in
     "vboxnet0"
   ];
 
-  i18n.consoleFont = "Lat2-Terminus16";
-  i18n.consoleKeyMap = "fi";
+  console.font = "Lat2-Terminus16";
+  console.keyMap = "fi";
   i18n.defaultLocale = "fi_FI.UTF-8";
 
   fonts.enableFontDir = true;
-  fonts.enableCoreFonts = true;
   fonts.enableGhostscriptFonts = true;
   fonts.fonts = with pkgs; [
     bakoma_ttf
@@ -97,7 +99,7 @@ in
   powerManagement.enable = true;
 
   virtualisation.docker.enable = true;
-  virtualisation.docker.storageDriver = "btrfs";
+# virtualisation.docker.storageDriver = "btrfs";
   virtualisation.virtualbox.host.enable = true;
   virtualisation.libvirtd.enable = true;
 
@@ -124,8 +126,10 @@ in
   services.xserver.enableTCP = false;
   services.xserver.layout = "fi";
   services.xserver.xkbOptions = "eurosign:e,caps:escape,nbsp:none";
-  services.xserver.displayManager.slim.enable = true;
-  services.xserver.displayManager.slim.defaultUser = "datakurre";
+  services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.displayManager.lightdm.greeters.mini.enable = true;
+  services.xserver.displayManager.lightdm.greeters.mini.user = "datakurre";
+  services.xserver.displayManager.defaultSession = "none+xmonad";
   services.xserver.displayManager.sessionCommands = with pkgs; with lib;''
     # Nautilus
     export XDG_DATA_DIRS=$XDG_DATA_DIRS''${XDG_DATA_DIRS:+:}${mimeAppsList}/share
@@ -138,7 +142,6 @@ in
 
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.updateDbusEnvironment = true;
-  services.xserver.windowManager.default = "xmonad";
   services.xserver.windowManager.xmonad.enable = true;
 
   services.xserver.inputClassSections = [''
@@ -187,6 +190,7 @@ in
     "input"
     "vboxusers"
     "docker"
+    "qemu"
   ];
   users.users.datakurre.uid = 1000;
   users.users.datakurre.shell = "/run/current-system/sw/bin/zsh";
@@ -223,12 +227,9 @@ in
     # ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", ENV{DEVTYPE}=="usb_device", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
 
-  services.tarsnap.enable = true;
+  services.tarsnap.enable = false;
   services.tarsnap.archives.data.directories = [
-    "/home/datakurre/Asiakirjat"
-    "/home/datakurre/Work/github/datakurre"
-    "/var/lib"
   ];
 
-  system.stateVersion = "19.03";
+  system.stateVersion = "20.03";
 }
