@@ -63,12 +63,12 @@ self: super:
 
   findimagedupes = super.callPackage ./findimagedupes {};
 
-  zest-releaser-python2 = (super.callPackage ./zest-releaser/release.nix {
+  zest-releaser-python2 = (import ./zest-releaser/release.nix {
     pkgs = self;
     python = "python27";
   }).targetPython.pkgs."zest.releaser";
 
-  zest-releaser-python3 = (super.callPackage ./zest-releaser/release.nix {
+  zest-releaser-python3 = (import ./zest-releaser/release.nix {
     pkgs = self;
     python = "python37";
   }).targetPython.pkgs."zest.releaser";
@@ -78,7 +78,7 @@ self: super:
   });
 
   jetbrains = (super.recurseIntoAttrs (super.callPackages ./jetbrains {
-    jdk = self.oraclejdk8;
+    # jdk = self.oraclejdk8;
   }));
 
   pidgin-with-plugins = super.pidgin-with-plugins.override {

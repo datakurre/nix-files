@@ -252,7 +252,6 @@ in
   nixpkgs.overlays = [
     (import ./overlays/custom)
   ];
-  nixpkgs.config.oraclejdk.accept_license = true;
 
   services.nixosManual.showManual = false;
 
