@@ -9,6 +9,7 @@ let username = "atsoukka"; in
     acpi
     afew
     autorandr
+    cachix
     camunda-modeler
     cookiecutter
     zeebe-modeler
@@ -28,6 +29,7 @@ let username = "atsoukka"; in
     inkscapeFull
     irssi
     isync
+    jetbrains.idea-community
     jetbrains.pycharm-professional
     jfrog-cli
     jq
@@ -42,6 +44,7 @@ let username = "atsoukka"; in
     nixops
     nodejs
     nodePackages.node2nix
+    nodePackages.prettier
     notmuch
     pass
     pavucontrol
@@ -59,6 +62,7 @@ let username = "atsoukka"; in
     rfkill
     sass
     sikulix
+    signal-desktop
 #   skype
     unzip
     vagrant
