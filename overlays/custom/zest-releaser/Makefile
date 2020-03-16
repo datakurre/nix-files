@@ -5,7 +5,7 @@ NIX_OPTIONS ?= --pure --argstr python $(PYTHON)
 all: requirements-${PYTHON}.nix
 
 requirements-$(PYTHON).nix: requirements-$(PYTHON).txt
-	nix-shell release.nix $(NIX_OPTIONS) -A pip2nix --run "pip2nix generate -r requirements-$(PYTHON).txt --output=requirements-$(PYTHON).nix"
+	nix-shell release.nix $(NIX_OPTIONS) -A pip2nix --run "pip2nix generate -r requirements-$(PYTHON).txt --no-binary check-manifest --output=requirements-$(PYTHON).nix"
 
 requirements-$(PYTHON).txt: requirements.txt
 	nix-shell release.nix $(NIX_OPTIONS) -A pip2nix --run "pip2nix generate -r requirements.txt --output=requirements-$(PYTHON).nix"

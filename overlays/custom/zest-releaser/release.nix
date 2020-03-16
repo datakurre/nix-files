@@ -95,6 +95,7 @@ let
 
   # Alias packages with different names in requirements and in nixpkgs
   aliases = {
+    "readme-renderer" = "readme_renderer";
   };
 
   # Final overrides to fix issues all the magic above cannot fix automatically
@@ -122,6 +123,13 @@ let
           --set SOURCE_DATE_EPOCH 315532800
       done
     '';
+    propagatedBuildInputs = with self; old.propagatedBuildInputs ++ [
+      chardet
+      check-manifest
+      pyroma
+      readme_renderer
+      wheel
+    ];
   });
   };
 

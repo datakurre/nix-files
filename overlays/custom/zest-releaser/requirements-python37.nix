@@ -86,10 +86,10 @@ self: super: {
     pname = "check-manifest";
     version = "0.41";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/54/40/7faf80474b21b3bd3f97465a31c3204379827379c5017f5cc703eee576ec/check_manifest-0.41-py2.py3-none-any.whl";
-      sha256 = "0sksvrfs6p2ylp9av0cvydglj7r2v6w8vzj1cjz3khb31qkb2ij0";
+      url = "https://files.pythonhosted.org/packages/d5/05/c055664f50026fcc256b554f35c07ccbd9447f4b13410a40b0440e555449/check-manifest-0.41.tar.gz";
+      sha256 = "1a3iqmv8vszaak2j1x7ik3d65nfh8fakvdn3if7nh5qpfmdyibw8";
     };
-    format = "wheel";
+    format = "setuptools";
     doCheck = false;
     buildInputs = [];
     checkInputs = [];
@@ -194,10 +194,10 @@ self: super: {
   };
   "jeepney" = super.buildPythonPackage rec {
     pname = "jeepney";
-    version = "0.4.2";
+    version = "0.4.3";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/ae/35/7e580cfed452e3b8c3cca44290adc54b8b5a5b8e37f89da5d24b09318be8/jeepney-0.4.2-py3-none-any.whl";
-      sha256 = "1l08rn65zhgaf8qsvyq4jagphspk64w3s4l83j5cbxjw2bhxqibg";
+      url = "https://files.pythonhosted.org/packages/79/31/2e8d42727595faf224c6dbb748c32b192e212f25495fe841fb7ce8e168b8/jeepney-0.4.3-py3-none-any.whl";
+      sha256 = "1kr4vhm64pd1gm1gx0li7w3gyxwa6rxcnfpys83j8va4hfbb9inn";
     };
     format = "wheel";
     doCheck = false;
@@ -208,10 +208,10 @@ self: super: {
   };
   "keyring" = super.buildPythonPackage rec {
     pname = "keyring";
-    version = "21.1.0";
+    version = "21.2.0";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/28/40/2bed013b87d6d2bf4104db67bab7c8c5b5f88ff68b383dc967b6019ee9e5/keyring-21.1.0-py2.py3-none-any.whl";
-      sha256 = "006a19n5q23p4ik04qzhnakb1irywd1nir9rhc9mkp3a5nmj7bi4";
+      url = "https://files.pythonhosted.org/packages/04/21/42d92822959a37ccc390742c2706c8b06cc6a29c10a5ef2e8d22cf0e2e33/keyring-21.2.0-py3-none-any.whl";
+      sha256 = "1fn5h8yj5nb6464q3srrybcqsvx0ryvycx2vdd2j3hnbrp6v2yc1";
     };
     format = "wheel";
     doCheck = false;
@@ -258,12 +258,12 @@ self: super: {
   };
   "pycparser" = super.buildPythonPackage rec {
     pname = "pycparser";
-    version = "2.19";
+    version = "2.20";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/68/9e/49196946aee219aead1290e00d1e7fdeab8567783e83e1b9ab5585e6206a/pycparser-2.19.tar.gz";
-      sha256 = "1cr5dcj9628lkz1qlwq3fv97c25363qppkmcayqvd05dpy573259";
+      url = "https://files.pythonhosted.org/packages/ae/e7/d9c3a176ca4b02024debf82342dab36efadfc5776f9c8db077e8f6e71821/pycparser-2.20-py2.py3-none-any.whl";
+      sha256 = "01apwc8fj6qh7lr01yxmns475rfhz07gccr8220ws3wgcwiav0km";
     };
-    format = "setuptools";
+    format = "wheel";
     doCheck = false;
     buildInputs = [];
     checkInputs = [];
@@ -272,10 +272,10 @@ self: super: {
   };
   "pygments" = super.buildPythonPackage rec {
     pname = "pygments";
-    version = "2.5.2";
+    version = "2.6.1";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/be/39/32da3184734730c0e4d3fa3b2b5872104668ad6dc1b5a73d8e477e5fe967/Pygments-2.5.2-py2.py3-none-any.whl";
-      sha256 = "06vgzl5srs5isskfpb0livj3nvajb3x7b77lkm51c82awnay4gra";
+      url = "https://files.pythonhosted.org/packages/2d/68/106af3ae51daf807e9cdcba6a90e518954eb8b70341cee52995540a53ead/Pygments-2.6.1-py3-none-any.whl";
+      sha256 = "091k8vlm6lyai7va05cvpwyb7h8w6pmn0qxdiys7lwhbhss40ypz";
     };
     format = "wheel";
     doCheck = false;
@@ -318,10 +318,10 @@ self: super: {
   };
   "readme-renderer" = super.buildPythonPackage rec {
     pname = "readme-renderer";
-    version = "24.0";
+    version = "25.0";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/c3/7e/d1aae793900f36b097cbfcc5e70eef82b5b56423a6c52a36dce51fedd8f0/readme_renderer-24.0-py2.py3-none-any.whl";
-      sha256 = "0g90zi5wv5lc97x3gwwhd5yhzdfnayhyqcq4y62mldy0mxwjnly8";
+      url = "https://files.pythonhosted.org/packages/ec/1c/1250524c071ee847732b2ba884b88db568059eea9b997f9f7b7ceb78f691/readme_renderer-25.0-py2.py3-none-any.whl";
+      sha256 = "08n2dc3ycpg677rc9y858rjz7vxncvvnl45lcqvjj2rscz8qsv8v";
     };
     format = "wheel";
     doCheck = false;

@@ -179,6 +179,9 @@ in
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = true;
 
+  users.users.docker.isNormalUser = false;
+  users.users.docker.uid = 65;
+
   users.users.datakurre.isNormalUser = true;
   users.users.datakurre.description = "Asko Soukka";
   users.users.datakurre.home = "/home/datakurre";

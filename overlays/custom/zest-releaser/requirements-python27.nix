@@ -53,10 +53,10 @@ self: super: {
     pname = "check-manifest";
     version = "0.41";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/54/40/7faf80474b21b3bd3f97465a31c3204379827379c5017f5cc703eee576ec/check_manifest-0.41-py2.py3-none-any.whl";
-      sha256 = "0sksvrfs6p2ylp9av0cvydglj7r2v6w8vzj1cjz3khb31qkb2ij0";
+      url = "https://files.pythonhosted.org/packages/d5/05/c055664f50026fcc256b554f35c07ccbd9447f4b13410a40b0440e555449/check-manifest-0.41.tar.gz";
+      sha256 = "1a3iqmv8vszaak2j1x7ik3d65nfh8fakvdn3if7nh5qpfmdyibw8";
     };
-    format = "wheel";
+    format = "setuptools";
     doCheck = false;
     buildInputs = [];
     checkInputs = [];
@@ -270,10 +270,10 @@ self: super: {
   };
   "readme-renderer" = super.buildPythonPackage rec {
     pname = "readme-renderer";
-    version = "24.0";
+    version = "25.0";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/c3/7e/d1aae793900f36b097cbfcc5e70eef82b5b56423a6c52a36dce51fedd8f0/readme_renderer-24.0-py2.py3-none-any.whl";
-      sha256 = "0g90zi5wv5lc97x3gwwhd5yhzdfnayhyqcq4y62mldy0mxwjnly8";
+      url = "https://files.pythonhosted.org/packages/ec/1c/1250524c071ee847732b2ba884b88db568059eea9b997f9f7b7ceb78f691/readme_renderer-25.0-py2.py3-none-any.whl";
+      sha256 = "08n2dc3ycpg677rc9y858rjz7vxncvvnl45lcqvjj2rscz8qsv8v";
     };
     format = "wheel";
     doCheck = false;
