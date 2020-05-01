@@ -16,7 +16,7 @@ in
 
 {
   imports = [
-    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
+    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-20.03.tar.gz}/nixos"
     ./modules/battery-notifier.nix
 #   ./modules/jenkins-local.nix
     ./cachix.nix
@@ -106,6 +106,8 @@ in
   services.gnome3.at-spi2-core.enable = true;
 # services.gnome3.gvfs.enable = true;
   services.gvfs.enable = true;
+
+  programs.fuse.userAllowOther = true;
 
   environment.systemPackages = [
     pkgs.gnome3.nautilus
