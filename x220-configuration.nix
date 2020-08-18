@@ -99,6 +99,7 @@ in
   powerManagement.enable = true;
 
   virtualisation.docker.enable = true;
+  virtualisation.docker.extraOptions = "--experimental";
 # virtualisation.docker.storageDriver = "btrfs";
   virtualisation.virtualbox.host.enable = true;
   virtualisation.libvirtd.enable = true;
@@ -211,6 +212,7 @@ in
     auto-optimise-store = false
     gc-keep-derivations = true
     gc-keep-outputs = true
+    builders-use-substitutes = true
   '';
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [

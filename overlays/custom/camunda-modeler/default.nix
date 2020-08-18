@@ -2,10 +2,10 @@
 
 stdenv.mkDerivation rec {
   name = "camunda-modeler-${version}";
-  version = "3.5.0";
+  version = "3.7.3";
   src = fetchurl {
     url = "https://github.com/camunda/camunda-modeler/releases/download/v${version}/camunda-modeler-${version}-linux-x64.tar.gz";
-    sha256 = "1qmgvb08b26iizizqglda0vyrxf8v3dxz2fxpbga1q7z76grmmij";
+    sha256 = "10b2khcxjyaa5syh4slianq4vyxglzqlvjl3hicgs8rwhxjvms21";
   };
 
   nativeBuildInputs = [ electron makeWrapper ];
