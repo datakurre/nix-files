@@ -4,6 +4,8 @@ let username = "atsoukka"; in
 
 {
   programs.home-manager.enable = true;
+  programs.direnv.enable = true;
+  programs.direnv.enableNixDirenvIntegration = true;
 
   home.packages = with pkgs; [
     acpi

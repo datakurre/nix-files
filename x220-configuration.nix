@@ -205,14 +205,31 @@ in
     inherit pkgs; prefix = config.users.users.datakurre.home;
   };
 
+  nix.buildMachines = [{
+    hostName = "hydra01.kopla.jyu.fi";
+    system = "x86_64-linux";
+    maxJobs = 8;
+    speedFactor = 2;
+    supportedFeatures = [ "kvm" "big-parallel" ];
+    mandatoryFeatures = [];
+  }{
+    hostName = "orion.psy.jyu.fi";
+    system = "x86_64-linux";
+    maxJobs = 16;
+    speedFactor = 4;
+    supportedFeatures = [ "kvm" "big-parallel" ];
+    mandatoryFeatures = [];
+  }];
+  nix.distributedBuilds = true;
+
   nix.useSandbox = true;
   nix.sandboxPaths = [ "/dev/urandom" "/etc/ssl/certs/ca-certificates.crt" ];
   nix.binaryCaches = [ https://cache.nixos.org ];
   nix.extraOptions = ''
     auto-optimise-store = false
-    gc-keep-derivations = true
-    gc-keep-outputs = true
     builders-use-substitutes = true
+    keep-outputs = true
+    keep-derivations = true
   '';
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [
