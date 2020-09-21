@@ -16,7 +16,7 @@ in
 
 {
   imports = [
-    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
+    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-20.03.tar.gz}/nixos"
     ./modules/battery-notifier.nix
   ];
 
@@ -45,12 +45,12 @@ in
   hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
 
   hardware.bluetooth.enable = true;
-  hardware.bluetooth.extraConfig = ''
-    [general]
-    Enable=Source,Sink,Media,Socket
-    Disable=Headset
-  '';
-
+  hardware.bluetooth.config = {
+    General = {
+      Enable = "Source,Sink,Media,Soket";
+      Display = "Headset";
+    };
+  };
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
   hardware.pulseaudio.package = pkgs.pulseaudioFull;
@@ -75,12 +75,17 @@ in
     "vboxnet0"
   ];
 
-  i18n.consoleFont = "Lat2-Terminus16";
-  i18n.consoleKeyMap = "fi";
+  networking.hosts = {
+    "127.0.0.1" = [ "localhost" "keycloak" "prodwebdp1.certia.fi" "qaswebdp1.certia.fi" ];
+    "127.0.1.1" = [ "makondo" ];
+    "::1" = [ "localhost" "keycloak" ];
+  };
+
+  console.font = "Lat2-Terminus16";
+  console.keyMap = "fi";
   i18n.defaultLocale = "fi_FI.UTF-8";
 
   fonts.enableFontDir = true;
-  fonts.enableCoreFonts = true;
   fonts.enableGhostscriptFonts = true;
   fonts.fonts = with pkgs; [
     bakoma_ttf
@@ -103,7 +108,9 @@ in
   virtualisation.virtualbox.host.enable = true;
 
   services.gnome3.at-spi2-core.enable = true;
-  services.gnome3.gvfs.enable = true;
+  services.gvfs.enable = true;
+  services.btrfs.autoScrub.enable = true;
+  services.btrfs.autoScrub.fileSystems = [ "/" "/home" ];
 
   environment.systemPackages = [
     pkgs.gnome3.nautilus
@@ -120,6 +127,7 @@ in
 
   services.dbus.packages = with pkgs; [ gnome3.sushi ];
 
+  programs.fuse.userAllowOther = true;
   programs.gnupg.agent.enableSSHSupport = true;
   programs.gnupg.agent.enable = true;
   programs.ssh.startAgent = false;
@@ -168,9 +176,11 @@ in
   services.xserver.layout = "fi";
   services.xserver.xrandrHeads = [ "eDP1" "DP1" ];
   services.xserver.xkbOptions = "eurosign:e,caps:escape,nbsp:none";
-  services.xserver.displayManager.slim.defaultUser = "atsoukka";
-  services.xserver.displayManager.slim.enable = true;
-  services.xserver.displayManager.xserverArgs = [ "-dpi 192" ];
+  services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.displayManager.lightdm.greeters.mini.enable = true;
+  services.xserver.displayManager.lightdm.greeters.mini.user = "atsoukka";
+  services.xserver.displayManager.defaultSession = "none+xmonad";
+  services.xserver.displayManager.xserverArgs = [ "-dpi 224" ];
   services.xserver.displayManager.sessionCommands = with pkgs; with lib;''
     # Nautilus
     export XDG_DATA_DIRS=$XDG_DATA_DIRS''${XDG_DATA_DIRS:+:}${mimeAppsList}/share
@@ -183,7 +193,6 @@ in
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.updateDbusEnvironment = true;
   services.xserver.videoDrivers = [ "nvidia" "intel" ];
-  services.xserver.windowManager.default = "xmonad";
   services.xserver.windowManager.xmonad.enable = true;
 
   services.xserver.libinput.enable = true;
@@ -262,5 +271,5 @@ in
     ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
 
-  system.stateVersion = "19.03";
+  system.stateVersion = "20.03";
 }

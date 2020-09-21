@@ -16,7 +16,7 @@ let username = "atsoukka"; in
     cookiecutter
     zeebe-modeler
     chromium
-    elmPackages.elm-format
+    #elmPackages.elm-format
     evince
     firefox-devedition-bin
     findimagedupes
@@ -171,7 +171,7 @@ let username = "atsoukka"; in
     max_geometry = "5x1-0+0";
     grow_gravity = "SW";
     icon_gravity = "SW";
-    icon_size = 24;
+    icon_size = 48;
     kludges = "force_icons_size";
     skip_taskbar = true;
     sticky = true;
@@ -212,7 +212,7 @@ let username = "atsoukka"; in
 
   xresources.properties = {
     "Xcursor.theme" = "Vanilla-DMZ";
-    "Xcursor.size" = "32";
+    "Xcursor.size" = "64";
 
     "XTerm*wideChars" = "true";
     "XTerm*locale" = "true";
