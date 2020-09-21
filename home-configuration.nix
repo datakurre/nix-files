@@ -171,7 +171,7 @@ let username = "atsoukka"; in
     max_geometry = "5x1-0+0";
     grow_gravity = "SW";
     icon_gravity = "SW";
-    icon_size = 48;
+    icon_size = 24;
     kludges = "force_icons_size";
     skip_taskbar = true;
     sticky = true;
@@ -212,7 +212,7 @@ let username = "atsoukka"; in
 
   xresources.properties = {
     "Xcursor.theme" = "Vanilla-DMZ";
-    "Xcursor.size" = "64";
+    "Xcursor.size" = "32";
 
     "XTerm*wideChars" = "true";
     "XTerm*locale" = "true";
