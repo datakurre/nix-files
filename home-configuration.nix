@@ -16,7 +16,7 @@ let username = "atsoukka"; in
     cookiecutter
     zeebe-modeler
     chromium
-    elmPackages.elm-format
+    #elmPackages.elm-format
     evince
     firefox-devedition-bin
     findimagedupes
