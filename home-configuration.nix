@@ -14,7 +14,7 @@ let username = "atsoukka"; in
     cachix
     camunda-modeler
     cookiecutter
-    zeebe-modeler
+#   zeebe-modeler
     chromium
     #elmPackages.elm-format
     evince
@@ -28,7 +28,7 @@ let username = "atsoukka"; in
     gnupg
     htop
     imagemagick
-    inkscapeFull
+#   inkscapeFull
     irssi
     isync
     jetbrains.idea-community
@@ -61,9 +61,9 @@ let username = "atsoukka"; in
       '';
     }))
     docker_compose
-    rfkill
+#   rfkiller
     sass
-    sikulix
+#   sikulix
     signal-desktop
 #   skype
     unzip
@@ -183,13 +183,17 @@ let username = "atsoukka"; in
   programs.ssh.enable = true;
   programs.ssh.extraConfig = ''
     CanonicalizeHostname yes
-    CanonicalDomains cc.jyu.fi jyu.fi
+    CanonicalDomains kopla.jyu.fi cc.jyu.fi jyu.fi
     CanonicalizeMaxDots 2
   '';
-  programs.ssh.matchBlocks = [
-    { host = "jalava.cc.jyu.fi"; user = username; }
-    { host = "*.jyu.fi"; user = builtins.substring 0 ((builtins.stringLength username) - 1) username + "_"; }
-  ];
+  programs.ssh.matchBlocks = {
+    "*.jyu.fi" = {
+      user = builtins.substring 0 ((builtins.stringLength username) - 1) username + "_";
+    };
+    "jalava.cc.jyu.fi" = {
+      user = username;
+    };
+  };
   services.gpg-agent.enable = true;
   services.gpg-agent.defaultCacheTtl = 1800;
   services.gpg-agent.enableSshSupport = true;
