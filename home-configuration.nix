@@ -183,8 +183,8 @@ let username = "atsoukka"; in
   programs.ssh.enable = true;
   programs.ssh.extraConfig = ''
     CanonicalizeHostname yes
-    CanonicalDomains kopla.jyu.fi cc.jyu.fi jyu.fi
-    CanonicalizeMaxDots 2
+    CanonicalDomains kopla.jyu.fi cc.jyu.fi
+    CanonicalizeMaxDots 1
   '';
   programs.ssh.matchBlocks = {
     "*.jyu.fi" = {
