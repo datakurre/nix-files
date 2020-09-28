@@ -14,9 +14,7 @@ let username = "atsoukka"; in
     cachix
     camunda-modeler
     cookiecutter
-#   zeebe-modeler
     chromium
-    #elmPackages.elm-format
     evince
     firefox-devedition-bin
     findimagedupes
@@ -33,7 +31,6 @@ let username = "atsoukka"; in
     isync
     jetbrains.idea-community
     jetbrains.pycharm-professional
-    jfrog-cli
     jq
     lastpass-cli
     lessc
@@ -43,15 +40,12 @@ let username = "atsoukka"; in
     ncmpcpp
     networkmanagerapplet
     networkmanager_vpnc
-    nixops
     nodejs
     nodePackages.node2nix
     nodePackages.prettier
     notmuch
     pass
     pavucontrol
-    phantomjs2
-#   postman
     psmisc
     python3Full
     pidgin-with-plugins
@@ -61,11 +55,8 @@ let username = "atsoukka"; in
       '';
     }))
     docker_compose
-#   rfkiller
     sass
-#   sikulix
     signal-desktop
-#   skype
     unzip
     vagrant
     vanilla-dmz
