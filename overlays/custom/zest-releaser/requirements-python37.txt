@@ -5,7 +5,7 @@ cffi==1.14.0
 chardet==3.0.4
 check-manifest==0.41
 colorama==0.4.3
-cryptography==2.8
+cryptography==3.2
 docutils==0.16
 gocept.zestreleaser.customupload==3.0
 idna==2.9
