@@ -2,7 +2,8 @@ self: super:
 
 {
 
-  afew = super.afew.overrideAttrs(old: {
+  afew = super.afew.overridePythonAttrs(old: {
+    doCheck = false;
     postPatch = ''
       sed -i "s|'notmuch', 'new'|'test', '1'|g" afew/MailMover.py
     '';
@@ -78,7 +79,7 @@ self: super:
   });
 
   jetbrains = (super.recurseIntoAttrs (super.callPackages ./jetbrains {
-    # jdk = self.oraclejdk8;
+#   jdk = self.oraclejdk8;
   }));
 
   pidgin-with-plugins = super.pidgin-with-plugins.override {

@@ -14,9 +14,7 @@ let username = "atsoukka"; in
     cachix
     camunda-modeler
     cookiecutter
-    zeebe-modeler
     chromium
-    #elmPackages.elm-format
     evince
     firefox-devedition-bin
     findimagedupes
@@ -28,12 +26,11 @@ let username = "atsoukka"; in
     gnupg
     htop
     imagemagick
-    inkscapeFull
+#   inkscapeFull
     irssi
     isync
     jetbrains.idea-community
     jetbrains.pycharm-professional
-    jfrog-cli
     jq
     lastpass-cli
     lessc
@@ -43,15 +40,12 @@ let username = "atsoukka"; in
     ncmpcpp
     networkmanagerapplet
     networkmanager_vpnc
-    nixops
     nodejs
     nodePackages.node2nix
     nodePackages.prettier
     notmuch
     pass
     pavucontrol
-    phantomjs2
-#   postman
     psmisc
     python3Full
     pidgin-with-plugins
@@ -61,11 +55,8 @@ let username = "atsoukka"; in
       '';
     }))
     docker_compose
-    rfkill
     sass
-    sikulix
     signal-desktop
-#   skype
     unzip
     vagrant
     vanilla-dmz
@@ -183,13 +174,18 @@ let username = "atsoukka"; in
   programs.ssh.enable = true;
   programs.ssh.extraConfig = ''
     CanonicalizeHostname yes
-    CanonicalDomains cc.jyu.fi jyu.fi
-    CanonicalizeMaxDots 2
+    CanonicalDomains kopla.jyu.fi cc.jyu.fi
+    CanonicalizeMaxDots 0
+    CanonicalizeFallbackLocal no
   '';
-  programs.ssh.matchBlocks = [
-    { host = "jalava.cc.jyu.fi"; user = username; }
-    { host = "*.jyu.fi"; user = builtins.substring 0 ((builtins.stringLength username) - 1) username + "_"; }
-  ];
+  programs.ssh.matchBlocks = {
+    "*.jyu.fi" = {
+      user = builtins.substring 0 ((builtins.stringLength username) - 1) username + "_";
+    };
+    "jalava.cc.jyu.fi" = {
+      user = username;
+    };
+  };
   services.gpg-agent.enable = true;
   services.gpg-agent.defaultCacheTtl = 1800;
   services.gpg-agent.enableSshSupport = true;
