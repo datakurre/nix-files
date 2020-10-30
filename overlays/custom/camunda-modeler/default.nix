@@ -12,10 +12,10 @@ in
 
 stdenv.mkDerivation rec {
   name = "camunda-modeler-${version}";
-  version = "4.2.0";
+  version = "4.3.0";
   src = fetchurl {
     url = "https://github.com/camunda/camunda-modeler/releases/download/v${version}/camunda-modeler-${version}-linux-x64.tar.gz";
-    sha256 = "15yrk2c5g2hawgi6ww7605bi45lsgrkc6yb4869l20wrrslylnyg";
+    sha256 = "03qgby5szqxy2zvq39cpv0jrqb47gzn3ghr2zqw7hlak9g8s38kh";
   };
 
   nativeBuildInputs = [ electron makeWrapper nodePackages.asar autoPatchelfHook gcc-unwrapped ];

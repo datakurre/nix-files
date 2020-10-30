@@ -206,13 +206,6 @@ in
   };
 
   nix.buildMachines = [{
-    hostName = "hydra01.kopla.jyu.fi";
-    system = "x86_64-linux";
-    maxJobs = 8;
-    speedFactor = 2;
-    supportedFeatures = [ "kvm" "big-parallel" ];
-    mandatoryFeatures = [];
-  }{
     hostName = "orion.psy.jyu.fi";
     system = "x86_64-linux";
     maxJobs = 16;
