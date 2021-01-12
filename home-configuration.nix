@@ -34,7 +34,7 @@ let username = "atsoukka"; in
     jq
     lastpass-cli
     lessc
-    libreoffice
+#   libreoffice
     lynx
     msmtp
     ncmpcpp

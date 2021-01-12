@@ -16,7 +16,7 @@ in
 
 {
   imports = [
-    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-20.03.tar.gz}/nixos"
+    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-20.09.tar.gz}/nixos"
     ./modules/battery-notifier.nix
 #   ./modules/jenkins-local.nix
     ./cachix.nix
@@ -205,14 +205,16 @@ in
     inherit pkgs; prefix = config.users.users.datakurre.home;
   };
 
-  nix.buildMachines = [{
-    hostName = "orion.psy.jyu.fi";
-    system = "x86_64-linux";
-    maxJobs = 16;
-    speedFactor = 4;
-    supportedFeatures = [ "kvm" "big-parallel" ];
-    mandatoryFeatures = [];
-  }];
+  nix.buildMachines = [
+#   {
+#     hostName = "orion.psy.jyu.fi";
+#     system = "x86_64-linux";
+#     maxJobs = 16;
+#     speedFactor = 4;
+#     supportedFeatures = [ "kvm" "big-parallel" ];
+#     mandatoryFeatures = [];
+#   }
+  ];
   nix.distributedBuilds = true;
 
   nix.useSandbox = true;
@@ -224,17 +226,17 @@ in
     keep-outputs = true
     keep-derivations = true
   '';
+  nixpkgs.config.allowBroken = true;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [
     (import ./overlays/custom)
 #   (import ./overlays/mrvandalo)
   ];
+  documentation.nixos.enable = false;
 
   environment.shellAliases = {
     "vi" = "vim";
   };
-
-  services.nixosManual.showManual = false;
 
   services.udev.packages = [ pkgs.gnome3.gnome_settings_daemon ];
   services.udev.extraRules = ''
