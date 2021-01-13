@@ -1,6 +1,8 @@
 { pkgs, prefix, ... }:
 
-let username = "atsoukka"; in
+let username = "atsoukka";
+    unstable = import "/home/atsoukka/.nix-defexpr/channels/unstable" {};
+in
 
 {
   programs.home-manager.enable = true;
@@ -46,6 +48,7 @@ let username = "atsoukka"; in
     notmuch
     pass
     pavucontrol
+    pulseeffects
     psmisc
     python3Full
     pidgin-with-plugins
@@ -57,6 +60,9 @@ let username = "atsoukka"; in
     docker_compose
     sass
     signal-desktop
+    teams
+#   zoom-us
+    unstable.pkgs.zoom-us
     unzip
     vagrant
     vanilla-dmz

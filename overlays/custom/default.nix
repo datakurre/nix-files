@@ -79,7 +79,7 @@ self: super:
   });
 
   jetbrains = (super.recurseIntoAttrs (super.callPackages ./jetbrains {
-    jdk = self.openjdk11;
+    jdk = self.jdk11;
   }));
 
   pidgin-with-plugins = super.pidgin-with-plugins.override {
