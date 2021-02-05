@@ -5,9 +5,15 @@ let username = "atsoukka";
 in
 
 {
+  imports = [
+    ./private/factorio.nix
+  ];
+
   programs.home-manager.enable = true;
   programs.direnv.enable = true;
   programs.direnv.enableNixDirenvIntegration = true;
+
+  fonts.fontconfig.enable = pkgs.lib.mkForce true;
 
   home.packages = with pkgs; [
     acpi
@@ -15,20 +21,20 @@ in
     autorandr
     cachix
     camunda-modeler
-    cookiecutter
     chromium
+    cookiecutter
+    docker_compose
     evince
-    firefox-devedition-bin
     findimagedupes
+    firefox-devedition-bin
     gimp
     git
-    gitlog
     gitclog
+    gitlog
     gnumake
     gnupg
     htop
     imagemagick
-#   inkscapeFull
     irssi
     isync
     jetbrains.idea-community
@@ -36,41 +42,41 @@ in
     jq
     lastpass-cli
     lessc
-#   libreoffice
     lynx
     msmtp
     ncmpcpp
-    networkmanagerapplet
     networkmanager_vpnc
-    nodejs
-    nodePackages.node2nix
-    nodePackages.prettier
+    networkmanagerapplet
     notmuch
     pass
     pavucontrol
     pulseeffects
+    pidgin-with-plugins
     psmisc
     python3Full
-    pidgin-with-plugins
+    sass
+    signal-desktop
+    teams
+    unstable.pkgs.zoom-us
+    unzip
+    vagrant
+    vanilla-dmz
+    vlc
+    vokoscreen
+    vpnc
+    w3m
+    xlockmore
+    yarn
+    zest-releaser-python2
+    zest-releaser-python3
+    zip
+
     (python3Packages.alot.overridePythonAttrs(old: {
       postPatch = ''
         find alot -type f -print0|xargs -0 sed -i "s|payload.encode('raw-unicode-escape')|payload.encode('utf-8')|g"
       '';
     }))
-    docker_compose
-    sass
-    signal-desktop
-    teams
-#   zoom-us
-    unstable.pkgs.zoom-us
-    unzip
-    vagrant
-    vanilla-dmz
-    vokoscreen
-    vpnc
-    vlc
-    xlockmore
-    w3m
+
     (xterm.overrideDerivation(old: {
       # fixes issue where locales were broken on non NixOS host
       postInstall = ''
@@ -79,10 +85,18 @@ in
         done
       '';
     }))
-    yarn
-    zest-releaser-python2
-    zest-releaser-python3
-    zip
+  ] ++ [
+    bakoma_ttf
+    cantarell_fonts
+    corefonts
+    dejavu_fonts
+    gentium
+    inconsolata
+    liberation_ttf
+    nerdfonts
+    powerline-fonts
+    terminus_font
+    ubuntu_font_family
   ];
 
   home.file.".buildout/default.cfg".text = ''
@@ -126,40 +140,23 @@ in
     core = { autocrlf = "input"; };
   };
 
-  programs.zsh.enable = true;
-  programs.zsh.history.share = false;
-  programs.zsh.shellAliases = {
-    vi = "vim";
-#   nix-shell = "nix-shell --command \"export __ETC_ZSHENV_SOURCED=1; export SPACESHIP_CHAR_PREFIX=\\\"(nix) \\\"; exec $(which zsh); return\"";
+  programs.bash.enable = true;
+  programs.bash.shellAliases = {
     notmuch-iki = "notmuch --config=${prefix}/.notmuch-iki";
     notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
     alot-iki = "EDITOR=vim alot -n ${prefix}/.notmuch-iki";
     alot-jyu = "EDITOR=vim alot -n ${prefix}/.notmuch-jyu";
     tls-fingerprint= "openssl s_client -connect $ -starttls smtp < /dev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
   };
-  programs.zsh.initExtra = ''
-    LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive";
-    EDITOR="vim";
-    NIX_REMOTE="daemon";
-    GS_OPTIONS="-sPAPERSIZE=a4";
-    SSL_CERT_FILE="/etc/ssl/certs/ca-bundle.crt";
-    SPACESHIP_EXIT_CODE_SHOW=true;
-    SPACESHIP_DIR_TRUNC=0;
-    SPACESHIP_DIR_TRUNC_REPO=false;
-    SPACESHIP_PROMPT_ORDER=(time user dir host git exec_time line_sep battery jobs exit_code char);
-    bindkey -e
-  '';
-  programs.zsh.plugins = [
-    {
-      name = "spaceship";
-      file = "spaceship.zsh";
-      src = pkgs.fetchgit {
-        url = "https://github.com/denysdovhan/spaceship-prompt";
-        rev = "v3.11.1";
-        sha256 = "0habry3r6wfbd9xbhw10qfdar3h5chjffr5pib4bx7j4iqcl8lw8";
-      };
-    }
-  ];
+  programs.bash.sessionVariables = {
+    LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
+    EDITOR = "vim";
+    NIX_REMOTE = "daemon";
+    GS_OPTIONS = "-sPAPERSIZE=a4";
+    SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
+  };
+  programs.starship.enable = true;
+  programs.starship.enableBashIntegration = true;
 
   services.stalonetray.config = {
     decorations = null;

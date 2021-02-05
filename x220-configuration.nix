@@ -18,7 +18,6 @@ in
   imports = [
     "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-20.09.tar.gz}/nixos"
     ./modules/battery-notifier.nix
-#   ./modules/jenkins-local.nix
     ./cachix.nix
   ];
 
@@ -80,20 +79,9 @@ in
   console.keyMap = "fi";
   i18n.defaultLocale = "fi_FI.UTF-8";
 
+  fonts.fontconfig.enable = true;
   fonts.enableFontDir = true;
   fonts.enableGhostscriptFonts = true;
-  fonts.fonts = with pkgs; [
-    bakoma_ttf
-    cantarell_fonts
-    corefonts
-    dejavu_fonts
-    gentium
-    inconsolata
-    liberation_ttf
-    powerline-fonts
-    terminus_font
-    ubuntu_font_family
-  ];
 
   sound.mediaKeys.enable = true;
   powerManagement.enable = true;
@@ -105,7 +93,6 @@ in
   virtualisation.libvirtd.enable = true;
 
   services.gnome3.at-spi2-core.enable = true;
-# services.gnome3.gvfs.enable = true;
   services.gvfs.enable = true;
 
   programs.fuse.userAllowOther = true;
@@ -122,7 +109,6 @@ in
   programs.gnupg.agent.enableSSHSupport = true;
   programs.gnupg.agent.enable = true;
   programs.ssh.startAgent = false;
-  programs.zsh.enable = true;
   services.pcscd.enable = true;
 
   services.xserver.enable = true;
@@ -199,7 +185,6 @@ in
     "qemu"
   ];
   users.users.datakurre.uid = 1000;
-  users.users.datakurre.shell = "/run/current-system/sw/bin/zsh";
 
   home-manager.users.datakurre = import ./home-configuration.nix {
     inherit pkgs; prefix = config.users.users.datakurre.home;
@@ -226,6 +211,7 @@ in
     keep-outputs = true
     keep-derivations = true
   '';
+
   nixpkgs.config.allowBroken = true;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [
@@ -245,9 +231,5 @@ in
     # ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", ENV{DEVTYPE}=="usb_device", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
 
-  services.tarsnap.enable = false;
-  services.tarsnap.archives.data.directories = [
-  ];
-
-  system.stateVersion = "20.03";
+  system.stateVersion = "20.09";
 }
