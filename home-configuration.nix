@@ -57,7 +57,6 @@ in
     sass
     signal-desktop
     teams
-    unstable.pkgs.zoom-us
     unzip
     vagrant
     vanilla-dmz
@@ -142,8 +141,8 @@ in
 
   programs.bash.enable = true;
   programs.bash.shellAliases = {
-    notmuch-iki = "notmuch --config=${prefix}/.notmuch-iki";
-    notmuch-jyu = "notmuch --config=${prefix}/.notmuch-jyu";
+    notmuch-iki = "EDITOR=vim notmuch --config=${prefix}/.notmuch-iki";
+    notmuch-jyu = "EDITOR=vim notmuch --config=${prefix}/.notmuch-jyu";
     alot-iki = "EDITOR=vim alot -n ${prefix}/.notmuch-iki";
     alot-jyu = "EDITOR=vim alot -n ${prefix}/.notmuch-jyu";
     tls-fingerprint= "openssl s_client -connect $ -starttls smtp < /dev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
