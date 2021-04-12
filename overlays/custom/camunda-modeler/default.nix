@@ -24,11 +24,11 @@ stdenv.mkDerivation rec {
     mkdir build
     cd build
     asar extract ../resources/app.asar .
-    if [ -f node_modules/grpc/src/node/extension_binary/node-v72-linux-x64-glibc/grpc_node.node ]; then
-      autoPatchelf node_modules/grpc/src/node/extension_binary/node-v72-linux-x64-glibc/grpc_node.node;
-    fi
-    if [ -f node_modules/grpc/src/node/extension_binary/electron-v7.2-linux-x64-glibc/grpc_node.node ]; then
-      autoPatchelf node_modules/grpc/src/node/extension_binary/electron-v7.2-linux-x64-glibc/grpc_node.node;
+    find . -name "grpc_node.node"
+    if [ -f node_modules/grpc/src/node/extension_binary/electron-v7.3-linux-x64-glibc/grpc_node.node ]; then
+      autoPatchelf node_modules/grpc/src/node/extension_binary/electron-v7.3-linux-x64-glibc/grpc_node.node;
+      cp -a node_modules/grpc/src/node/extension_binary/electron-v7.3-linux-x64-glibc \
+            node_modules/grpc/src/node/extension_binary/electron-v7.2-linux-x64-glibc
     fi
     asar pack . ../app.asar
     cd ..
