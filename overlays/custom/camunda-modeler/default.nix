@@ -3,9 +3,9 @@
 let
 
   mkElectron = import (<nixpkgs> + "/pkgs/development/tools/electron/generic.nix") { inherit stdenv libXScrnSaver makeWrapper fetchurl wrapGAppsHook glib gtk3 unzip atomEnv libuuid at-spi2-atk at-spi2-core libdrm mesa libxkbcommon; };
-  electron = mkElectron "7.2.4" {
-    x86_64-linux = "aa809819aa353f0dabd40a80124f5e433ccba445ec4dfa9668e04ae47fcb6057";
-    x86_64-darwin = "11d05813c2b7c923a2b58f4ca4460869619350419a5cd962d0ce3e4639146f45";
+  electron = mkElectron "7.3.3" {
+    x86_64-linux = "a947228a859149bec5bd937f9f3c03eb0aa4d78cfe4dfa9aead60d3646a357f9";
+    x86_64-darwin = "e081436abef52212065f560ea6add1c0cd13d287a1b3cc76b28d2762f7651a4e";
   };
 
 in
@@ -27,8 +27,6 @@ stdenv.mkDerivation rec {
     find . -name "grpc_node.node"
     if [ -f node_modules/grpc/src/node/extension_binary/electron-v7.3-linux-x64-glibc/grpc_node.node ]; then
       autoPatchelf node_modules/grpc/src/node/extension_binary/electron-v7.3-linux-x64-glibc/grpc_node.node;
-      cp -a node_modules/grpc/src/node/extension_binary/electron-v7.3-linux-x64-glibc \
-            node_modules/grpc/src/node/extension_binary/electron-v7.2-linux-x64-glibc
     fi
     asar pack . ../app.asar
     cd ..
@@ -37,11 +35,4 @@ stdenv.mkDerivation rec {
     makeWrapper ${electron}/bin/electron $out/bin/camunda-modeler \
       --add-flags "$out/var/lib/camunda/app.asar"
   '';
-
-# installPhase = ''
-#   mkdir -p $out/var/lib/camunda $out/bin
-#   cp resources/app.asar $out/var/lib/camunda
-#   makeWrapper ${electron}/bin/electron $out/bin/camunda-modeler \
-#     --add-flags "$out/var/lib/camunda/app.asar"
-# '';
 }
