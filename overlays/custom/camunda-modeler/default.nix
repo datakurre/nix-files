@@ -13,6 +13,13 @@ let
     sha256 = "0l64a7zq7z1vx2bjbrff9xn1g1c798zxf41pjnjggjwm55kfqvh0";
   };
 
+  camunda-modeler-property-info-plugin = fetchurl {
+    url = "https://github.com/umb/camunda-modeler-property-info-plugin/archive/b50e34e99ef87f5cac30a074acbd2aae29fe53b2.tar.gz";
+    sha256 = "0ac6klmd788fams5ikrl47dr2adhxzbmay778chnrp7zgh1h9w5d";
+#   url = "https://github.com/umb/camunda-modeler-property-info-plugin/archive/f06c33c45ef57302a910c30d9497a46dc79bd93d.tar.gz";
+#   sha256 = "02mccdi8bqwp92gfv1w7xch72yjx3pvrvqzyd82nxfb519sdbwk1";
+  };
+
   camunda-modeler-linter-plugin = fetchurl {
     url = "https://github.com/camunda/camunda-modeler-linter-plugin/archive/c506ee6b250871c9b7785e9a1ff9fa9fe4334c85.tar.gz";
     sha256 = "080x1yjic2lhs5mqsbw3n2vxsgyadjgrflqjx20grq1vv3vjf5s1";
@@ -66,6 +73,7 @@ stdenv.mkDerivation rec {
     tar xzvf ${bpmn-js-token-simulation-plugin}
     tar xzvf ${camunda-modeler-linter-plugin}
     tar xzvf ${camunda-modeler-plugins}
+    tar xzvf ${camunda-modeler-property-info-plugin}
     mv camunda-modeler-plugins*/camunda-transaction-boundaries-plugin .
     rm -r camunda-modeler-plugins*
     makeWrapper ${electron}/bin/electron $out/bin/camunda-modeler \
