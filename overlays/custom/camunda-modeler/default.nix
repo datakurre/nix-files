@@ -30,6 +30,11 @@ let
     sha256 = "0gin2icbr74a6ppcs7yj0dxl6na8m98b5whvgxglvm8r0qwzfbgj";
   };
 
+  camunda-modeler-tooltip-plugin = fetchurl { 
+    url = "https://github.com/viadee/camunda-modeler-tooltip-plugin/archive/7255229c1abbf1cb71b3758b3939d5b9ff05d0e8.tar.gz";
+    sha256 = "0dq679dr2p44mazqvkiiryv69hqc4kgag2507crm0f2qmywbj8c9";
+  };
+
   bpmn-js-token-simulation-plugin = fetchurl { 
     url = "https://github.com/bpmn-io/bpmn-js-token-simulation-plugin/archive/b856b708362a2022180316a8b4c84ae7122bcf63.tar.gz";
     sha256 = "0b005201c5ec346f542c6f556c2d7579a021707fd7f0701f3f7819b58a8aeb7b";
@@ -72,8 +77,9 @@ stdenv.mkDerivation rec {
     tar xzvf ${camunda-modeler-robot-plugin}
     tar xzvf ${bpmn-js-token-simulation-plugin}
     tar xzvf ${camunda-modeler-linter-plugin}
-    tar xzvf ${camunda-modeler-plugins}
+    tar xzvf ${camunda-modeler-tooltip-plugin}
     tar xzvf ${camunda-modeler-property-info-plugin}
+    tar xzvf ${camunda-modeler-plugins}
     mv camunda-modeler-plugins*/camunda-transaction-boundaries-plugin .
     rm -r camunda-modeler-plugins*
     makeWrapper ${electron}/bin/electron $out/bin/camunda-modeler \
