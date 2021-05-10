@@ -6,7 +6,7 @@ in
 
 {
   imports = [
-    ./private/factorio.nix
+#   ./private/factorio.nix
   ];
 
   programs.home-manager.enable = true;
@@ -45,6 +45,7 @@ in
     lynx
     msmtp
     ncmpcpp
+    nodejs-14_x
     networkmanager_vpnc
     networkmanagerapplet
     notmuch
@@ -171,6 +172,10 @@ in
     alot-jyu = "EDITOR=vim alot -n ${prefix}/.notmuch-jyu";
     tls-fingerprint= "openssl s_client -connect $ -starttls smtp < /dev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
   };
+  programs.bash.bashrcExtra = ''
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+    export NIX_PATH=$HOME/.nix-defexpr/channels$'' + ''{NIX_PATH:+:}$NIX_PATH
+  '';
   programs.bash.sessionVariables = {
     LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
     EDITOR = "vim";
