@@ -77,6 +77,11 @@ stdenv.mkDerivation rec {
     tar xzvf ${camunda-modeler-robot-plugin}
     tar xzvf ${bpmn-js-token-simulation-plugin}
     tar xzvf ${camunda-modeler-linter-plugin}
+
+    # Fix camunda/camunda-modeler-linter-plugin to allow inclusive gateways
+    substituteInPlace camunda-modeler-linter-plugin-*/dist/client.js \
+      --replace '"no-inclusive-gateway": "error",' ""
+
     tar xzvf ${camunda-modeler-tooltip-plugin}
     tar xzvf ${camunda-modeler-property-info-plugin}
     tar xzvf ${camunda-modeler-plugins}
