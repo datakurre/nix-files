@@ -80,7 +80,8 @@ stdenv.mkDerivation rec {
 
     # Fix camunda/camunda-modeler-linter-plugin to allow inclusive gateways
     substituteInPlace camunda-modeler-linter-plugin-*/dist/client.js \
-      --replace '"no-inclusive-gateway": "error",' ""
+      --replace '"no-inclusive-gateway": "error",' "" \
+      --replace '"camunda/avoid-lanes": "warn",' ""
 
     tar xzvf ${camunda-modeler-tooltip-plugin}
     tar xzvf ${camunda-modeler-property-info-plugin}
