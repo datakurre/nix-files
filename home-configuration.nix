@@ -1,7 +1,7 @@
 { pkgs, prefix, ... }:
 
 let username = "atsoukka";
-    unstable = import "/home/atsoukka/.nix-defexpr/channels/unstable" {};
+    unstable = import <unstable> {};
 in
 
 {
