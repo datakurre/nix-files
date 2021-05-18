@@ -1,11 +1,11 @@
-{ stdenv, libXScrnSaver, makeWrapper, fetchurl, wrapGAppsHook, glib, gtk3, unzip, atomEnv, libuuid, at-spi2-atk, at-spi2-core, nodePackages, autoPatchelfHook, gcc-unwrapped, libdrm, mesa, libxkbcommon, adoptopenjdk-jre-hotspot-bin-11 }:
+{ stdenv, libXScrnSaver, makeWrapper, fetchurl, wrapGAppsHook, glib, gtk3, unzip, atomEnv, libuuid, at-spi2-atk, at-spi2-core, nodePackages, autoPatchelfHook, gcc-unwrapped, libdrm, mesa, libxkbcommon, adoptopenjdk-jre-hotspot-bin-11, libxshmfence, lib, libappindicator-gtk3}:
 
 let
 
-  mkElectron = import (<nixpkgs> + "/pkgs/development/tools/electron/generic.nix") { inherit stdenv libXScrnSaver makeWrapper fetchurl wrapGAppsHook glib gtk3 unzip atomEnv libuuid at-spi2-atk at-spi2-core libdrm mesa libxkbcommon; };
-  electron = mkElectron "7.3.3" {
-    x86_64-linux = "a947228a859149bec5bd937f9f3c03eb0aa4d78cfe4dfa9aead60d3646a357f9";
-    x86_64-darwin = "e081436abef52212065f560ea6add1c0cd13d287a1b3cc76b28d2762f7651a4e";
+  mkElectron = import (<unstable> + "/pkgs/development/tools/electron/generic.nix") { inherit stdenv libXScrnSaver makeWrapper fetchurl wrapGAppsHook glib gtk3 unzip atomEnv libuuid at-spi2-atk at-spi2-core libdrm mesa libxkbcommon libxshmfence lib libappindicator-gtk3; };
+  electron = mkElectron "12.0.7" {
+    x86_64-linux = "335b77b35361fac4e2df1b7e8de5cf055e0a1a2065759cb2dd4508e8a77949fa";
+    x86_64-darwin = "c3238c9962c5ad0f9de23c9314f07e03410d096d7e9f9d91016dab2856606a9e";
   };
 
   camunda-modeler-plugins = fetchurl {
@@ -49,10 +49,10 @@ in
 
 stdenv.mkDerivation rec {
   name = "camunda-modeler-${version}";
-  version = "4.7.0";
+  version = "4.8.1";
   src = fetchurl {
     url = "https://github.com/camunda/camunda-modeler/releases/download/v${version}/camunda-modeler-${version}-linux-x64.tar.gz";
-    sha256 = "1fq4bbfzlybgab4rwsqzdrva5rf0v4wv65y5kylj5gai8j9d20in";
+    sha256 = "11ymcqf1cs3x982vg6n1ndi5i5zz9l0jbpz973wx9g3cfdmgw54l";
   };
 
   nativeBuildInputs = [ electron makeWrapper nodePackages.asar autoPatchelfHook gcc-unwrapped ];
@@ -65,9 +65,7 @@ stdenv.mkDerivation rec {
       --replace "let resourcesPaths = [" \
                 "let resourcesPaths = [\"$out/var/lib/camunda/resources\","
     find . -name "grpc_node.node"
-    if [ -f node_modules/grpc/src/node/extension_binary/electron-v7.3-linux-x64-glibc/grpc_node.node ]; then
-      autoPatchelf node_modules/grpc/src/node/extension_binary/electron-v7.3-linux-x64-glibc/grpc_node.node;
-    fi
+    autoPatchelf node_modules/grpc/src/node/extension_binary/electron-v12.0-linux-x64-glibc/grpc_node.node;
     asar pack . ../app.asar
     cd ..
     mkdir -p $out/var/lib/camunda/resources/plugins $out/bin
