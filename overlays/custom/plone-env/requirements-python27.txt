@@ -31,7 +31,7 @@ selenium==3.141.0
 setuptools-git==1.2
 setuptools-scm==3.3.3
 six==1.12.0
-urllib3==1.22
+urllib3==1.26.5
 watchdog==0.9.0
 wmctrl==0.3
 zc.buildout==2.13.4
