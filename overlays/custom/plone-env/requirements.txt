@@ -13,7 +13,7 @@ lxml==4.3.3
 pathlib==1.0.1
 pathtools==0.1.2
 pdbpp==0.10.0
-pillow==6.0.0
+pillow==8.2.0
 pyasn1==0.4.5
 pyasn1-modules==0.2.5
 pycparser==2.19
