@@ -43,5 +43,8 @@ gpgsign = true
 [gpg]
 program = gpg
 
+[init]
+defaultBranch = main
+
 [pull]
-	rebase = true
+rebase = true
