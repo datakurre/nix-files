@@ -49,10 +49,10 @@ in
 
 stdenv.mkDerivation rec {
   name = "camunda-modeler-${version}";
-  version = "4.8.1";
+  version = "4.10.0";
   src = fetchurl {
     url = "https://github.com/camunda/camunda-modeler/releases/download/v${version}/camunda-modeler-${version}-linux-x64.tar.gz";
-    sha256 = "11ymcqf1cs3x982vg6n1ndi5i5zz9l0jbpz973wx9g3cfdmgw54l";
+    sha256 = "0vlnihh2dbmkhn4vs93rwp5c7qnxz9bcfp9qryyw9l0abd2izcjv";
   };
 
   nativeBuildInputs = [ electron makeWrapper nodePackages.asar autoPatchelfHook gcc-unwrapped ];
