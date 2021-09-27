@@ -36,8 +36,8 @@ let
   };
 
   bpmn-js-token-simulation-plugin = fetchurl { 
-    url = "https://github.com/bpmn-io/bpmn-js-token-simulation-plugin/archive/b856b708362a2022180316a8b4c84ae7122bcf63.tar.gz";
-    sha256 = "0b005201c5ec346f542c6f556c2d7579a021707fd7f0701f3f7819b58a8aeb7b";
+    url = "https://github.com/bpmn-io/bpmn-js-token-simulation-plugin/archive/e95eedf67e2d14239504151ba1ae150ec8640b74.tar.gz";
+    sha256 = "0r8m042zlbflqjgm9fgr477ws6iapacfzb4wx1ggwnzlljl9rlrk";
   };
 
   dmn-testing-plugin = fetchurl { 
