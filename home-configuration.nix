@@ -71,30 +71,6 @@ in
     zest-releaser-python3
     zip
 
-    (unstable.obs-studio.override {
-      libcef = ((unstable.libcef.overrideDerivation(old: {
-        src = fetchurl {
-          name = "cef_binary_74.1.14+g50c3c5c+chromium-74.0.3729.131_linux64_minimal.tar.bz2";
-          url = "https://cef-builds.spotifycdn.com/cef_binary_74.1.14%2Bg50c3c5c%2Bchromium-74.0.3729.131_linux64.tar.bz2";
-          sha256 = "1p88vxivvg133x6p7lk88snn6884n5x10qp2g8m9lagfngdb4cb3";
-        };
-      })).override {
-        nss = unstable.nss_3_53;
-      });
-    })
-
-#   (unstable.obs-studio.override {
-#     libcef = ((unstable.libcef.overrideDerivation(old: {
-#       src = fetchurl {
-#         name = "cef_binary_75.1.14+gc81164e+chromium-75.0.3770.100_linux64.tar.bz2";
-#         url = "https://cef-builds.spotifycdn.com/cef_binary_75.1.14%2Bgc81164e%2Bchromium-75.0.3770.100_linux64.tar.bz2";
-#         sha256 = "1lfk7by8ndr9zc1qjh8i1ckzzhs838scc0c1m716qlnj4nmrn406";
-#       };
-#     })).override {
-#       nss = unstable.nss_3_53;
-#     });
-#   })
-
     (python3Packages.alot.overridePythonAttrs(old: {
       postPatch = ''
         find alot -type f -print0|xargs -0 sed -i "s|payload.encode('raw-unicode-escape')|payload.encode('utf-8')|g"
