@@ -32,12 +32,12 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ zlib apr aprutil sqlite ]
-    ++ stdenv.lib.optional httpSupport neon
-    ++ stdenv.lib.optional pythonBindings python
-    ++ stdenv.lib.optional perlBindings perl
-    ++ stdenv.lib.optional saslSupport sasl
-    ++ stdenv.lib.optional stdenv.isDarwin darwin.apple_sdk.frameworks.Security
-    ++ stdenv.lib.optional stdenv.isDarwin darwin.apple_sdk.frameworks.CoreServices;
+    ++ lib.optional httpSupport neon
+    ++ lib.optional pythonBindings python
+    ++ lib.optional perlBindings perl
+    ++ lib.optional saslSupport sasl
+    ++ lib.optional stdenv.isDarwin darwin.apple_sdk.frameworks.Security
+    ++ lib.optional stdenv.isDarwin darwin.apple_sdk.frameworks.CoreServices;
 
   configureFlags = ''
     ${if bdbSupport then "--with-berkeley-db" else "--without-berkeley-db"}
@@ -57,7 +57,7 @@ stdenv.mkDerivation rec {
 
   preBuild = ''
     makeFlagsArray=(APACHE_LIBEXECDIR=$out/modules)
-  '' + stdenv.lib.optionalString stdenv.isDarwin ''
+  '' + lib.optionalString stdenv.isDarwin ''
     substituteInPlace configure --replace "-no-cpp-precomp" ""
   '';
 
@@ -84,7 +84,7 @@ stdenv.mkDerivation rec {
   meta = {
     description = "A version control system intended to be a compelling replacement for CVS in the open source community";
     homepage = http://subversion.apache.org/;
-    maintainers = with stdenv.lib.maintainers; [ eelco lovek323 ];
-    platforms = stdenv.lib.platforms.all;
+    maintainers = with lib.maintainers; [ eelco lovek323 ];
+    platforms = lib.platforms.all;
   };
 }

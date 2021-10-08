@@ -65,12 +65,12 @@ self: super:
   findimagedupes = super.callPackage ./findimagedupes {};
 
   zest-releaser-python2 = (import ./zest-releaser/release.nix {
-    pkgs = self;
+    pkgs = import <nixos-20.09> {};
     python = "python27";
   }).targetPython.pkgs."zest.releaser";
 
   zest-releaser-python3 = (import ./zest-releaser/release.nix {
-    pkgs = self;
+    pkgs = import <nixos-20.09> {};
     python = "python37";
   }).targetPython.pkgs."zest.releaser";
 

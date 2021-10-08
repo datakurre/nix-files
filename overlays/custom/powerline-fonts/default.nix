@@ -1,4 +1,4 @@
-{ stdenv, fetchzip}:
+{ stdenv, lib, fetchzip}:
 
 fetchzip {
   name = "powerline-fonts-2018-01-02";
@@ -24,7 +24,7 @@ fetchzip {
 
   sha256 = "0irifak86gn7hawzgxcy53s22y215mxc2kjncv37h7q44jsqdqww";
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage = https://github.com/powerline/fonts;
     description = "Patched fonts for Powerline users";
     longDescription = ''

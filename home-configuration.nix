@@ -1,7 +1,7 @@
 { pkgs, prefix, ... }:
 
 let username = "atsoukka";
-    unstable = import <unstable> {};
+    unstable = import <nixos-unstable> {};
 in
 
 {
@@ -51,7 +51,7 @@ in
     notmuch
     pass
     pavucontrol
-    pulseeffects
+    pulseeffects-legacy
     pidgin-with-plugins
     psmisc
     python3Full
@@ -62,6 +62,7 @@ in
     vagrant
     vanilla-dmz
     vlc
+    virt-manager
     vokoscreen
     vpnc
     w3m

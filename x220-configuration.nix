@@ -41,7 +41,7 @@ in
   hardware.opengl.enable = true;
 
   hardware.bluetooth.enable = true;
-  hardware.bluetooth.config = {
+  hardware.bluetooth.settings = {
     General = {
       Enable = "Source,Sink,Media,Soket";
       Display = "Headset";
@@ -80,11 +80,12 @@ in
   i18n.defaultLocale = "fi_FI.UTF-8";
 
   fonts.fontconfig.enable = true;
-  fonts.enableFontDir = true;
+  fonts.fontDir.enable = true;
   fonts.enableGhostscriptFonts = true;
 
   sound.mediaKeys.enable = true;
   powerManagement.enable = true;
+  powerManagement.cpuFreqGovernor = "performance";
 
   virtualisation.docker.enable = true;
   virtualisation.docker.extraOptions = "--experimental";
@@ -92,7 +93,7 @@ in
   virtualisation.virtualbox.host.enable = true;
   virtualisation.libvirtd.enable = true;
 
-  services.gnome3.at-spi2-core.enable = true;
+  services.gnome.at-spi2-core.enable = true;
   services.gvfs.enable = true;
 
   programs.fuse.userAllowOther = true;
@@ -183,6 +184,7 @@ in
     "vboxusers"
     "docker"
     "qemu"
+    "libvirtd"
   ];
   users.users.datakurre.uid = 1000;
 
@@ -231,5 +233,5 @@ in
     # ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", ENV{DEVTYPE}=="usb_device", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
   '';
 
-  system.stateVersion = "20.09";
+  system.stateVersion = "21.05";
 }

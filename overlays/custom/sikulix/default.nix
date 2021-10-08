@@ -56,7 +56,7 @@ EOF
       --prefix CLASSPATH : "${opencv}/share/OpenCV/java/opencv-348.jar"
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Sikuli automates anything you see on the screen.";
     homepage = http://www.sikulix.com/;
     license = with licenses; [ mit ];
