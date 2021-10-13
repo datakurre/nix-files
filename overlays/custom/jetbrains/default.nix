@@ -228,12 +228,12 @@ in
 
   datagrip = buildDataGrip rec {
     name = "datagrip-${version}";
-    version = "2021.2.3"; /* updated by script */
+    version = "2021.2.4"; /* updated by script */
     description = "Your Swiss Army Knife for Databases and SQL";
     license = lib.licenses.unfree;
     src = fetchurl {
       url = "https://download.jetbrains.com/datagrip/${name}.tar.gz";
-      sha256 = "083vg1004wr8vbmmphygsrbnmcw02b5v3awqlq90mbfy96znr1ba"; /* updated by script */
+      sha256 = "1vj9ihzw07bh30ngy8mj027ljq9zzd904k61f8jbfpw75vknh8f6"; /* updated by script */
     };
     wmClass = "jetbrains-datagrip";
     update-channel = "DataGrip RELEASE";
@@ -280,13 +280,13 @@ in
 
   mps = buildMps rec {
     name = "mps-${version}";
-    version = "2021.2"; /* updated by script */
+    version = "2021.2.1"; /* updated by script */
     versionMajorMinor = "2021.2"; /* updated by script */
     description = "Create your own domain-specific language";
     license = lib.licenses.asl20;
     src = fetchurl {
       url = "https://download.jetbrains.com/mps/${versionMajorMinor}/MPS-${version}.tar.gz";
-      sha256 = "15kahhikxw2dc32703j25pz8clsj8c7p6qv938wl43lv9zxs37d5"; /* updated by script */
+      sha256 = "1yawjc5xwga1mmlsl3068ml532941mq08i9ji3dhj1nwdkyav2jz"; /* updated by script */
     };
     wmClass = "jetbrains-mps";
     update-channel = "MPS RELEASE";

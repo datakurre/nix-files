@@ -45,6 +45,11 @@ let
     sha256 = "4a48bfeeac46baaa5731ae2472c564d6c154bf5ca7716b059d0ce1b47ecaa26d";
   };
 
+  excel-import-plugin = fetchurl { 
+    url = "https://github.com/pinussilvestrus/camunda-modeler-excel-import-plugin/archive/19e3975a10a382caa80bcf62fcca28b4f0acb404.tar.gz";
+    sha256 = "0cdj39bxakxri8fxfhbqf57b1ylsxrigil22w84kabf2a116931p";
+  };
+
 in
 
 stdenv.mkDerivation rec {
@@ -84,6 +89,7 @@ stdenv.mkDerivation rec {
     tar xzvf ${camunda-modeler-tooltip-plugin}
     tar xzvf ${camunda-modeler-property-info-plugin}
     tar xzvf ${camunda-modeler-plugins}
+    tar xzvf ${excel-import-plugin}
     mv camunda-modeler-plugins*/camunda-transaction-boundaries-plugin .
     rm -r camunda-modeler-plugins*
     makeWrapper ${electron}/bin/electron $out/bin/camunda-modeler \

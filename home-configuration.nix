@@ -57,7 +57,7 @@ in
     python3Full
     sass
     signal-desktop
-    teams
+    unstable.teams
     unzip
     vagrant
     vanilla-dmz

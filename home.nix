@@ -6,15 +6,30 @@ let username = "atsoukka";
 
     prefix = "/home/atsoukka";
 
+    previous = import "/home/atsoukka/.nix-defexpr/channels/nixpkgs-20.09" {};
+    current = import "/home/atsoukka/.nix-defexpr/channels/nixpkgs-21.05" {};
     unstable = import "/home/atsoukka/.nix-defexpr/channels/nixpkgs-unstable" {};
 
-    extensions = (with unstable.vscode-extensions; [
+    extensions = (with current.vscode-extensions; [
       ms-python.python
       ms-vsliveshare.vsliveshare
       vscodevim.vim
+      (current.vscode-utils.buildVscodeMarketplaceExtension rec {
+        mktplcRef = {
+          name = "GitHub-Copilot";
+          publisher = "ms-vscode"; 
+          version = "1.1.1959";
+        };
+        vsix = ./GitHub.copilot-1.1.1959.zip;
+#       vsix = pkgs.fetchurl {
+#         name = "GitHub.copilot-1.1.1959.vsix";
+#         url = "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/1.1.1959/vspackage";
+#         sha256 = "0ee6096f5973a884c4a62b44172c9702cec7e4d07da37c97852055dc243462c2";
+#       };
+      })
     ]);
 
-    vscode-with-extensions = unstable.vscode-with-extensions.override {
+    vscode-with-extensions = current.vscode-with-extensions.override {
       vscodeExtensions = extensions;
     };
 
@@ -24,7 +39,7 @@ in
 
   programs.home-manager.enable = true;
   programs.direnv.enable = true;
-  programs.direnv.enableNixDirenvIntegration = true;
+  programs.direnv.nix-direnv.enable = true;
 
   fonts.fontconfig.enable = pkgs.lib.mkForce true;
 
@@ -33,7 +48,6 @@ in
     afew
     autorandr
     bitwarden-cli
-    cachix
     camunda-modeler
     cookiecutter
     docker_compose
@@ -47,8 +61,8 @@ in
     htop
     irssi
     isync
-    jetbrains.idea-community
-    jetbrains.pycharm-professional
+    previous.jetbrains.idea-community
+    previous.jetbrains.pycharm-professional
     jq
     lessc
     lynx
@@ -65,9 +79,9 @@ in
     python3Full
     sass
     signal-desktop
-    teams
+    previous.teams
     unzip
-    vagrant
+#   vagrant
     vanilla-dmz
     vlc
     vokoscreen
@@ -75,21 +89,22 @@ in
     w3m
     xlockmore
     yarn
-#   zest-releaser-python2
-#   zest-releaser-python3
+    previous.zest-releaser-python2
+    previous.zest-releaser-python3
+    unstable.libreoffice
     zip
 
-#   (unstable.obs-studio.override {
-#     libcef = ((unstable.libcef.overrideDerivation(old: {
+    (unstable.obs-studio.override {
+      libcef = ((unstable.libcef.overrideDerivation(old: {
 #       src = fetchurl {
 #         name = "cef_binary_74.1.14+g50c3c5c+chromium-74.0.3729.131_linux64_minimal.tar.bz2";
 #         url = "https://cef-builds.spotifycdn.com/cef_binary_74.1.14%2Bg50c3c5c%2Bchromium-74.0.3729.131_linux64.tar.bz2";
 #         sha256 = "1p88vxivvg133x6p7lk88snn6884n5x10qp2g8m9lagfngdb4cb3";
 #       };
-#     })).override {
-#       nss = unstable.nss_3_53;
-#     });
-#   })
+      })).override {
+        nss = unstable.nss_3_53;
+      });
+    })
 
 #   (unstable.obs-studio.override {
 #     libcef = ((unstable.libcef.overrideDerivation(old: {
