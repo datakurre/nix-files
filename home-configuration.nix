@@ -1,7 +1,10 @@
 { pkgs, prefix, ... }:
 
-let username = "atsoukka";
-    unstable = import <nixos-unstable> {};
+let
+
+  username = "atsoukka";
+  unstable = import <nixos-unstable> {};
+
 in
 
 {
@@ -16,6 +19,7 @@ in
   fonts.fontconfig.enable = pkgs.lib.mkForce true;
 
   home.packages = with pkgs; [
+    rcc
     acpi
     afew
     autorandr
@@ -54,7 +58,18 @@ in
     pulseeffects-legacy
     pidgin-with-plugins
     psmisc
-    python3Full
+#   (python3Full.withPackages(ps: [
+#     (ps.robotframework.overridePythonAttrs(old: rec {
+#       version = "4.1.1";
+#       src =  ps.fetchPypi {
+#         pname = "robotframework";
+#         extension = "zip";
+#         inherit version;
+#         sha256 = "0ddd9dzrn9gi29w0caab78zs6mx06wbf6f99g0xrpymjfz0q8gv6";
+#       };
+#       doCheck = false;
+#     }))
+#   ]))
     sass
     signal-desktop
     unstable.teams
@@ -140,6 +155,47 @@ in
     apply = { whitespace = "nowarn"; };
     core = { autocrlf = "input"; };
   };
+
+  programs.vscode.enable = true;
+  programs.vscode.package = (pkgs.vscode-fhsWithPackages (ps: with ps; [
+    (ps.python3Full.withPackages(ps: [
+      (ps.robotframework.overridePythonAttrs(old: rec {
+        version = "4.1.1";
+        src =  ps.fetchPypi {
+          pname = "robotframework";
+          extension = "zip";
+          inherit version;
+          sha256 = "0ddd9dzrn9gi29w0caab78zs6mx06wbf6f99g0xrpymjfz0q8gv6";
+        };
+        doCheck = false;
+      }))
+    ]))
+  ]));
+  programs.vscode.extensions = (with pkgs.vscode-extensions; [
+    ms-python.python
+    ms-vsliveshare.vsliveshare
+    vscodevim.vim
+    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
+      mktplcRef = {
+        name = "robotframework-lsp";
+        publisher = "robocorp";
+        version = "0.23.2";
+        sha256 = "1lcgnrspqh1fkp9kzslfmcmvvvrwjbgvna1qd0dba4qpskaj1ggg";
+      };
+    })
+    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
+      mktplcRef = {
+        name = "robocorp-code";
+        publisher = "robocorp";
+        version = "0.15.0";
+        sha256 = "140m8gqwc63b3fdyy44kzwjq7dvj05ivgcralhqgpx1rckp4i2hh";
+      };
+      postInstall = ''
+        mkdir -p $out/share/vscode/extensions/robocorp.robocorp-code/bin
+        ln -s ${pkgs.rcc}/bin/rcc $out/share/vscode/extensions/robocorp.robocorp-code/bin
+      '';
+    })
+  ]);
 
   programs.bash.enable = true;
   programs.bash.shellAliases = {

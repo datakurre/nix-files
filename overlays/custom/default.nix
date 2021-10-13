@@ -11,6 +11,11 @@ self: super:
 
   aspellDicts = super.recurseIntoAttrs (super.callPackages ./aspell/dictionaries.nix {});
 
+  rcc = let
+    unstable = import <nixos-unstable> {};
+  in
+    super.callPackage ./rcc { micromamba = unstable.micromamba; };
+
   camunda-modeler = super.callPackage ./camunda-modeler {};
 
   zeebe-modeler = super.callPackage ./zeebe-modeler {};
