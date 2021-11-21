@@ -2,7 +2,7 @@
 
 let rcc = buildGoPackage rec {
   name = "rcc-${version}";
-  version = "v11.1.6";
+  version = "v11.4.3";
   goPackagePath = "github.com/robocorp/rcc";
   src = (import ./nix/sources.nix).rcc;
   nativeBuildInputs = [ go-bindata rake zip ];
