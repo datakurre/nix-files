@@ -58,18 +58,6 @@ in
     pulseeffects-legacy
     pidgin-with-plugins
     psmisc
-#   (python3Full.withPackages(ps: [
-#     (ps.robotframework.overridePythonAttrs(old: rec {
-#       version = "4.1.1";
-#       src =  ps.fetchPypi {
-#         pname = "robotframework";
-#         extension = "zip";
-#         inherit version;
-#         sha256 = "0ddd9dzrn9gi29w0caab78zs6mx06wbf6f99g0xrpymjfz0q8gv6";
-#       };
-#       doCheck = false;
-#     }))
-#   ]))
     sass
     signal-desktop
     unstable.teams
@@ -179,16 +167,16 @@ in
       mktplcRef = {
         name = "robotframework-lsp";
         publisher = "robocorp";
-        version = "0.23.2";
-        sha256 = "1lcgnrspqh1fkp9kzslfmcmvvvrwjbgvna1qd0dba4qpskaj1ggg";
+        version = "0.29.0";
+        sha256 = "1waz2kkzy10rjwxpw9wdicm0bz5a10jpy06cwd9f95id1ppn3l0z";
       };
     })
     (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
       mktplcRef = {
         name = "robocorp-code";
         publisher = "robocorp";
-        version = "0.15.0";
-        sha256 = "140m8gqwc63b3fdyy44kzwjq7dvj05ivgcralhqgpx1rckp4i2hh";
+        version = "0.20.0";
+        sha256 = "09dl08fb0qrnnna4x5d6z3jmj0kkl6gzkjwj12bi7v7khwm0r92a";
       };
       postInstall = ''
         mkdir -p $out/share/vscode/extensions/robocorp.robocorp-code/bin
