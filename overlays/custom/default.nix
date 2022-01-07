@@ -1,3 +1,27 @@
+let
+
+  sources = import ./nix/sources.nix;
+  nixpkgs = sources."nixpkgs-21.11";
+
+  config = let pkgs = import sources."nixpkgs-21.11" {}; in {
+    allowBroken = true;
+    allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+      "code"
+      "corefonts"
+      "font-bh-100dpi"
+      "font-bh-lucidatypewriter-100dpi"
+      "font-bh-lucidatypewriter-75dpi"
+      "pycharm-professional"
+      "teams"
+      "vscode"
+      "vscode-extension-ms-vsliveshare-vsliveshare"
+    ];
+  };
+
+  unstable = import sources."nixpkgs-unstable" { inherit config; };
+
+in
+
 self: super:
 
 {
@@ -9,23 +33,11 @@ self: super:
     '';
   });
 
-  aspellDicts = super.recurseIntoAttrs (super.callPackages ./aspell/dictionaries.nix {});
-
-  rcc = let
-    unstable = import <nixos-unstable> {};
-  in
-    super.callPackage ./rcc { micromamba = unstable.micromamba; };
-
-  camunda-modeler = super.callPackage ./camunda-modeler {};
-
-  zeebe-modeler = super.callPackage ./zeebe-modeler {};
-
-  subversion_1_7_14 = super.callPackage ./subversion {
-    sqlite = super.callPackage ./subversion/sqlite.nix {};
-  };
-
-  fuzzylite = super.callPackage ./fuzzylite {};
-  vcmi = super.callPackage ./vcmi {};
+  alot = (super.python3Packages.alot.overridePythonAttrs(old: {
+    postPatch = ''
+      find alot -type f -print0|xargs -0 sed -i "s|payload.encode('raw-unicode-escape')|payload.encode('utf-8')|g"
+    '';
+  }));
 
   gitlog = super.stdenv.mkDerivation {
     name = "gitlog";
@@ -57,49 +69,8 @@ self: super:
     '';
   };
 
-  jfrog-cli = super.callPackage ./jfrog-cli {};
-
-  jupyter-env = super.callPackage ./jupyter-env {};
-
-  sikulix = super.callPackage ./sikulix {};
-
-  robotframework-sikulilibrary = super.callPackage ./sikulilibrary {
-    pythonPackages = self.python3Packages;
-  };
-
-  findimagedupes = super.callPackage ./findimagedupes {};
-
-  zest-releaser-python2 = (import ./zest-releaser/release.nix {
-    pkgs = import <nixos-20.09> {};
-    python = "python27";
-  }).targetPython.pkgs."zest.releaser";
-
-  zest-releaser-python3 = (import ./zest-releaser/release.nix {
-    pkgs = import <nixos-20.09> {};
-    python = "python37";
-  }).targetPython.pkgs."zest.releaser";
-
-  gmime = super.gmime.overrideAttrs(old: {
-    propagatedBuildInputs = old.propagatedBuildInputs ++ [ self.gpgme.dev ];
-  });
-
-  jetbrains = (super.recurseIntoAttrs (super.callPackages ./jetbrains {
-    jdk = self.jdk11;
-  }));
-
-  pidgin-with-plugins = super.pidgin-with-plugins.override {
-    plugins = [ self.pidginsipe ];
-  };
-
-  plone-env = super.callPackage ./plone-env {};
-  plone6-env = super.callPackage ./plone6-env {};
-
-  plonetheme-upload = (super.callPackage ./plonetheme-upload {}).package;
-
-  powerline-fonts = super.callPackage ./powerline-fonts {};
-
   inkscapeFull = let
-    myPython2Env = self.python2.withPackages(ps: with ps; [
+    myPython2Env = super.python2.withPackages(ps: with ps; [
       numpy
       lxml
       (buildPythonPackage rec {
@@ -108,7 +79,6 @@ self: super:
         version = "0.36";
         src = super.fetchurl {
           url = "https://pypi.python.org/packages/1a/9a/7e9f7a40241c1d2659655a5f10ef3d9a84b18365c845f030825d709d59b1/scour-0.36.tar.gz";
-          # url = "mirror://pypi/r/${pname}/${name}.tar.gz";
           sha256 = "0aizn6yk1nqqz0gqj70hkynf9zgqnab552aix4svy0wygcwlksjb";
         };
         propagatedBuildInputs = [
@@ -122,9 +92,49 @@ self: super:
       patchShebangs fix-roff-punct
       # Python is used at run-time to execute scripts, e.g., those from
       # the "Effects" menu.
-      substituteInPlace src/extension/implementation/script.cpp \
-        --replace '"python-interpreter", "python"' '"python-interpreter", "${myPython2Env}/bin/python"'
+        substituteInPlace src/extension/implementation/script.cpp \
+          --replace '"python-interpreter", "python"' '"python-interpreter", "${myPython2Env}/bin/python"'
     '';
     buildInputs = old.buildInputs ++ [ myPython2Env ];
   });
+
+  xterm = (super.xterm.overrideDerivation(old: {
+    # fixes issue where locales were broken on non NixOS host
+    postInstall = ''
+      for prog in $out/bin/*; do
+        wrapProgram $prog --set LOCALE_ARCHIVE ${super.glibcLocales}/lib/locale/locale-archive
+      done
+    '';
+  }));
+
+  aspellDicts = super.recurseIntoAttrs (super.callPackages ./super.aspell/dictionaries.nix {});
+  camunda-modeler = super.callPackage ./pkgs/camunda-modeler { inherit nixpkgs; };
+  findimagedupes = super.callPackage ./pkgs/findimagedupes {};
+  fuzzylite = super.callPackage ./pkgs/fuzzylite {};
+  jfrog-cli = super.callPackage ./pkgs/jfrog-cli {};
+  jupyter-env = super.callPackage ./pkgs/jupyter-env {};
+  micromamba = (import sources."nixpkgs-21.11" {}).micromamba;
+  mvn2nix = (super.callPackage ./pkgs/mvn2nix { inherit nixpkgs; }).mvn2nix;
+  node2nix = super.callPackage ./pkgs/node2nix { inherit nixpkgs; };
+  plone-env = super.callPackage ./pkgs/plone-env {};
+  plone6-env = super.callPackage ./pkgs/plone6-env {};
+  plonetheme-upload = (super.callPackage ./pkgs/plonetheme-upload {}).package;
+  poetry2nix = super.callPackage ./pkgs/poetry2nix { inherit nixpkgs; };
+  rcc = super.callPackage ./pkgs/rcc {};
+  robotframework-sikulilibrary = super.callPackage ./pkgs/sikulilibrary { pythonPackages = super.python3Packages; };
+  sikulix = super.callPackage ./pkgs/sikulix {};
+  vcmi = super.callPackage ./pkgs/vcmi {};
+  zeebe-modeler = super.callPackage ./pkgs/zeebe-modeler { inherit nixpkgs; };
+  zest-releaser-python2 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python27"; }).targetPython.pkgs."zest.releaser";
+  zest-releaser-python3 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python37"; }).targetPython.pkgs."zest.releaser";
+
+  inherit (unstable)
+  jetbrains
+  obs-studio
+  teams
+  vscode
+  vscode-extensions
+  vscode-fhsWithPackages
+  vscode-utils
+  ;
 }

@@ -1,11 +1,4 @@
-{ pkgs, prefix, ... }:
-
-let
-
-  username = "atsoukka";
-  unstable = import <nixos-unstable> {};
-
-in
+{ pkgs, user ? { name = "atsoukka"; description = "Asko Soukka"; home = "/home/atsoukka"; }}:
 
 {
   imports = [
@@ -14,12 +7,9 @@ in
 
   programs.home-manager.enable = true;
   programs.direnv.enable = true;
-  programs.direnv.enableNixDirenvIntegration = true;
-
-  fonts.fontconfig.enable = pkgs.lib.mkForce true;
+  programs.direnv.nix-direnv.enable = true;
 
   home.packages = with pkgs; [
-    rcc
     acpi
     afew
     autorandr
@@ -27,6 +17,7 @@ in
     camunda-modeler
     chromium
     cookiecutter
+    curl
     docker_compose
     evince
     findimagedupes
@@ -44,51 +35,31 @@ in
     jetbrains.idea-community
     jetbrains.pycharm-professional
     jq
-    lastpass-cli
-    lessc
     lynx
     msmtp
     ncmpcpp
-    nodejs-14_x
     networkmanager_vpnc
     networkmanagerapplet
     notmuch
+    obs-studio
+    openshot-qt
     pass
-    pavucontrol
-    pulseeffects-legacy
-    pidgin-with-plugins
     psmisc
-    sass
+    rcc
     signal-desktop
-    unstable.teams
+    teams
+    unzip
     unzip
     vagrant
-    vanilla-dmz
-    vlc
     virt-manager
+    vlc
     vokoscreen
     vpnc
     w3m
     xlockmore
-    yarn
     zest-releaser-python2
     zest-releaser-python3
     zip
-
-    (python3Packages.alot.overridePythonAttrs(old: {
-      postPatch = ''
-        find alot -type f -print0|xargs -0 sed -i "s|payload.encode('raw-unicode-escape')|payload.encode('utf-8')|g"
-      '';
-    }))
-
-    (xterm.overrideDerivation(old: {
-      # fixes issue where locales were broken on non NixOS host
-      postInstall = ''
-        for prog in $out/bin/*; do
-          wrapProgram $prog --set LOCALE_ARCHIVE ${pkgs.glibcLocales}/lib/locale/locale-archive
-        done
-      '';
-    }))
   ] ++ [
     bakoma_ttf
     cantarell_fonts
@@ -105,9 +76,9 @@ in
 
   home.file.".buildout/default.cfg".text = ''
     [buildout]
-    download-cache = ${prefix}/.cache/download-cache
-    eggs-directory = ${prefix}/.cache/eggs-directory
-    extends-cache = ${prefix}/.cache/extends-cache
+    download-cache = ${user.home}/.cache/download-cache
+    eggs-directory = ${user.home}/.cache/eggs-directory
+    extends-cache = ${user.home}/.cache/extends-cache
   '';
   home.file.".docutils.conf".source = ./dotfiles/docutils.conf;
   home.file.".gitconfig".source = ./dotfiles/gitconfig;
@@ -121,11 +92,11 @@ in
   home.file.".irssi/secrets".source = ./dotfiles/irssi.secrets;
   home.file.".irssi/startup".source = ./dotfiles/irssi.startup;
   home.file.".config/afew/config".source = ./dotfiles/afew.conf;
-  home.file.".config/alot/config".text = import ./dotfiles/alot.nix { inherit prefix; };
+  home.file.".config/alot/config".text = import ./dotfiles/alot.nix { prefix = user.home; };
   home.file.".config/alot/signature-jyu".source = ./dotfiles/alot.signature-jyu;
   home.file.".config/alot/themes/solarized_dark".source = ./dotfiles/alot.theme;
-  home.file.".notmuch-iki".text = import ./dotfiles/notmuch-iki.nix { inherit prefix; };
-  home.file.".notmuch-jyu".text = import ./dotfiles/notmuch-jyu.nix { inherit prefix; };
+  home.file.".notmuch-iki".text = import ./dotfiles/notmuch-iki.nix { prefix = user.home; };
+  home.file.".notmuch-jyu".text = import ./dotfiles/notmuch-jyu.nix { prefix = user.home; };
   home.file.".mail/iki/.notmuch/hooks/pre-new".source = ./dotfiles/notmuch-iki-pre-new;
   home.file.".mail/iki/.notmuch/hooks/pre-new".executable = true;
   home.file.".mail/iki/.notmuch/hooks/post-new".source = ./dotfiles/notmuch-iki-post-new;
@@ -187,10 +158,11 @@ in
 
   programs.bash.enable = true;
   programs.bash.shellAliases = {
-    notmuch-iki = "EDITOR=vim notmuch --config=${prefix}/.notmuch-iki";
-    notmuch-jyu = "EDITOR=vim notmuch --config=${prefix}/.notmuch-jyu";
-    alot-iki = "EDITOR=vim alot -n ${prefix}/.notmuch-iki";
-    alot-jyu = "EDITOR=vim alot -n ${prefix}/.notmuch-jyu";
+    vi = "vim";
+    notmuch-iki = "EDITOR=vim notmuch --config=${user.home}/.notmuch-iki";
+    notmuch-jyu = "EDITOR=vim notmuch --config=${user.home}/.notmuch-jyu";
+    alot-iki = "EDITOR=vim alot -n ${user.home}/.notmuch-iki";
+    alot-jyu = "EDITOR=vim alot -n ${user.home}/.notmuch-jyu";
     tls-fingerprint= "openssl s_client -connect $ -starttls smtp < /dev/null | openssl x509 -fingerprint -noout | cut -d'=' -f2";
   };
   programs.bash.bashrcExtra = ''
@@ -232,10 +204,10 @@ in
   '';
   programs.ssh.matchBlocks = {
     "*.jyu.fi" = {
-      user = builtins.substring 0 ((builtins.stringLength username) - 1) username + "_";
+      user = builtins.substring 0 ((builtins.stringLength user.name) - 1) user.name + "_";
     };
     "jalava.cc.jyu.fi" = {
-      user = username;
+      user = user.name;
     };
   };
   services.gpg-agent.enable = true;
@@ -245,8 +217,8 @@ in
   services.gpg-agent.enableScDaemon = true;
 
   services.redshift.enable = true;
-  services.redshift.brightness.day = "1.0";
-  services.redshift.brightness.night = "0.7";
+  services.redshift.settings.redshift.brightness-day = "1.0";
+  services.redshift.settings.redshift.brightness-night = "0.7";
   services.redshift.latitude = "62.1435";
   services.redshift.longitude = "25.4449";
 

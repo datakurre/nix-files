@@ -1,5 +1,3 @@
 /configuration.nix
-/overlays/mrvandalo
-/private
 /.idea
 *.swp
