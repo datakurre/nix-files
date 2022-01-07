@@ -8,6 +8,7 @@ let
     allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
       "code"
       "corefonts"
+      "factorio-alpha"
       "font-bh-100dpi"
       "font-bh-lucidatypewriter-100dpi"
       "font-bh-lucidatypewriter-75dpi"
@@ -129,6 +130,7 @@ self: super:
   zest-releaser-python3 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python37"; }).targetPython.pkgs."zest.releaser";
 
   inherit (unstable)
+  factorio
   jetbrains
   obs-studio
   teams
