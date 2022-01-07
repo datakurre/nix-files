@@ -23,7 +23,7 @@ six==1.14.0
 toml==0.10.0
 tqdm==4.43.0
 twine==1.15.0
-urllib3==1.25.8
+urllib3==1.26.5
 webencodings==0.5.1
 zest.pocompile==1.5.0
 zest.releaser==6.20.1
