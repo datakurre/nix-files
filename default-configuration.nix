@@ -33,6 +33,9 @@ in
       "docker0"
       "vboxnet0"
     ];
+    networking.firewall.allowedTCPPorts = [
+      4444  # obs-websocket
+    ];
 
     console.font = "Lat2-Terminus16";
     console.keyMap = "fi";
@@ -160,6 +163,9 @@ in
     ];
     nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
       "corefonts"
+    ];
+    nixpkgs.config.permittedInsecurePackages = [
+       "electron-12.0.7"  # Electron version 12.0.7 is EOL
     ];
 
     environment.shellAliases = {

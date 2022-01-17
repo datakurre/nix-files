@@ -41,7 +41,6 @@
     networkmanager_vpnc
     networkmanagerapplet
     notmuch
-    obs-studio
     openshot-qt
     pass
     psmisc
@@ -103,6 +102,12 @@
   home.file.".mail/iki/.notmuch/hooks/post-new".executable = true;
   home.file.".mail/jyu/.notmuch/hooks/pre-new".source = ./dotfiles/notmuch-jyu-pre-new;
   home.file.".mail/jyu/.notmuch/hooks/pre-new".executable = true;
+
+  programs.obs-studio.enable = true;
+  programs.obs-studio.plugins = with pkgs.obs-studio-plugins; [
+    obs-websocket
+  ];
+
 
   programs.git.enable = true;
   programs.git.userName = "Asko Soukka";
