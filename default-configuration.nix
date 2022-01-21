@@ -52,6 +52,7 @@ in
       gnome3.sushi
       xorg.xmodmap
       vim
+      spice-gtk
     ];
 
     services.dbus.packages = with pkgs; [ gnome3.sushi ];
@@ -103,6 +104,7 @@ in
     ''];
 
     programs.adb.enable = true;
+    programs.dconf.enable = true;
     programs.fuse.userAllowOther = true;
     programs.gnupg.agent.enable = true;
     programs.gnupg.agent.enableSSHSupport = true;
