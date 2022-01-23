@@ -7,8 +7,8 @@ import Graphics.X11.Xlib
 import XMonad.Prompt
 import XMonad.Prompt.Shell
 import XMonad.Prompt.XMonad
-import XMonad.Layout.Dwindle
 import XMonad.Layout.GridVariants
+import XMonad.Layout.ResizableTile
 import XMonad.Layout.ThreeColumns
 import XMonad.Hooks.EwmhDesktops
 import System.Posix.Env (putEnv)
@@ -27,6 +27,10 @@ main = do
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList
   [ ((modm .|. shiftMask, xK_x), shellPrompt myXPConfig)
+  , ((modm .|. shiftMask, xK_h), sendMessage MirrorShrink)
+  , ((modm .|. shiftMask, xK_l), sendMessage MirrorExpand)
+  , ((modm .|. shiftMask, xK_a), sendMessage (IncMasterN 1))
+  , ((modm .|. shiftMask, xK_z), sendMessage (IncMasterN (-1)))
   ]
 
 -- XPConfig options:
@@ -35,12 +39,11 @@ myXPConfig = def
   , height = 32
   }
 
-myLayout = tiled ||| threeCol ||| split ||| spiral
+myLayout = tall ||| threeCol ||| split
   where
-    tiled = Tall nmaster delta ratio
+    tall = ResizableTall nmaster delta ratio []
     threeCol = ThreeCol nmaster delta ratio
-    split = Mirror (SplitGrid XMonad.Layout.GridVariants.L 3 1 (3/4) (3/4) (0.5/100))
-    spiral = Spiral XMonad.Layout.Dwindle.L CW 1.1 1.1
+    split = Mirror (SplitGrid XMonad.Layout.GridVariants.L 3 1 (3/4) (3/4) delta)
     nmaster = 1
     ratio = 1/2
-    delta = 2/100
+    delta = 1/100
