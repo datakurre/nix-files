@@ -108,7 +108,6 @@
     obs-websocket
   ];
 
-
   programs.git.enable = true;
   programs.git.userName = "Asko Soukka";
   programs.git.userEmail = "asko.soukka@iki.fi";
@@ -122,6 +121,21 @@
 
   programs.vscode.enable = true;
   programs.vscode.package = (pkgs.vscode-fhsWithPackages (ps: with ps; [
+    elmPackages.elm
+    elmPackages.elm-analyse
+    elmPackages.elm-coverage
+    elmPackages.elm-doc-preview
+    elmPackages.elm-format
+    elmPackages.elm-instrument
+    elmPackages.elm-json
+    elmPackages.elm-language-server
+    elmPackages.elm-live
+    elmPackages.elm-optimize-level-2
+    elmPackages.elm-review
+    elmPackages.elm-test
+    elmPackages.elm-upgrade
+    elmPackages.elm-verify-examples
+    elmPackages.elm-xref
     (ps.python3Full.withPackages(ps: [
       (ps.robotframework.overridePythonAttrs(old: rec {
         version = "4.1.1";
@@ -139,6 +153,30 @@
     ms-python.python
     ms-vsliveshare.vsliveshare
     vscodevim.vim
+    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
+      mktplcRef = {
+        name = "test-adapter-converter";
+        publisher = "ms-vscode";
+        version = "0.1.5";
+        sha256 = "11x29njy746mjbv58s7cis2fj6xnmjqc0vn3nb4vv53skxcbhn4y";
+      };
+    })
+    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
+      mktplcRef = {
+        name = "vscode-test-explorer";
+        publisher = "hbenl";
+        version = "2.21.1";
+        sha256 = "022lnkq278ic0h9ggpqcwb3x3ivpcqjimhgirixznq0zvwyrwz3w";
+      };
+    })
+    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
+      mktplcRef = {
+        name = "elm-ls-vscode";
+        publisher = "Elmtooling";
+        version = "2.4.1";
+        sha256 = "1idhsrl9w8sc0qk58dvmyyjbmfznk3f4gz2zl6s9ksyz9d06vfrd";
+      };
+    })
     (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
       mktplcRef = {
         name = "robotframework-lsp";
