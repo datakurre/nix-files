@@ -22,7 +22,7 @@ let
 
       meta = {
         description = "Aspell dictionary for ${fullName}";
-        platforms = lib.platforms.all;
+        platforms = stdenv.lib.platforms.all;
       };
     };
 

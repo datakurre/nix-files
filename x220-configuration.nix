@@ -97,6 +97,7 @@ in
   services.gvfs.enable = true;
 
   programs.fuse.userAllowOther = true;
+  programs.adb.enable = true;
 
   environment.systemPackages = [
     pkgs.gnome3.nautilus
@@ -185,6 +186,7 @@ in
     "docker"
     "qemu"
     "libvirtd"
+    "adbusers"
   ];
   users.users.datakurre.uid = 1000;
 
@@ -226,7 +228,10 @@ in
     "vi" = "vim";
   };
 
-  services.udev.packages = [ pkgs.gnome3.gnome_settings_daemon ];
+  services.udev.packages = [
+    pkgs.gnome3.gnome_settings_daemon
+    pkgs.android-udev-rules
+  ];
   services.udev.extraRules = ''
     # Yubico YubiKey
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", TAG+="uaccess", MODE="0660", GROUP="wheel"
