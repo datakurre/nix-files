@@ -36,6 +36,9 @@ in
     networking.firewall.allowedTCPPorts = [
       4444  # obs-websocket
     ];
+    networking.firewall.allowedTCPPortRanges = [
+      { from = 5990; to = 5999; }  # vscode
+    ];
 
     console.font = "Lat2-Terminus16";
     console.keyMap = "fi";
@@ -165,6 +168,7 @@ in
     ];
     nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
       "corefonts"
+      "Oracle_VM_VirtualBox_Extension_Pack"
     ];
     nixpkgs.config.permittedInsecurePackages = [
        "electron-12.0.7"  # Electron version 12.0.7 is EOL
@@ -187,6 +191,7 @@ in
     virtualisation.docker.enable = true;
     virtualisation.docker.extraOptions = "--experimental";
     virtualisation.virtualbox.host.enable = true;
+    virtualisation.virtualbox.host.enableExtensionPack = true;
     virtualisation.libvirtd.enable = true;
   };
 }

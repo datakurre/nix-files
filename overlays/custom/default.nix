@@ -133,6 +133,7 @@ self: super:
   factorio
   jetbrains
   obs-studio
+  openshot-qt
   teams
   vscode
   vscode-extensions
