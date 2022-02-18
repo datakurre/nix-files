@@ -63,6 +63,11 @@ in
     services.gvfs.enable = true;
     services.pcscd.enable = true;
 
+    hardware.pulseaudio.enable = true;
+    hardware.pulseaudio.support32Bit = true;
+    hardware.pulseaudio.package = pkgs.pulseaudioFull;
+    hardware.pulseaudio.configFile = ./dotfiles/pulseaudio.conf;
+
     services.xserver.desktopManager.xterm.enable = false;
     services.xserver.enable = true;
     services.xserver.enableTCP = false;

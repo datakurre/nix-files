@@ -43,6 +43,7 @@
     notmuch
     openshot-qt
     pass
+    pavucontrol
     psmisc
     rcc
     signal-desktop
