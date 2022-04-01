@@ -19,45 +19,38 @@
   # Clean tmp on reboot
   boot.cleanTmpDir = true;
 
-  # Minimal list of modules to use the EFI system partition and the YubiKey
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ] ++ [ "vfat" "nls_cp437" "nls_iso8859-1" ];
-
-  # Support LUKS with Yubikey
+  # Minimal list of modules to use the EFI system partition
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
-  boot.initrd.luks.yubikeySupport = true;
 
   # Configuration to use your Luks device
+  boot.initrd.luks.fido2Support = true;
   boot.initrd.luks.devices = {
     "nixos-enc" = {
       device = "/dev/nvme0n1p1";
       preLVM = true; # You may want to set this to false if you need to start a network service first
-      yubikey = {
-        slot = 2;
-        twoFactor = false; # Set to false if you did not set up a user password.
-        storage = {
-          device = "/dev/nvme0n1p2";
-        };
-      };
+      fido2.passwordLess = true;
+      fido2.credential = "1174b4f8cfd2c80d09e8459ec0d68b21";
       bypassWorkqueues = true;
-    }; 
+    };
   };
 
   # Enable scheduled TRIM for SSD
   services.fstrim.enable = true;
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/6235c903-8de9-40d0-a252-0cd40de3ea2a";
+    { device = "/dev/disk/by-uuid/a1a39e3a-fa41-40ca-9923-22aaf03c4ada";
       fsType = "ext4";
       options = [ "noatime" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/03F4-A35A";
+    { device = "/dev/disk/by-uuid/8B82-CD1F";
       fsType = "vfat";
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/02c9f0d3-5c8e-4933-a383-739099716944"; }
+    [ { device = "/dev/disk/by-uuid/bb41de47-faeb-49f9-b6e2-5462d5b73575"; }
     ];
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
@@ -78,6 +71,19 @@
 
   # Graphics
   hardware.opengl.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  
+  # hardware.opengl.extraPackages = [ pkgs.mesa.drivers ];
+  # services.xserver.videoDrivers = [ "nvidia" "intel" ];
+
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "cudatoolkit"
+    "nvidia-x11"
+    "nvidia-settings"
+    "corefonts"
+    "Oracle_VM_VirtualBox_Extension_Pack"
+  ];
 
   # Initial system version
   system.stateVersion = "21.11";

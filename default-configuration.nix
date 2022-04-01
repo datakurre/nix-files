@@ -46,6 +46,11 @@ in
     time.timeZone = "Europe/Helsinki";
     services.xserver.layout = "fi";
 
+    services.avahi.enable = true;
+    services.avahi.allowPointToPoint = true;
+    services.avahi.publish.enable = true;
+    services.avahi.publish.userServices = true;
+
     fonts.fontconfig.enable = true;
     fonts.fontDir.enable = true;
     fonts.enableGhostscriptFonts = true;

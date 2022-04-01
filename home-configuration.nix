@@ -44,6 +44,8 @@
     openshot-qt
     pass
     pavucontrol
+    pulseeffects-legacy
+    gnome-icon-theme
     psmisc
     rcc
     signal-desktop
@@ -52,6 +54,7 @@
     unzip
     vagrant
     virt-manager
+    vingester
     vlc
     vokoscreen
     vpnc
@@ -105,8 +108,11 @@
   home.file.".mail/jyu/.notmuch/hooks/pre-new".executable = true;
 
   programs.obs-studio.enable = true;
+  programs.obs-studio.package = pkgs.obs-studio;
   programs.obs-studio.plugins = with pkgs.obs-studio-plugins; [
     obs-websocket
+    obs-ndi
+    pkgs.obs-backgroundremoval
   ];
 
   programs.git.enable = true;

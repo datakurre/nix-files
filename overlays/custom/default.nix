@@ -12,6 +12,7 @@ let
       "font-bh-100dpi"
       "font-bh-lucidatypewriter-100dpi"
       "font-bh-lucidatypewriter-75dpi"
+      "ndi"
       "pycharm-professional"
       "teams"
       "vscode"
@@ -117,6 +118,8 @@ self: super:
   micromamba = (import sources."nixpkgs-21.11" {}).micromamba;
   mvn2nix = (super.callPackage ./pkgs/mvn2nix { inherit nixpkgs; }).mvn2nix;
   node2nix = super.callPackage ./pkgs/node2nix { inherit nixpkgs; };
+  onnxruntime = super.callPackage ./pkgs/onnxruntime {};
+  obs-backgroundremoval = super.libsForQt5.callPackage ./pkgs/obs-backgroundremoval {};
   plone-env = super.callPackage ./pkgs/plone-env {};
   plone6-env = super.callPackage ./pkgs/plone6-env {};
   plonetheme-upload = (super.callPackage ./pkgs/plonetheme-upload {}).package;
@@ -124,20 +127,26 @@ self: super:
   rcc = super.callPackage ./pkgs/rcc {};
   robotframework-sikulilibrary = super.callPackage ./pkgs/sikulilibrary { pythonPackages = super.python3Packages; };
   sikulix = super.callPackage ./pkgs/sikulix {};
+  vingester = super.callPackage ./pkgs/vingester { inherit nixpkgs; };
   vcmi = super.callPackage ./pkgs/vcmi {};
   zeebe-modeler = super.callPackage ./pkgs/zeebe-modeler { inherit nixpkgs; };
   zest-releaser-python2 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python27"; }).targetPython.pkgs."zest.releaser";
   zest-releaser-python3 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python37"; }).targetPython.pkgs."zest.releaser";
 
-  inherit (unstable)
-  factorio
-  jetbrains
-  obs-studio
-  openshot-qt
-  teams
-  vscode
-  vscode-extensions
-  vscode-fhsWithPackages
-  vscode-utils
-  ;
+  foonovnc = unstable.novnc;
+
+# inherit (unstable)
+# factorio
+# jetbrains
+# obs-studio
+# obs-studio-plugins
+# openshot-qt
+# novnc
+# ndi
+# teams
+# vscode
+# vscode-extensions
+# vscode-fhsWithPackages
+# vscode-utils
+# ;
 }
