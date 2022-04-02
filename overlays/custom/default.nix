@@ -133,20 +133,17 @@ self: super:
   zest-releaser-python2 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python27"; }).targetPython.pkgs."zest.releaser";
   zest-releaser-python3 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python37"; }).targetPython.pkgs."zest.releaser";
 
-  foonovnc = unstable.novnc;
-
-# inherit (unstable)
-# factorio
-# jetbrains
-# obs-studio
-# obs-studio-plugins
-# openshot-qt
-# novnc
-# ndi
-# teams
-# vscode
-# vscode-extensions
-# vscode-fhsWithPackages
-# vscode-utils
-# ;
+  inherit (unstable)
+  factorio
+  jetbrains
+  obs-studio
+  obs-studio-plugins
+  novnc
+  ndi
+  teams
+  vscode
+  vscode-extensions
+  vscode-fhsWithPackages
+  vscode-utils
+  ;
 }
