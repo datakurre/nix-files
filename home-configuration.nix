@@ -10,9 +10,11 @@
   programs.direnv.nix-direnv.enable = true;
 
   home.packages = with pkgs; [
+    alot
     acpi
     afew
     autorandr
+    avidemux
     cachix
     camunda-modeler
     chromium
@@ -54,6 +56,7 @@
     unzip
     unzip
     vagrant
+    v4l-utils
     virt-manager
     vingester
     vlc
@@ -61,6 +64,7 @@
     vpnc
     w3m
     xlockmore
+    set-exposure
     zest-releaser-python2
     zest-releaser-python3
     zip
@@ -131,9 +135,9 @@
   programs.vscode.package = (pkgs.vscode-fhsWithPackages (ps: with ps; [
     elmPackages.elm
     elmPackages.elm-analyse
-    elmPackages.elm-coverage
+#   elmPackages.elm-coverage
     elmPackages.elm-doc-preview
-    elmPackages.elm-format
+#   elmPackages.elm-format
     elmPackages.elm-instrument
     elmPackages.elm-json
     elmPackages.elm-language-server
@@ -142,7 +146,7 @@
     elmPackages.elm-review
     elmPackages.elm-test
     elmPackages.elm-upgrade
-    elmPackages.elm-verify-examples
+#   elmPackages.elm-verify-examples
     elmPackages.elm-xref
     (ps.python3Full.withPackages(ps: [
       (ps.robotframework.overridePythonAttrs(old: rec {

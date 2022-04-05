@@ -41,6 +41,25 @@ self: super:
     '';
   }));
 
+  set-exposure = super.stdenv.mkDerivation {
+    name = "set-exposure";
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      mkdir -p $out/bin
+      cat > $out/bin/set-exposure<< EOF
+      #!/usr/bin/env bash
+      v4l2-ctl -d /dev/video0 --set-ctrl=exposure_auto=1
+      echo \''$1
+      if [ -z \''$1 ]; then
+        v4l2-ctl -d /dev/video0 --set-ctrl=exposure_absolute=200;
+      else
+        v4l2-ctl -d /dev/video0 --set-ctrl=exposure_absolute=\''$1;
+      fi
+      EOF
+      chmod u+x $out/bin/set-exposure
+    '';
+  };
+
   gitlog = super.stdenv.mkDerivation {
     name = "gitlog";
     builder = builtins.toFile "builder.sh" ''
@@ -134,6 +153,7 @@ self: super:
   zest-releaser-python3 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python37"; }).targetPython.pkgs."zest.releaser";
 
   inherit (unstable)
+  elmPackages
   factorio
   jetbrains
   obs-studio
