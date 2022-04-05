@@ -18,6 +18,7 @@
     chromium
     cookiecutter
     curl
+    cpulimit
     docker_compose
     evince
     findimagedupes
