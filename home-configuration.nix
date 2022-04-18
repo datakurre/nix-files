@@ -38,13 +38,19 @@
     jetbrains.idea-community
     jetbrains.pycharm-professional
     jq
+    libreoffice
     lynx
     msmtp
     ncmpcpp
     networkmanager_vpnc
     networkmanagerapplet
     notmuch
-    openshot-qt
+    (openshot-qt.overridePythonAttrs(old: {
+      postPatch = ''
+        substituteInPlace src/classes/query.py \
+          --replace 'hasattr("project", app)' 'hasattr(app, "project")'
+      '';
+    }))
     pass
     pavucontrol
     pulseeffects-legacy
