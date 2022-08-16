@@ -77,7 +77,10 @@
   # services.xserver.videoDrivers = [ "nvidia" "intel" ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "zoom"
     "cudatoolkit"
+    "cudatoolkit-11-cudnn"
+    "libcublas"
     "nvidia-x11"
     "nvidia-settings"
     "corefonts"

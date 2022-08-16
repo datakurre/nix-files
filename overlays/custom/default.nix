@@ -17,6 +17,7 @@ let
       "teams"
       "vscode"
       "vscode-extension-ms-vsliveshare-vsliveshare"
+      "zoom"
     ];
   };
 
@@ -35,7 +36,7 @@ self: super:
     '';
   });
 
-  alot = (super.python3Packages.alot.overridePythonAttrs(old: {
+  alot = (super.alot.overridePythonAttrs(old: {
     postPatch = ''
       find alot -type f -print0|xargs -0 sed -i "s|payload.encode('raw-unicode-escape')|payload.encode('utf-8')|g"
     '';
@@ -48,10 +49,15 @@ self: super:
       mkdir -p $out/bin
       cat > $out/bin/set-exposure<< EOF
       #!/usr/bin/env bash
+      v4l2-ctl -d /dev/video0 --set-ctrl=exposure_auto=3
+      sleep 1
       v4l2-ctl -d /dev/video0 --set-ctrl=exposure_auto=1
+      sleep 1
       echo \''$1
       if [ -z \''$1 ]; then
         v4l2-ctl -d /dev/video0 --set-ctrl=exposure_absolute=200;
+        sleep 1
+        v4l2-ctl -d /dev/video0 --set-ctrl=sharpness=4;
       else
         v4l2-ctl -d /dev/video0 --set-ctrl=exposure_absolute=\''$1;
       fi

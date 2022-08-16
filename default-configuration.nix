@@ -20,7 +20,7 @@ in
   };
 
   imports = [
-    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-21.11.tar.gz}/nixos"
+    "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-22.05.tar.gz}/nixos"
     ./modules/battery-notifier.nix
     ./modules/cachix/default.nix
     ./modules/private/default.nix
@@ -32,6 +32,7 @@ in
     networking.firewall.trustedInterfaces = [
       "docker0"
       "vboxnet0"
+      "virbr0"
     ];
     networking.firewall.allowedTCPPorts = [
       4444  # obs-websocket
@@ -190,7 +191,7 @@ in
     };
 
     services.udev.packages = [
-      pkgs.gnome3.gnome_settings_daemon
+      pkgs.gnome3.gnome-settings-daemon
       pkgs.android-udev-rules
     ];
     services.udev.extraRules = ''

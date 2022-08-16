@@ -21,7 +21,7 @@
     cookiecutter
     curl
     cpulimit
-    docker_compose
+    docker-compose
     evince
     findimagedupes
     firefox-devedition-bin
@@ -40,15 +40,17 @@
     jq
     libreoffice
     lynx
+    zoom-us
     msmtp
     ncmpcpp
-    networkmanager_vpnc
+    networkmanager-vpnc
     networkmanagerapplet
     notmuch
     (openshot-qt.overridePythonAttrs(old: {
       postPatch = ''
         substituteInPlace src/classes/query.py \
-          --replace 'hasattr("project", app)' 'hasattr(app, "project")'
+          --replace 'hasattr("project", app)' 'hasattr(app, "project")' \
+          --replace 'hasattr("current_filepath", app.project)' 'hasattr(app.project, "current_filepath")'
       '';
     }))
     pass
@@ -76,7 +78,7 @@
     zip
   ] ++ [
     bakoma_ttf
-    cantarell_fonts
+    cantarell-fonts
     corefonts
     dejavu_fonts
     gentium

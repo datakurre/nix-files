@@ -1,6 +1,6 @@
 { stdenv, fetchFromGitHub, glibcLocales
 , cmake, python3, lib, libpng, zlib
-, cudatoolkit, cudnn
+, cudatoolkit, cudaPackages
 }:
 
 stdenv.mkDerivation rec {
@@ -33,7 +33,7 @@ stdenv.mkDerivation rec {
     libpng
     zlib
     cudatoolkit
-    cudnn
+    cudaPackages.cudnn
   ];
 
   cmakeDir = "../cmake";
@@ -44,7 +44,7 @@ stdenv.mkDerivation rec {
     "-Donnxruntime_BUILD_UNIT_TESTS=OFF"
     "-Donnxruntime_ENABLE_LTO=OFF"
     "-Donnxruntime_USE_CUDA=ON"
-    "-Donnxruntime_CUDNN_HOME=${cudnn}"
+    "-Donnxruntime_CUDNN_HOME=${cudaPackages.cudnn}"
     "-DCMAKE_CUDA_ARCHITECTURES=61;62"
   ];
 
