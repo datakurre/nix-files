@@ -139,6 +139,7 @@ in
         extraGroups = [
           "adbusers"
           "audio"
+          "dialout"
           "docker"
           "input"
           "libvirtd"

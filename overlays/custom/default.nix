@@ -129,7 +129,7 @@ self: super:
   }));
 
   aspellDicts = super.recurseIntoAttrs (super.callPackages ./super.aspell/dictionaries.nix {});
-  camunda-modeler = super.callPackage ./pkgs/camunda-modeler { inherit nixpkgs; };
+  camunda-modeler = super.callPackage ./pkgs/camunda-modeler {};
   findimagedupes = super.callPackage ./pkgs/findimagedupes {};
   fuzzylite = super.callPackage ./pkgs/fuzzylite {};
   jfrog-cli = super.callPackage ./pkgs/jfrog-cli {};
@@ -158,6 +158,7 @@ self: super:
   jetbrains
   obs-studio
   obs-studio-plugins
+  openshot-qt
   novnc
   ndi
   teams

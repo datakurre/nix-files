@@ -1,12 +1,12 @@
-{ nixpkgs, stdenv, libXScrnSaver, makeWrapper, fetchurl, wrapGAppsHook, glib, gtk3, unzip, atomEnv, libuuid, at-spi2-atk, at-spi2-core, nodePackages, autoPatchelfHook, gcc-unwrapped, libdrm, mesa, libxkbcommon, adoptopenjdk-jre-hotspot-bin-11, libxshmfence, lib, libappindicator-gtk3}:
+{ stdenv, libXScrnSaver, makeWrapper, fetchurl, wrapGAppsHook, glib, gtk3, unzip, atomEnv, libuuid, at-spi2-atk, at-spi2-core, nodePackages, autoPatchelfHook, gcc-unwrapped, libdrm, mesa, libxkbcommon, adoptopenjdk-jre-hotspot-bin-11, libxshmfence, lib, libappindicator-gtk3}:
 
 let
 
-  mkElectron = import "${nixpkgs}/pkgs/development/tools/electron/generic.nix" { inherit stdenv libXScrnSaver makeWrapper fetchurl wrapGAppsHook glib gtk3 unzip atomEnv libuuid at-spi2-atk at-spi2-core libdrm mesa libxkbcommon libxshmfence lib libappindicator-gtk3; };
+  sources = import ../../nix/sources.nix;
 
-  electron = mkElectron "12.0.7" {
-    x86_64-linux = "335b77b35361fac4e2df1b7e8de5cf055e0a1a2065759cb2dd4508e8a77949fa";
-    x86_64-darwin = "c3238c9962c5ad0f9de23c9314f07e03410d096d7e9f9d91016dab2856606a9e";
+  mkElectron = import "${sources."nixpkgs"}/pkgs/development/tools/electron/generic.nix" { inherit stdenv libXScrnSaver makeWrapper fetchurl wrapGAppsHook glib gtk3 unzip atomEnv libuuid at-spi2-atk at-spi2-core libdrm mesa libxkbcommon libxshmfence lib libappindicator-gtk3; };
+  electron = mkElectron "17.1.0" {
+    x86_64-linux = "1s18zrmqiiks9nq27nw2s65wcl0rqhxc6b343wg6qdk9b65c4vhh";
   };
 
   camunda-modeler-plugins = fetchurl {
@@ -35,8 +35,8 @@ let
   };
 
   bpmn-js-token-simulation-plugin = fetchurl {
-    url = "https://github.com/bpmn-io/bpmn-js-token-simulation-plugin/archive/30530cfbd997940b86d7b4fa4153fdcec1dfce17.tar.gz";
-    sha256 = "1axqkzc2rgr9zkn5h3hqjdfv0qyv5r3kh4km2vh180kviw6wisay";
+    url = "https://github.com/bpmn-io/bpmn-js-token-simulation-plugin/archive/ba7b6c0f4edf0872229da58a20ef96590d9a99a8.tar.gz";
+    sha256 = "0gns9pvy393jasvdwhyjgm79wpnmkbycp0hpm1pylif5qgb0df8a";
   };
 
   dmn-testing-plugin = fetchurl {
@@ -49,32 +49,39 @@ let
     sha256 = "0cdj39bxakxri8fxfhbqf57b1ylsxrigil22w84kabf2a116931p";
   };
 
+  asar = stdenv.mkDerivation rec {
+    name = "camunda-modeler-${version}-asar";
+    version = "5.0.0";
+    src = fetchurl {
+      url = "https://github.com/camunda/camunda-modeler/releases/download/v${version}/camunda-modeler-${version}-linux-x64.tar.gz";
+      sha256 = "11gkcb209dgnmavn113b91dywh4b1n4i0a7xnhkc4angn8y22amp";
+    };
+    nativeBuildInputs = [ nodePackages.asar autoPatchelfHook gcc-unwrapped ];
+    installPhase = ''
+      asar extract ./resources/app.asar $out
+    '';
+  };
+
 in
 
 stdenv.mkDerivation rec {
   name = "camunda-modeler-${version}";
-  version = "4.11.1";
-  src = fetchurl {
-    url = "https://github.com/camunda/camunda-modeler/releases/download/v${version}/camunda-modeler-${version}-linux-x64.tar.gz";
-    sha256 = "01vyvvgx57yz04xk1lrh6s3qrx00d3g918i83bpir8fzk26mqr0n";
-  };
-
+  version = "5.0.0";
+  src = asar;
+  unpackPhase = "";
   nativeBuildInputs = [ electron makeWrapper nodePackages.asar autoPatchelfHook gcc-unwrapped ];
-
   installPhase = ''
-    mkdir build
-    cd build
-    asar extract ../resources/app.asar .
-    substituteInPlace ./lib/index.js \
+    mkdir -p $out/var/lib/camunda/resources/plugins $out/bin
+
+    cp -a $src build
+    chmod u+w -R build
+    substituteInPlace build/lib/index.js \
       --replace "let resourcesPaths = [" \
                 "let resourcesPaths = [\"$out/var/lib/camunda/resources\","
-    find . -name "grpc_node.node"
-    autoPatchelf node_modules/grpc/src/node/extension_binary/electron-v12.0-linux-x64-glibc/grpc_node.node;
-    asar pack . ../app.asar
-    cd ..
-    mkdir -p $out/var/lib/camunda/resources/plugins $out/bin
-    cp app.asar $out/var/lib/camunda
+    asar pack build $out/var/lib/camunda/app.asar
+
     cd $out/var/lib/camunda/resources/plugins
+
     tar xzvf ${dmn-testing-plugin}
     tar xzvf ${camunda-modeler-robot-plugin}
     tar xzvf ${bpmn-js-token-simulation-plugin}
@@ -91,6 +98,7 @@ stdenv.mkDerivation rec {
     tar xzvf ${excel-import-plugin}
     mv camunda-modeler-plugins*/camunda-transaction-boundaries-plugin .
     rm -r camunda-modeler-plugins*
+
     makeWrapper ${electron}/bin/electron $out/bin/camunda-modeler \
       --add-flags "$out/var/lib/camunda/app.asar" \
       --prefix PATH : "${adoptopenjdk-jre-hotspot-bin-11}/bin"
