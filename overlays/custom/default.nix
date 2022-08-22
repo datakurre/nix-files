@@ -1,9 +1,9 @@
 let
 
   sources = import ./nix/sources.nix;
-  nixpkgs = sources."nixpkgs-21.11";
+  nixpkgs = sources.nixpkgs;
 
-  config = let pkgs = import sources."nixpkgs-21.11" {}; in {
+  config = let pkgs = import sources.nixpkgs {}; in {
     allowBroken = true;
     allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
       "code"
@@ -22,25 +22,13 @@ let
   };
 
   unstable = import sources."nixpkgs-unstable" { inherit config; };
+  previous = import sources."nixpkgs-21.11" { inherit config; };
 
 in
 
 self: super:
 
 {
-
-  afew = super.afew.overridePythonAttrs(old: {
-    doCheck = false;
-    postPatch = ''
-      sed -i "s|'notmuch', 'new'|'test', '1'|g" afew/MailMover.py
-    '';
-  });
-
-  alot = (super.alot.overridePythonAttrs(old: {
-    postPatch = ''
-      find alot -type f -print0|xargs -0 sed -i "s|payload.encode('raw-unicode-escape')|payload.encode('utf-8')|g"
-    '';
-  }));
 
   set-exposure = super.stdenv.mkDerivation {
     name = "set-exposure";
@@ -140,7 +128,6 @@ self: super:
   fuzzylite = super.callPackage ./pkgs/fuzzylite {};
   jfrog-cli = super.callPackage ./pkgs/jfrog-cli {};
   jupyter-env = super.callPackage ./pkgs/jupyter-env {};
-  micromamba = (import sources."nixpkgs-21.11" {}).micromamba;
   mvn2nix = (super.callPackage ./pkgs/mvn2nix { inherit nixpkgs; }).mvn2nix;
   node2nix = super.callPackage ./pkgs/node2nix { inherit nixpkgs; };
   onnxruntime = super.callPackage ./pkgs/onnxruntime {};
@@ -157,6 +144,22 @@ self: super:
   zeebe-modeler = super.callPackage ./pkgs/zeebe-modeler { inherit nixpkgs; };
   zest-releaser-python2 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python27"; }).targetPython.pkgs."zest.releaser";
   zest-releaser-python3 = (import ./pkgs/zest-releaser/release.nix { pkgs = import sources."nixpkgs-20.09" {}; python = "python37"; }).targetPython.pkgs."zest.releaser";
+
+  inherit (previous)
+  notmuch;
+
+  alot = (previous.alot.overridePythonAttrs(old: {
+    postPatch = ''
+      find alot -type f -print0|xargs -0 sed -i "s|payload.encode('raw-unicode-escape')|payload.encode('utf 8')|g"
+    '';
+  }));
+
+  afew = previous.afew.overridePythonAttrs(old: {
+    doCheck = false;
+    postPatch = ''
+      sed -i "s|'notmuch', 'new'|'test', '1'|g" afew/MailMover.py
+    '';
+  });
 
   inherit (unstable)
   elmPackages
