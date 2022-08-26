@@ -171,6 +171,7 @@ in
       keep-derivations = true
       min-free = ${toString (100 * 1024 * 1024)}
       max-free = ${toString (1024 * 1024 * 1024)}
+      experimental-features = nix-command flakes
     '';
     nix.useSandbox = true;
     nix.sandboxPaths = [ "/dev/urandom" "/etc/ssl/certs/ca-certificates.crt" ];
