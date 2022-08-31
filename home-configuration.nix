@@ -9,6 +9,7 @@
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
 
+  home.stateVersion = "22.05";
   home.packages = with pkgs; [
     alot
     acpi
@@ -24,7 +25,6 @@
     docker-compose
     evince
     findimagedupes
-    firefox-devedition-bin
     gimp
     git
     gitclog
@@ -41,6 +41,7 @@
     libreoffice
     lynx
     zoom-us
+    mpollux-digisign-client
     msmtp
     ncmpcpp
     networkmanager-vpnc
@@ -66,7 +67,7 @@
     vagrant
     v4l-utils
     virt-manager
-    vingester
+#   vingester
     vlc
     vokoscreen
     vpnc
@@ -120,11 +121,20 @@
   home.file.".mail/jyu/.notmuch/hooks/pre-new".source = ./dotfiles/notmuch-jyu-pre-new;
   home.file.".mail/jyu/.notmuch/hooks/pre-new".executable = true;
 
+  programs.firefox = {
+    enable = true;
+    package = pkgs.wrapFirefox pkgs.firefox-unwrapped {
+      extraPolicies = {
+         SecurityDevices.opensc = "${pkgs.opensc}/lib/onepin-opensc-pkcs11.so";
+      };
+    };
+   };
+
   programs.obs-studio.enable = true;
   programs.obs-studio.package = pkgs.obs-studio;
   programs.obs-studio.plugins = with pkgs.obs-studio-plugins; [
     obs-websocket
-    obs-ndi
+#   obs-ndi
     pkgs.obs-backgroundremoval
   ];
 

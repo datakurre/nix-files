@@ -30,6 +30,10 @@ self: super:
 
 {
 
+  opensc = super.opensc.overrideDerivation (old: {
+    patches = old.patches ++ [ ./opensc-2567.patch ];
+  });
+
   set-exposure = super.stdenv.mkDerivation {
     name = "set-exposure";
     builder = builtins.toFile "builder.sh" ''
@@ -128,6 +132,7 @@ self: super:
   fuzzylite = super.callPackage ./pkgs/fuzzylite {};
   jfrog-cli = super.callPackage ./pkgs/jfrog-cli {};
   jupyter-env = super.callPackage ./pkgs/jupyter-env {};
+  mpollux-digisign-client = super.libsForQt5.callPackage ./pkgs/mpollux-digisign-client {};
   mvn2nix = (super.callPackage ./pkgs/mvn2nix { inherit nixpkgs; }).mvn2nix;
   node2nix = super.callPackage ./pkgs/node2nix { inherit nixpkgs; };
   onnxruntime = super.callPackage ./pkgs/onnxruntime {};
