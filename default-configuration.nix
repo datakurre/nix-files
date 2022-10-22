@@ -102,13 +102,17 @@ in
       xmodmap -e 'keycode 167=Next'
     '';
     services.xserver.inputClassSections = [''
-      Identifier   "Logitech USB Trackball"
+      Identifier   "Marble Mouse"
       MatchProduct "Logitech USB Trackball"
+      MatchIsPointer "on"
+      MatchDevicePath "/dev/input/event*"
       Driver "evdev"
+      Option "SendCoreEvents"          "true"
+      Option "ButtonMapping"           "1 9 3 4 5 6 7 2"
       Option "EmulateWheel"            "true"
       Option "EmulateWheelButton"      "8"
-      Option "XAxisMapping"            "6 7"
       Option "YAxisMapping"            "4 5"
+      Option "XAxisMapping"            "6 7"
       Option "DeviceAccelProfile"      "3"
       Option "AccelerationProfile"     "2"
       Option "AdaptiveDeceleration"    "2"

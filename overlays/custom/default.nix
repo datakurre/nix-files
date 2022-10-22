@@ -172,13 +172,16 @@ self: super:
   jetbrains
   obs-studio
   obs-studio-plugins
-  openshot-qt
+  losslesscut-bin
+# openshot-qt
   novnc
   ndi
   teams
-  vscode
-  vscode-extensions
-  vscode-fhsWithPackages
-  vscode-utils
+# vscode
+# vscode-extensions
+# vscode-fhsWithPackages
+# vscode-utils
   ;
+
+  vscode = self.callPackage ./pkgs/vscode/vscode.nix {};
 }

@@ -47,6 +47,7 @@
     networkmanager-vpnc
     networkmanagerapplet
     notmuch
+    losslesscut-bin
     (openshot-qt.overridePythonAttrs(old: {
       postPatch = ''
         substituteInPlace src/classes/query.py \
@@ -168,21 +169,49 @@
     elmPackages.elm-xref
     (ps.python3Full.withPackages(ps: [
       (ps.robotframework.overridePythonAttrs(old: rec {
-        version = "4.1.1";
-        src =  ps.fetchPypi {
-          pname = "robotframework";
-          extension = "zip";
-          inherit version;
-          sha256 = "0ddd9dzrn9gi29w0caab78zs6mx06wbf6f99g0xrpymjfz0q8gv6";
-        };
-        doCheck = false;
+      version = "5.0.1";
+      src = ps.fetchPypi {
+        pname = "robotframework";
+        extension = "zip";
+        inherit version;
+        sha256 = "1j0glardn8jg5zr82mkkcwl294288l1l9ywi3qz8r7gdfybwapfg";
+      };
+      doCheck = false;
       }))
     ]))
+    pkgs.rcc
   ]));
+  programs.vscode.userSettings = {
+    "terminal.integrated.inheritEnv" = false;
+    "editor.minimap.enabled" = false;
+    "python.experiments.enabled" = false;
+    "robot.codeLens.enabled" = true;
+    "robocorp.verifyLSP" = true;
+  };
   programs.vscode.extensions = (with pkgs.vscode-extensions; [
+    vscodevim.vim
     ms-python.python
     ms-vsliveshare.vsliveshare
-    vscodevim.vim
+    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
+      mktplcRef = {
+        name = "robotframework-lsp";
+        publisher = "robocorp";
+        version = "1.0.6";
+        sha256 = "sha256-cbZtvQa9yM+oT/o9Sm8Z7R+K4Qn7uxHMVfTta6sGcSA=";
+      };
+    })
+    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
+      mktplcRef = {
+        name = "robocorp-code";
+        publisher = "robocorp";
+        version = "0.36.0";
+        sha256 = "sha256-H8gDSDlVad+Fncl+S21dgFy1eJzlzSSHa0CNe9fkSD0=";
+      };
+      postInstall = ''
+        mkdir -p $out/share/vscode/extensions/robocorp.robocorp-code/bin
+        ln -s ${pkgs.rcc}/bin/rcc $out/share/vscode/extensions/robocorp.robocorp-code/bin
+      '';
+      })
     (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
       mktplcRef = {
         name = "test-adapter-converter";
@@ -206,26 +235,6 @@
         version = "2.4.1";
         sha256 = "1idhsrl9w8sc0qk58dvmyyjbmfznk3f4gz2zl6s9ksyz9d06vfrd";
       };
-    })
-    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
-      mktplcRef = {
-        name = "robotframework-lsp";
-        publisher = "robocorp";
-        version = "0.29.0";
-        sha256 = "1waz2kkzy10rjwxpw9wdicm0bz5a10jpy06cwd9f95id1ppn3l0z";
-      };
-    })
-    (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
-      mktplcRef = {
-        name = "robocorp-code";
-        publisher = "robocorp";
-        version = "0.20.0";
-        sha256 = "09dl08fb0qrnnna4x5d6z3jmj0kkl6gzkjwj12bi7v7khwm0r92a";
-      };
-      postInstall = ''
-        mkdir -p $out/share/vscode/extensions/robocorp.robocorp-code/bin
-        ln -s ${pkgs.rcc}/bin/rcc $out/share/vscode/extensions/robocorp.robocorp-code/bin
-      '';
     })
   ]);
 
@@ -292,6 +301,10 @@
   services.redshift.enable = true;
   services.redshift.settings.redshift.brightness-day = "1.0";
   services.redshift.settings.redshift.brightness-night = "0.7";
+  services.redshift.settings.redshift.temp-day = 5500;
+  services.redshift.settings.redshift.temp-night = 3700;
+# services.redshift.settings.redshift.brightness-night = "1.0";
+# services.redshift.settings.redshift.temp-night = pkgs.lib.mkForce 5500;
   services.redshift.latitude = "62.1435";
   services.redshift.longitude = "25.4449";
 

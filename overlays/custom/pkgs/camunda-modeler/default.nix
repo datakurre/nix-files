@@ -59,7 +59,7 @@ let
     version = "5.4.1";
     src = fetchurl {
       url = "https://github.com/camunda/camunda-modeler/releases/download/v${version}/camunda-modeler-${version}-linux-x64.tar.gz";
-      sha256 = "71d3c655e3665c67ead7a29cbfcac2444029056b7b343770303dae1f01fb80e6";
+      sha256 = "sha256-cdPGVeNmXGfq16Kcv8rCREApBWt7NDdwMD2uHwH7gOY=";
     };
     nativeBuildInputs = [ nodePackages.asar autoPatchelfHook gcc-unwrapped ];
     installPhase = ''
