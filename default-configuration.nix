@@ -244,7 +244,7 @@ r/xS7vOO+Qq8VUHSmfQbp31m
     virtualisation.docker.enable = true;
     virtualisation.docker.extraOptions = "--experimental";
     virtualisation.virtualbox.host.enable = true;
-    virtualisation.virtualbox.host.enableExtensionPack = true;
+#   virtualisation.virtualbox.host.enableExtensionPack = true;
     virtualisation.libvirtd.enable = true;
   };
 }

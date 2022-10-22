@@ -29,6 +29,11 @@ let
     sha256 = "sha256-Msa1ZD6PPvKZQh3A/3m5kczCAGmmSCAV+r6NdgmGKak=";
   };
 
+  camunda-modeler-python-plugin = fetchurl {
+    url = "https://github.com/datakurre/camunda-modeler-python-plugin/archive/792bdba5551dcd765ba7542f79df5a087323b268.tar.gz";
+    sha256 = "1jh5kadiybj92lcwkw1jc2pmy3kr0cylmf3sdf65y434m38y395n";
+  };
+
   camunda-modeler-tooltip-plugin = fetchurl {
     url = "https://github.com/viadee/camunda-modeler-tooltip-plugin/archive/d33ad3d35451e42806fcea525dd30a5857d32511.tar.gz";
     sha256 = "0s4j9rfqyys428havqhc9r2kdfbn3qi269rrxhh0jcq9v9rklld9";
@@ -51,10 +56,10 @@ let
 
   asar = stdenv.mkDerivation rec {
     name = "camunda-modeler-${version}-asar";
-    version = "5.2.0";
+    version = "5.4.1";
     src = fetchurl {
       url = "https://github.com/camunda/camunda-modeler/releases/download/v${version}/camunda-modeler-${version}-linux-x64.tar.gz";
-      sha256 = "sha256-ycvs4bf7yqYMW8Xjb/kEHiJv6vuV2jQRxHPNzZoEwjM=";
+      sha256 = "71d3c655e3665c67ead7a29cbfcac2444029056b7b343770303dae1f01fb80e6";
     };
     nativeBuildInputs = [ nodePackages.asar autoPatchelfHook gcc-unwrapped ];
     installPhase = ''
@@ -66,7 +71,7 @@ in
 
 stdenv.mkDerivation rec {
   name = "camunda-modeler-${version}";
-  version = "5.2.0";
+  version = "5.4.1";
   src = asar;
   unpackPhase = "";
   nativeBuildInputs = [ electron makeWrapper nodePackages.asar autoPatchelfHook gcc-unwrapped ];
@@ -84,13 +89,14 @@ stdenv.mkDerivation rec {
 
     tar xzvf ${dmn-testing-plugin}
     tar xzvf ${camunda-modeler-robot-plugin}
+#   tar xzvf ${camunda-modeler-python-plugin}
     tar xzvf ${bpmn-js-token-simulation-plugin}
-    tar xzvf ${camunda-modeler-linter-plugin}
+#   tar xzvf ${camunda-modeler-linter-plugin}
 
-    # Fix camunda/camunda-modeler-linter-plugin to allow inclusive gateways
-    substituteInPlace camunda-modeler-linter-plugin-*/dist/client.js \
-      --replace '"no-inclusive-gateway": "error",' "" \
-      --replace '"camunda/avoid-lanes": "warn",' ""
+#   # Fix camunda/camunda-modeler-linter-plugin to allow inclusive gateways
+#   substituteInPlace camunda-modeler-linter-plugin-*/dist/client.js \
+#     --replace '"no-inclusive-gateway": "error",' "" \
+#     --replace '"camunda/avoid-lanes": "warn",' ""
 
     tar xzvf ${camunda-modeler-tooltip-plugin}
     tar xzvf ${camunda-modeler-property-info-plugin}

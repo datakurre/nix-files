@@ -35,7 +35,7 @@
   services.fstrim.enable = true;
 
   # Power management
-  powerManagement.cpuFreqGovernor = lib.mkDefault "performance";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "conservative";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   services.batteryNotifier.enable = true;
 
