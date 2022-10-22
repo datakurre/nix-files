@@ -87,6 +87,16 @@
     "Oracle_VM_VirtualBox_Extension_Pack"
   ];
 
+  services.openssh.enable = true;
+  services.openssh.forwardX11 = true;
+  services.openssh.allowSFTP = true;
+  services.openssh.passwordAuthentication = false;
+  services.openssh.permitRootLogin = "no";
+  services.openssh.extraConfig = ''
+    HostkeyAlgorithms +ssh-rsa
+    PubkeyAcceptedAlgorithms +ssh-rsa
+  '';
+
   # Initial system version
   system.stateVersion = "21.11";
 }

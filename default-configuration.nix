@@ -195,6 +195,9 @@ r/xS7vOO+Qq8VUHSmfQbp31m
           "wheel"
         ];
         uid = 1000;
+        openssh.authorizedKeys.keys = [
+          "TsOi8q+54I0W08g1Fsjn+AjXBF3SWyQMP2F/ZaF806LYBrRSUfbM3DWJawUALWfzTBdM6PV4kg3AK47EZDuVC3y21L1DiPsVo2XocFHehewcmCtaue6vZagTeJE8VXwOyKhYJ4gWofEhE49t/vmi1DWBaI1dJceR9vQPbP3wHwb8hBC0biTGc1ZWhhivMSIvvwpghvIT19HXxT0uGiT8+Yr1fwl7RaUmjp95/LuzETYXULVdzq8Lios+23dTbJRDlUblf2WljcglLoEHHdjyyqasc/0c9kwIuCQatBubde6POjoRRhMp30FkYLFhtkaSD6erBudauDatI4PzYvGZY9AzW7hfVeo76GQoKjGgHRL+/Necw7cT8BbHOxmXAYufgzaiAdQAfga7kDtc/OYRQc+fD5baPnDpf29zc/GGh1iOUgik= asko"
+        ];
       };
     }];
     home-manager.users = builtins.listToAttrs [{
