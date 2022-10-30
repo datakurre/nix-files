@@ -24,9 +24,9 @@
     [ { device = "/dev/disk/by-uuid/9f37984d-88ba-4857-af2c-4941e2077f2b"; }
     ];
 
-  # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+# # Use the systemd-boot EFI boot loader.
+# boot.loader.systemd-boot.enable = true;
+# boot.loader.efi.canTouchEfiVariables = true;
 
   # Clean tmp on reboot
   boot.cleanTmpDir = true;
@@ -80,6 +80,15 @@
 
   # Bluetooth
   hardware.bluetooth.enable = false;
+
+  # Unfree
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+      "Oracle_VM_VirtualBox_Extension_Pack"
+      "code"
+      "corefonts"
+      "vscode"
+      "zoom"
+    ];
 
   # Initial system version
   system.stateVersion = "21.11";
