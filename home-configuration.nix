@@ -138,7 +138,7 @@
   programs.obs-studio.plugins = with pkgs.obs-studio-plugins; [
 #   obs-websocket
 #   obs-ndi
-    pkgs.obs-backgroundremoval
+#   pkgs.obs-backgroundremoval
   ];
 
   programs.git.enable = true;
