@@ -11,6 +11,8 @@
 
   home.stateVersion = "22.05";
   home.packages = with pkgs; [
+    poetry
+    twine
     alot
     acpi
     afew
@@ -134,7 +136,7 @@
   programs.obs-studio.enable = true;
   programs.obs-studio.package = pkgs.obs-studio;
   programs.obs-studio.plugins = with pkgs.obs-studio-plugins; [
-    obs-websocket
+#   obs-websocket
 #   obs-ndi
     pkgs.obs-backgroundremoval
   ];

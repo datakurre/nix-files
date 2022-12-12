@@ -1131,8 +1131,8 @@ index a508fa6d29..594c2c8a38 100644
  	/* belpic driver */
  	SC_CARD_TYPE_BELPIC_BASE = 12000,
 @@ -313,5 +315,6 @@ extern sc_card_driver_t *sc_get_esteid2018_driver(void);
- extern sc_card_driver_t *sc_get_idprime_driver(void);
  extern sc_card_driver_t *sc_get_edo_driver(void);
+ extern sc_card_driver_t *sc_get_nqApplet_driver(void);
 +extern sc_card_driver_t *sc_get_fineid_driver(void);
  
  #ifdef __cplusplus

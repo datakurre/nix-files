@@ -86,6 +86,7 @@
     "corefonts"
     "Oracle_VM_VirtualBox_Extension_Pack"
   ];
+  virtualisation.virtualbox.host.enableExtensionPack = true;
 
   services.openssh.enable = true;
   services.openssh.forwardX11 = true;
