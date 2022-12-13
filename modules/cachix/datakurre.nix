@@ -1,11 +1,11 @@
 {
   nix = {
-    binaryCaches = [
+    settings.substituters = [
       "https://datakurre.cachix.org"
     ];
-    binaryCachePublicKeys = [
+    settings.trusted-public-keys = [
       "datakurre.cachix.org-1:ayZJTy5BDd8K4PW9uc9LHV+WCsdi/fu1ETIYZMooK78="
     ];
-    trustedUsers = [ "root" "datakurre" "atsoukka" ];
+    settings.trusted-users = [ "root" "datakurre" "atsoukka" ];
   };
 }

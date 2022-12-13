@@ -205,7 +205,7 @@ r/xS7vOO+Qq8VUHSmfQbp31m
       value = import ./home-configuration.nix { inherit pkgs; user = cfg; };
     }];
 
-    nix.binaryCaches = [ https://cache.nixos.org ];
+    nix.settings.substituters = [ https://cache.nixos.org ];
     nix.gc = {
       automatic = true;
       dates = "weekly";
@@ -220,8 +220,8 @@ r/xS7vOO+Qq8VUHSmfQbp31m
       max-free = ${toString (1024 * 1024 * 1024)}
       experimental-features = nix-command flakes
     '';
-    nix.useSandbox = true;
-    nix.sandboxPaths = [ "/dev/urandom" "/etc/ssl/certs/ca-certificates.crt" ];
+    nix.settings.sandbox= true;
+    nix.settings.extra-sandbox-paths = [ "/dev/urandom" "/etc/ssl/certs/ca-certificates.crt" ];
 
     nixpkgs.overlays = [
       (import ./overlays/custom)
@@ -252,6 +252,6 @@ r/xS7vOO+Qq8VUHSmfQbp31m
     virtualisation.docker.extraOptions = "--experimental";
     virtualisation.virtualbox.host.enable = true;
 #   virtualisation.virtualbox.host.enableExtensionPack = true;
-    virtualisation.libvirtd.enable = true;
+#   virtualisation.libvirtd.enable = true;
   };
 }

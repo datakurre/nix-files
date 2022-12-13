@@ -71,10 +71,8 @@
 
   # Graphics
   hardware.opengl.enable = true;
-  services.xserver.videoDrivers = [ "nvidia" ];
-
-  # hardware.opengl.extraPackages = [ pkgs.mesa.drivers ];
-  # services.xserver.videoDrivers = [ "nvidia" "intel" ];
+  hardware.opengl.extraPackages = [ pkgs.mesa.drivers ];
+  services.xserver.videoDrivers = [ "nvidia" "intel" ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "zoom"
