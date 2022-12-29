@@ -166,14 +166,18 @@ self: super:
     '';
   });
 
+# inherit (obspkgs)
+# obs-studio
+# obs-studio-plugins;
+
   inherit (unstable)
   poetry
   twine
   elmPackages
   factorio
   jetbrains
-# obs-studio
-# obs-studio-plugins
+  obs-studio
+  obs-studio-plugins
   losslesscut-bin
 # openshot-qt
   novnc
