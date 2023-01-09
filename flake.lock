@@ -1,0 +1,157 @@
+{
+  "nodes": {
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1667395993,
+        "narHash": "sha256-nuEHfE/LcWyuSWnS8t12N1wc105Qtau+/OdUAjtQ0rA=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "5aed5285a952e0b949eb3ba02c12fa4fcfef535f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "utils": "utils"
+      },
+      "locked": {
+        "lastModified": 1673211936,
+        "narHash": "sha256-ba7jhl5BhLtpSooDHllgC0Y29vc0AiYWWsxQVtjlc7o=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "684bdb386cec7d4f16e0da9f694c8ab50ad2cf2a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nixgl": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1672992692,
+        "narHash": "sha256-/eLQLSNIa22ARTZbk+x8i0iE8khe1eiHWkuxgTVXZ7g=",
+        "owner": "guibou",
+        "repo": "nixGL",
+        "rev": "643e730efb981ffaf8478f441ec9b9aeea1c89f5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "guibou",
+        "repo": "nixGL",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1673163619,
+        "narHash": "sha256-B33PFBL64ZgTWgMnhFL3jgheAN/DjHPsZ1Ih3z0VE5I=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "8c54d842d9544361aac5f5b212ba04e4089e8efe",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-22.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "rcc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1672223627,
+        "narHash": "sha256-rUpCL6sTpC/uPBvBLF6CL52+0DrxvtCBKHYc9lDEHto=",
+        "owner": "robocorp",
+        "repo": "rcc",
+        "rev": "c687438a726bd417437f4fbffae9db61f0010a87",
+        "type": "github"
+      },
+      "original": {
+        "owner": "robocorp",
+        "repo": "rcc",
+        "rev": "c687438a726bd417437f4fbffae9db61f0010a87",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "home-manager": "home-manager",
+        "nixgl": "nixgl",
+        "nixpkgs": "nixpkgs",
+        "rcc": "rcc",
+        "unstable": "unstable",
+        "zbctl": "zbctl"
+      }
+    },
+    "unstable": {
+      "locked": {
+        "lastModified": 1672953546,
+        "narHash": "sha256-oz757DnJ1ITvwyTovuwG3l9cX6j9j6/DH9eH+cXFJmc=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "a518c77148585023ff56022f09c4b2c418a51ef5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "utils": {
+      "locked": {
+        "lastModified": 1667395993,
+        "narHash": "sha256-nuEHfE/LcWyuSWnS8t12N1wc105Qtau+/OdUAjtQ0rA=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "5aed5285a952e0b949eb3ba02c12fa4fcfef535f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "zbctl": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1670333412,
+        "narHash": "sha256-ongana4RWa0MNmbHAt4eieHio4fmq/EmKZWMAXqeN7k=",
+        "owner": "camunda",
+        "repo": "zeebe",
+        "rev": "3b271d94838d9dd4c622f3dca2846c28f33a748a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "camunda",
+        "ref": "clients/go/v8.1.5",
+        "repo": "zeebe",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
