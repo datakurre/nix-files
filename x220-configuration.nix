@@ -35,9 +35,10 @@
   services.fstrim.enable = true;
 
   # Power management
+  services.tlp.enable = true;
   powerManagement.cpuFreqGovernor = lib.mkDefault "conservative";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  services.batteryNotifier.enable = true;
+  services.batteryNotifier.enable = false;
 
   # GRUB
   boot.loader.grub.enable = true;

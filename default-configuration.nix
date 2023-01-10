@@ -185,7 +185,7 @@ r/xS7vOO+Qq8VUHSmfQbp31m
           "adbusers"
           "audio"
           "dialout"
-          "docker"
+          "podman"
           "input"
           "libvirtd"
           "networkmanager"
@@ -248,10 +248,13 @@ r/xS7vOO+Qq8VUHSmfQbp31m
       # ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0113|0114|0115|0116|0120|0402|0403|0406|0407|0410", ENV{DEVTYPE}=="usb_device", RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
     '';
 
-    virtualisation.docker.enable = true;
-    virtualisation.docker.extraOptions = "--experimental";
+    virtualisation.podman.enable = true;
+    virtualisation.podman.dockerCompat = true;
+    # Required for containers under podman-compose to be able to talk to each other.
+    virtualisation.podman.defaultNetwork.dnsname.enable = true;
+
     virtualisation.virtualbox.host.enable = true;
-#   virtualisation.virtualbox.host.enableExtensionPack = true;
+    virtualisation.virtualbox.host.enableExtensionPack = true;
     virtualisation.libvirtd.enable = true;
   };
 }

@@ -22,7 +22,7 @@
     cookiecutter
     curl
     cpulimit
-    docker-compose
+    podman-compose
     evince
     findimagedupes
     gimp
@@ -47,6 +47,7 @@
     networkmanager-vpnc
     networkmanagerapplet
     notmuch
+    poetry
     losslesscut-bin
     (openshot-qt.overridePythonAttrs(old: {
       postPatch = ''
@@ -124,20 +125,20 @@
 
   programs.firefox = {
     enable = true;
-    package = pkgs.wrapFirefox pkgs.firefox-unwrapped {
-      extraPolicies = {
-         SecurityDevices.opensc = "${pkgs.opensc}/lib/onepin-opensc-pkcs11.so";
-      };
-    };
+#   package = pkgs.wrapFirefox pkgs.firefox-unwrapped {
+#     extraPolicies = {
+#        SecurityDevices.opensc = "${pkgs.opensc}/lib/onepin-opensc-pkcs11.so";
+#     };
+#   };
   };
 
-  programs.obs-studio.enable = true;
-  programs.obs-studio.package = pkgs.obs-studio;
-  programs.obs-studio.plugins = with pkgs.obs-studio-plugins; [
-    obs-websocket
+# programs.obs-studio.enable = true;
+# programs.obs-studio.package = pkgs.obs-studio;
+# programs.obs-studio.plugins = with pkgs.obs-studio-plugins; [
+#   obs-websocket
 #   obs-ndi
-    pkgs.obs-backgroundremoval
-  ];
+#   pkgs.obs-backgroundremoval
+# ];
 
   programs.git.enable = true;
   programs.git.userName = "Asko Soukka";
@@ -191,7 +192,7 @@
   programs.vscode.extensions = (with pkgs.vscode-extensions; [
     vscodevim.vim
     ms-python.python
-    ms-vsliveshare.vsliveshare
+#   ms-vsliveshare.vsliveshare
     (pkgs.vscode-utils.buildVscodeMarketplaceExtension rec {
       mktplcRef = {
         name = "robotframework-lsp";

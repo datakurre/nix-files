@@ -167,6 +167,7 @@ self: super:
   });
 
   inherit (unstable)
+  poetry
   elmPackages
   factorio
   jetbrains
