@@ -4,6 +4,7 @@ import XMonad
 
 import qualified Data.Map as M
 import Graphics.X11.Xlib
+import XMonad.Actions.NoBorders
 import XMonad.Prompt
 import XMonad.Prompt.Shell
 import XMonad.Prompt.XMonad
@@ -11,6 +12,7 @@ import XMonad.Layout.GridVariants
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.ThreeColumns
 import XMonad.Hooks.EwmhDesktops
+import qualified XMonad.StackSet as W
 import System.Posix.Env (putEnv)
 
 main :: IO ()
@@ -25,12 +27,28 @@ main = do
     , terminal = "xterm"
     }
 
+--Looks to see if focused window is floating and if it is the places it in the stack
+--else it makes it floating but as full screen
+toggleFull = withFocused (\windowId -> do
+{
+   floats <- gets (W.floating . windowset);
+   if windowId `M.member` floats
+   then do
+       withFocused $ toggleBorder
+       withFocused $ windows . W.sink
+   else do
+       withFocused $ toggleBorder
+       withFocused $  windows . (flip W.float $ W.RationalRect 0 0 1 1)    }    )
+
+
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList
   [ ((modm .|. shiftMask, xK_x), shellPrompt myXPConfig)
   , ((modm .|. shiftMask, xK_h), sendMessage MirrorShrink)
   , ((modm .|. shiftMask, xK_l), sendMessage MirrorExpand)
   , ((modm .|. shiftMask, xK_a), sendMessage (IncMasterN 1))
   , ((modm .|. shiftMask, xK_z), sendMessage (IncMasterN (-1)))
+  -- toggle between full screen and tiling
+  , ((modm, xK_f              ), toggleFull)
   ]
 
 -- XPConfig options:
