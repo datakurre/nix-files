@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-mbsync --pull --create --new --delete --flags --renew --expunge-slave iki
-afew -C $HOME/.notmuch-iki --move-mails --all
-mbsync --push  --create --new --delete --flags --renew --expunge-master iki

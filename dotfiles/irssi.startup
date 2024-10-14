@@ -1,3 +1,0 @@
-/script load secrets
-/secrets address /secret port /secret freenode /connect -net Freenode -ssl <secret> <secret> freenode:<secret>
-/secrets address /secret port /secret ircnet /connect -net IRCnet -ssl <secret> <secret> ircnet:<secret>

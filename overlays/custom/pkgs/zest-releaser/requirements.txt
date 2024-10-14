@@ -1,4 +1,0 @@
-gocept.zestreleaser.customupload
-pyroma
-zest.pocompile
-zest.releaser [recommended]

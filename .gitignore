@@ -1,4 +1,2 @@
-/configuration.nix
-/.idea
-/modules/private/*.nix
-*.swp
+/deprecated/
+/result
