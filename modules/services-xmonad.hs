@@ -4,6 +4,7 @@ import XMonad
 
 import qualified Data.Map as M
 import Graphics.X11.Xlib
+import Graphics.X11.ExtraTypes.XF86
 import XMonad.Actions.NoBorders
 import XMonad.Prompt
 import XMonad.Prompt.Shell
@@ -50,6 +51,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList
   , ((modm .|. shiftMask, xK_z), sendMessage (IncMasterN (-1)))
   -- toggle between full screen and tiling
   , ((modm, xK_f              ), toggleFull)
+  , ((0, xF86XK_MonBrightnessUp), spawn "brightnessctl set 5%+")
+  , ((0, xF86XK_MonBrightnessDown), spawn "brightnessctl set 5%-")
+  , ((0, xF86XK_AudioMute), spawn "amixer set Master toggle")
+  , ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 5%- unmute")
+  , ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 5%+ unmute")
+  , ((0, xF86XK_AudioMicMute), spawn "amixer set Capture toggle")
+  , ((0, xF86XK_Favorites), spawn "xlock -mode xjack")
   ]
 
 -- XPConfig options:

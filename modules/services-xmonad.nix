@@ -2,10 +2,16 @@
 {
   environment.systemPackages = [
     pkgs.blueman
+    pkgs.brightnessctl
+    pkgs.cbatticon
     pkgs.gnome3.adwaita-icon-theme
     pkgs.gnome3.nautilus
     pkgs.gnome3.sushi
     pkgs.networkmanagerapplet
+    pkgs.paprefs
+    pkgs.pasystray
+    pkgs.pavucontrol
+    pkgs.qpaeq
     pkgs.xlockmore
   ];
   programs.dconf.enable = true;
@@ -15,7 +21,7 @@
         config = {
           decorations = null;
           dockapp_mode = null;
-          geometry = "2x1-0+0";
+          geometry = "4x1-0+0";
           max_geometry = "5x1-0+0";
           grow_gravity = "SW";
           icon_gravity = "SW";
@@ -89,11 +95,12 @@
     };
   };
   services = {
-    udev.packages = [ pkgs.gnome3.gnome-settings-daemon ];
+    blueman.enable = true;
     dbus.packages = with pkgs; [ gnome3.sushi ];
     displayManager.defaultSession = "none+xmonad";
     gnome.at-spi2-core.enable = true;
     gvfs.enable = true;
+    udev.packages = [ pkgs.gnome3.gnome-settings-daemon ];
     xserver = {
       displayManager = {
         lightdm = {
@@ -128,8 +135,10 @@
             xss-lock -- xlock -mode xjack -erasedelay 0 &
             # Tray
             stalonetray &
-            blueman-applet &
             nm-applet &
+            sleep 0.3 && blueman-applet &
+            sleep 0.6 && pasystray &
+            sleep 0.9 && cbatticon &
           '';
       };
       enableTCP = false;
