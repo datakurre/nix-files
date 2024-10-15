@@ -9,8 +9,15 @@
     systemd-boot.enable = true;
   };
   environment.systemPackages = [ pkgs.acpi ];
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
   hardware.pulseaudio.enable = true;
-  home-manager.users.${config.user.name}.xresources.properties."Xcursor.size" = "48";
+  home-manager.users.${config.user.name} = {
+    services.stalonetray.config.icon_size = 48;
+    xresources.properties."Xcursor.size" = "64";
+  };
   networking.hostName = "albemuth";
   services = {
     fwupd.enable = true;

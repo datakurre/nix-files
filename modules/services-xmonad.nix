@@ -1,8 +1,11 @@
 { config, pkgs, ... }:
 {
   environment.systemPackages = [
+    pkgs.blueman
+    pkgs.gnome3.adwaita-icon-theme
     pkgs.gnome3.nautilus
     pkgs.gnome3.sushi
+    pkgs.networkmanagerapplet
     pkgs.xlockmore
   ];
   programs.dconf.enable = true;
@@ -12,11 +15,10 @@
         config = {
           decorations = null;
           dockapp_mode = null;
-          geometry = "1x1-0+0";
+          geometry = "2x1-0+0";
           max_geometry = "5x1-0+0";
           grow_gravity = "SW";
           icon_gravity = "SW";
-          icon_size = 24;
           kludges = "force_icons_size";
           skip_taskbar = true;
           sticky = true;
@@ -29,7 +31,7 @@
       };
     };
     xresources.properties = {
-      "Xcursor.theme" = "macOS-BigSur";
+      "Xcursor.theme" = "Adwaita";
 
       "XTerm*wideChars" = "true";
       "XTerm*locale" = "true";
@@ -40,11 +42,6 @@
       "XTerm*faceName" = "DejaVu Sans Mono for Powerline";
       "XTerm*faceSize" = "11";
       "XTerm*saveLines" = "1024";
-      "XTerm*cursorTheme" = "macOS-BigSur";
-
-      "UXTerm*faceName" = "DejaVu Sans Mono for Powerline";
-      "UXTerm*faceSize" = "11";
-      "UXTerm*cursorTheme" = "macOS-BigSur";
 
       "*background" = "#002b36";
       "*foreground" = "#839496";
@@ -125,8 +122,14 @@
             export XDG_DATA_DIRS=$XDG_DATA_DIRS''${XDG_DATA_DIRS:+:}${mimeAppsList}/share
             export NAUTILUS_EXTENSION_DIR=${config.system.path}/lib/nautilus/extensions-3.0/
             ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
+            # XMousePasteBlock
+            ${pkgs.xmousepasteblock}/bin/xmousepasteblock &
             # XLock
             xss-lock -- xlock -mode xjack -erasedelay 0 &
+            # Tray
+            stalonetray &
+            blueman-applet &
+            nm-applet &
           '';
       };
       enableTCP = false;
