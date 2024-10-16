@@ -30,6 +30,7 @@
       in
       {
         overlays.default = self: super: { };
+        packages.discord = pkgs.discord;
         formatter = pkgs.nixfmt-rfc-style;
       }
     )

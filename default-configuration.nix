@@ -9,6 +9,7 @@
     ./modules/env-user.nix
     ./modules/hw-marble-mouse.nix
     ./modules/hw-yubikey.nix
+    ./modules/programs-discord.nix
     ./modules/programs-git.nix
     ./modules/programs-minecraft.nix
     ./modules/programs-obs.nix
