@@ -14,6 +14,7 @@
     ./modules/programs-minecraft.nix
     ./modules/programs-obs.nix
     ./modules/programs-shell.nix
+    ./modules/programs-signal-desktop.nix
     ./modules/programs-ssh.nix
     ./modules/programs-vim.nix
     ./modules/programs-vscode.nix

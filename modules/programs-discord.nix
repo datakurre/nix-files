@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, ... }:
 {
   home-manager.users.${config.user.name} = {
     home.packages = [ pkgs.discord ];
