@@ -14,6 +14,7 @@ import XMonad.Layout.GridVariants
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.ThreeColumns
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Util.EZConfig (additionalKeys)
 import qualified XMonad.StackSet as W
 import System.Posix.Env (putEnv)
 
@@ -58,6 +59,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList
   , ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 5%+ unmute")
   , ((0, xF86XK_AudioMicMute), spawn "amixer set Capture toggle")
   , ((0, xF86XK_Favorites), spawn "xlock -mode xjack")
+  , ((0, xK_Cancel), spawn "sudo systemctl suspend")
   ]
 
 -- XPConfig options:
