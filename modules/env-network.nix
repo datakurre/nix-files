@@ -1,5 +1,6 @@
 { config, pkgs, ... }:
 {
+  environment.systemPackages = [ pkgs.openconnect ];
   home-manager.users.${config.user.name} = {
     services = {
       blueman-applet.enable = true;

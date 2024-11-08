@@ -1,8 +1,11 @@
 { config, pkgs, ... }:
 {
-  security.sudo = {
-    enable = true;
-    wheelNeedsPassword = true;
+  security = {
+    polkit.enable = true;
+    sudo = {
+      enable = true;
+      wheelNeedsPassword = true;
+    };
   };
   home-manager = {
     useGlobalPkgs = true;
