@@ -4,9 +4,9 @@
     pkgs.blueman
     pkgs.brightnessctl
     pkgs.cbatticon
-    pkgs.gnome3.adwaita-icon-theme
-    pkgs.gnome3.nautilus
-    pkgs.gnome3.sushi
+    pkgs.adwaita-icon-theme
+    pkgs.nautilus
+    pkgs.sushi
     pkgs.networkmanagerapplet
     pkgs.paprefs
     pkgs.pasystray
@@ -96,11 +96,11 @@
   };
   services = {
     blueman.enable = true;
-    dbus.packages = with pkgs; [ gnome3.sushi ];
+    dbus.packages = [ pkgs.sushi ];
     displayManager.defaultSession = "none+xmonad";
     gnome.at-spi2-core.enable = true;
     gvfs.enable = true;
-    udev.packages = [ pkgs.gnome3.gnome-settings-daemon ];
+    udev.packages = [ pkgs.gnome-settings-daemon ];
     xserver = {
       displayManager = {
         lightdm = {

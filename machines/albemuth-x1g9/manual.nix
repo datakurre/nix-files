@@ -2,7 +2,8 @@
 {
   boot.initrd = {
     availableKernelModules = [ "kvm" ];
-    luks.devices."luks-05e3771a-f128-4db5-b054-8804bd6b7c14".device = "/dev/disk/by-uuid/05e3771a-f128-4db5-b054-8804bd6b7c14";
+    luks.devices."luks-05e3771a-f128-4db5-b054-8804bd6b7c14".device =
+      "/dev/disk/by-uuid/05e3771a-f128-4db5-b054-8804bd6b7c14";
   };
   boot.loader = {
     efi.canTouchEfiVariables = true;
@@ -13,7 +14,6 @@
     enable = true;
     powerOnBoot = true;
   };
-  hardware.pulseaudio.enable = true;
   home-manager.users.${config.user.name} = {
     services.stalonetray.config.icon_size = 48;
     xresources.properties."Xcursor.size" = "64";
