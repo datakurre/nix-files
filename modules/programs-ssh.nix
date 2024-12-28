@@ -3,10 +3,10 @@
   home-manager.users.${config.user.name} = {
     programs = {
       bash.bashrcExtra = ''
-        export SSH_AUTH_SOCK=$(gpg-conf --list-dirs agent-ssh-socket)
+        export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
       '';
       nushell.envFile.text = ''
-        ''$env.SSH_AUTH_SOCK = (gpgconf --list-dirs | parse "agent-ssh-socket: {}" | get agent-ssh-socket)
+        ''$env.SSH_AUTH_SOCK = $"(gpgconf --list-dirs agent-ssh-socket)"
       '';
       ssh.enable = true;
     };

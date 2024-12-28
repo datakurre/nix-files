@@ -3,9 +3,9 @@
   home-manager.users.${config.user.name} = {
     programs = {
       nushell = {
-        environmentVariables.DOCKER_HOST = "unix:///var/run/user/${
+        environmentVariables.DOCKER_HOST = "\"unix:///var/run/user/${
           builtins.toString config.users.users.${config.user.name}.uid
-        }/podman/podman.sock";
+        }/podman/podman.sock\"";
       };
     };
   };

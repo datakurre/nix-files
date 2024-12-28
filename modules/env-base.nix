@@ -8,6 +8,7 @@
     };
   };
   home-manager = {
+    backupFileExtension = ".bak";
     useGlobalPkgs = true;
     users.${config.user.name} = {
       programs.home-manager.enable = true;
