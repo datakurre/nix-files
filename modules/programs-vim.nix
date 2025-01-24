@@ -158,6 +158,9 @@
   };
   environment = {
     shellAliases."vi" = "vim";
-    systemPackages = [ pkgs.vim ];
+    systemPackages = [
+      pkgs.vim
+      pkgs.unzip
+    ];
   };
 }
