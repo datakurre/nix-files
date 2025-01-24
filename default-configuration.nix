@@ -3,6 +3,7 @@
   imports = [
     ./modules/env-base.nix
     ./modules/env-fonts.nix
+    ./modules/env-ca.nix
     ./modules/env-locale.nix
     ./modules/env-network.nix
     ./modules/env-nix.nix

@@ -47,7 +47,24 @@
             }
           )
           home-manager.nixosModules.home-manager
-          ./machines/albemuth-x1g9
+          ./machines/albemuth-x1g11
+          ./default-configuration.nix
+        ];
+        system = "x86_64-linux";
+      };
+      nixosConfigurations.makondo = nixpkgs.lib.nixosSystem {
+        modules = [
+          (
+            { ... }:
+            {
+              nixpkgs.overlays = [ self.overlays.x86_64-linux.default ];
+              user.name = "atsoukka";
+              user.description = "Asko Soukka";
+              user.home = "/home/atsoukka";
+            }
+          )
+          home-manager.nixosModules.home-manager
+          ./machines/makondo-p7670
           ./default-configuration.nix
         ];
         system = "x86_64-linux";

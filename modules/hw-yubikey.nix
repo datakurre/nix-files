@@ -9,5 +9,5 @@
     services.${config.user.name}.u2fAuth = true;
     u2f.enable = true;
   };
-  services.pcscd.enable = false;
+  services.pcscd.enable = true;
 }
