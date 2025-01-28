@@ -65,7 +65,12 @@
   services = {
     fstrim.enable = true;
     fwupd.enable = true;
-    xserver.displayManager.xserverArgs = [ "-dpi 196" ];
+    libinput.touchpad.tapping = false;
+    libinput.touchpad.tappingDragLock = false;
+    libinput.touchpad.additionalOptions = ''
+      Option "SendEventsMode" "disabled-on-external-mouse"
+    '';
+    xserver.displayManager.xserverArgs = [ "-dpi 224" ];
     xserver.videoDrivers = [ "nvidia" ];
   };
   system.stateVersion = "24.11";

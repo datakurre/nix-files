@@ -48,6 +48,7 @@
       "XTerm*faceName" = "DejaVu Sans Mono for Powerline";
       "XTerm*faceSize" = "11";
       "XTerm*saveLines" = "1024";
+      "XTerm*cursorTheme" = "Adwaita";
 
       "*background" = "#002b36";
       "*foreground" = "#839496";
