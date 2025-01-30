@@ -1,7 +1,6 @@
 { config, pkgs, ... }:
 {
   boot.initrd.availableKernelModules = [
-    "kvm"
     "sd_mod"
     "usb_storage"
   ];
@@ -9,6 +8,7 @@
   boot.kernelParams = [
     # https://wiki.archlinux.org/index.php/Intel_graphics#Screen_flickering
     "i915.enable_psr=0"
+    "kvm.enable_virt_at_load=0"
   ];
   boot.initrd.luks.fido2Support = true;
   boot.initrd.luks.devices = {
