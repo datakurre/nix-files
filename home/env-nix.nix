@@ -1,20 +1,10 @@
 { config, pkgs, ... }:
 {
-  documentation.nixos.enable = false;
-  environment.systemPackages = [ pkgs.gnumake ];
-  home-manager.users.${config.user.name} = {
-    programs.nushell.environmentVariables = {
-      NETRC = "/etc/nix/netrc"; # TODO...
-      NIX_REMOTE = "daemon";
-      SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
-    };
+  programs.nushell.environmentVariables = {
+    SSL_CERT_FILE = "/etc/ssl/certs/ca-bundle.crt";
   };
   nix = {
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 180d";
-    };
+    package = pkgs.nix;
     extraOptions = ''
       auto-optimise-store = false
       builders-use-substitutes = true
@@ -27,13 +17,13 @@
     settings = {
       extra-sandbox-paths = [
         "/dev/urandom"
-        "/etc/ssl/certs/ca-certificates.crt"
+        "/etc/ssl/certs/ca-bundle.crt"
+        "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
       ];
       sandbox = true;
       substituters = [ "https://cache.nixos.org" ];
       trusted-users = [
-        "root"
-        "${config.user.name}"
+        "${config.home.username}"
       ];
     };
   };

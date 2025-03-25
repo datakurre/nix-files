@@ -7,6 +7,7 @@
 {
   imports = [
     ./home/env-fonts.nix
+    ./home/env-nix.nix
     ./home/programs-vscode.nix
     ./home/programs-git.nix
     ./home/programs-shell.nix
@@ -16,6 +17,7 @@
     pkg:
     builtins.elem (lib.getName pkg) [
       "corefonts"
+      "vagrant"
       "vscode"
       "vscode-with-extensions"
       "vscode-extension-github-copilot"
@@ -36,12 +38,10 @@
       temp-night = 3700;
     };
   };
-  # services.screen-locker = {
-  #   enable = true;
-  #   inactiveInterval = 1;
-  #   lockCmd = "${pkgs.xlockmore}/bin/xlock -mode xjack -erasedelay 0";
-  # };
-  # systemd.user.startServices = true;
+# services.betterlockcreen = {
+#   enable = true;
+#   lockCmd = "${pkgs.xlockmore}/bin/xlock -mode xjack -erasedelay 0";
+# };
   xresources.properties = {
     "Xft.dpi" = "192";
     "Xcursor.theme" = "Adwaita";
