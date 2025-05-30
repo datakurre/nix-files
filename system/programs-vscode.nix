@@ -1,15 +1,10 @@
 {
   config,
-  pkgs,
-  lib,
   ...
 }:
 {
-  home-manager.users.${config.user.name} = {
-    programs.vscode = {
-      enable = true;
-      package = pkgs.vscodium;
-    };
+  home-manager.users.${config.home.username} = {
+    imports = [ ../home-manager/programs-vscode.nix ];
   };
   networking.firewall.allowedTCPPortRanges = [
     {

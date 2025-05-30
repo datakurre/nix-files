@@ -31,6 +31,17 @@
       {
         overlays.default = self: super: { };
         packages.discord = pkgs.discord;
+        packages.homeConfigurations."atsoukka" = home-manager.lib.homeManagerConfiguration {
+          modules = [
+            {
+              home.username = "atsoukka";
+              home.homeDirectory = "/home/atsoukka";
+              home.stateVersion = "24.11";
+            }
+            ./home-atsoukka.nix
+          ];
+          inherit pkgs;
+        };
         formatter = pkgs.nixfmt-rfc-style;
       }
     )
