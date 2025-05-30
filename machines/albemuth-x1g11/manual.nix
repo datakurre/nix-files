@@ -38,6 +38,7 @@
     services.stalonetray.config.icon_size = 48;
     xresources.properties."Xcursor.size" = "64";
   };
+  hardware.keyboard.qmk.enable = true;
   networking.hostName = "albemuth";
   services = {
     fwupd.enable = true;
