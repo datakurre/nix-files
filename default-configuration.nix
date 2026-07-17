@@ -1,29 +1,24 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ./modules/env-base.nix
-    ./modules/env-fonts.nix
-    ./modules/env-locale.nix
-    ./modules/env-network.nix
-    ./modules/env-nix.nix
-    ./modules/env-user.nix
-    ./modules/hw-marble-mouse.nix
-    ./modules/hw-yubikey.nix
-    ./modules/programs-discord.nix
-    ./modules/programs-git.nix
-    ./modules/programs-minecraft.nix
-    ./modules/programs-obs.nix
-    ./modules/programs-shell.nix
-    ./modules/programs-signal-desktop.nix
-    ./modules/programs-ssh.nix
-    ./modules/programs-vim.nix
-    ./modules/programs-vscode.nix
-    ./modules/services-adb.nix
-    ./modules/services-battery-notifier.nix
-    ./modules/services-cachix.nix
-    ./modules/services-fineid.nix
-    ./modules/services-redshift.nix
-    ./modules/services-virtualization.nix
-    ./modules/services-xmonad.nix
+    ./modules/nixos/env-base.nix
+    ./modules/nixos/env-fonts.nix
+    ./modules/nixos/env-locale.nix
+    ./modules/nixos/env-network.nix
+    ./modules/nixos/env-nix.nix
+    ./modules/nixos/env-user.nix
+    ./modules/nixos/hw-marble-mouse.nix
+    ./modules/nixos/hw-yubikey.nix
+    ./modules/nixos/programs-obs.nix
+    ./modules/nixos/programs-ssh.nix
+    ./modules/nixos/programs-vim.nix
+    ./modules/nixos/services-fineid.nix
+    ./modules/nixos/services-virtualization.nix
+    ./modules/nixos/services-xmonad.nix
+    # ./modules/nixos/services-adb.nix
+    # ./modules/nixos/services-cachix.nix
   ];
+  home-manager.users.${config.user.name} = {
+    imports = import ./modules/home/default.nix;
+  };
 }
