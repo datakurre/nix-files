@@ -5,6 +5,7 @@
     flake-compat.url = "github:edolstra/flake-compat";
     flake-compat.flake = false;
     home-manager.url = "github:nix-community/home-manager/release-26.05";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs =
     {
@@ -26,16 +27,36 @@
 
       pkgs = import nixpkgs {
         inherit system;
-        config = {
-          allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "discord" ];
-        };
         overlays = [ unstableOverlay ];
       };
+
+      mkNixos =
+        host:
+        {
+          name,
+          description,
+          home,
+        }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            (
+              { ... }:
+              {
+                nixpkgs.overlays = [ self.overlays.default ];
+                user.name = name;
+                user.description = description;
+                user.home = home;
+              }
+            )
+            home-manager.nixosModules.home-manager
+            host
+            ./default-configuration.nix
+          ];
+        };
     in
     {
       overlays.default = unstableOverlay;
-
-      packages.${system}.discord = pkgs.unstable.discord;
 
       formatter.${system} = pkgs.nixfmt;
 
@@ -62,40 +83,16 @@
         ];
       };
 
-      nixosConfigurations.albemuth = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          (
-            { ... }:
-            {
-              nixpkgs.overlays = [ self.overlays.default ];
-              user.name = "datakurre";
-              user.description = "Asko Soukka";
-              user.home = "/home/datakurre";
-            }
-          )
-          home-manager.nixosModules.home-manager
-          ./machines/albemuth-x1g9
-          ./default-configuration.nix
-        ];
+      nixosConfigurations.albemuth = mkNixos ./machines/albemuth-x1g9 {
+        name = "datakurre";
+        description = "Asko Soukka";
+        home = "/home/datakurre";
       };
 
-      nixosConfigurations.makondo = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          (
-            { ... }:
-            {
-              nixpkgs.overlays = [ self.overlays.default ];
-              user.name = "atsoukka";
-              user.description = "Asko Soukka";
-              user.home = "/home/atsoukka";
-            }
-          )
-          home-manager.nixosModules.home-manager
-          ./machines/makondo-p7670
-          ./default-configuration.nix
-        ];
+      nixosConfigurations.makondo = mkNixos ./machines/makondo-p7670 {
+        name = "atsoukka";
+        description = "Asko Soukka";
+        home = "/home/atsoukka";
       };
     };
 }

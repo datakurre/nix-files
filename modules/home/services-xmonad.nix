@@ -1,5 +1,14 @@
 { pkgs, ... }:
 {
+  # Session tools started via xsession.initExtra below (or referenced from
+  # services-xmonad.hs). Listed here so they also exist on standalone
+  # Home Manager hosts, where there is no NixOS environment.systemPackages.
+  home.packages = [
+    pkgs.brightnessctl
+    pkgs.cbatticon
+    pkgs.pasystray
+    pkgs.xmousepasteblock
+  ];
   services = {
     stalonetray = {
       config = {
@@ -72,9 +81,21 @@
     "*color7" = "#eee8d5";
     "*color15" = "#fdf6e3";
   };
-  xsession.windowManager.xmonad = {
+  # The session is fully managed by Home Manager on both NixOS and
+  # standalone hosts: NixOS only registers the "none+xmonad" session, which
+  # executes ~/.xsession generated here. Tray applets not available as Home
+  # Manager services are started in initExtra.
+  xsession = {
     enable = true;
-    enableContribAndExtras = true;
-    config = ../services-xmonad.hs;
+    initExtra = ''
+      ${pkgs.xmousepasteblock}/bin/xmousepasteblock &
+      ${pkgs.pasystray}/bin/pasystray &
+      sleep 0.3 && ${pkgs.cbatticon}/bin/cbatticon &
+    '';
+    windowManager.xmonad = {
+      enable = true;
+      enableContribAndExtras = true;
+      config = ../services-xmonad.hs;
+    };
   };
 }

@@ -154,8 +154,5 @@
       '';
     };
   };
-  home.packages = [
-    pkgs.vim
-    pkgs.unzip
-  ];
+  home.packages = [ pkgs.unzip ];
 }

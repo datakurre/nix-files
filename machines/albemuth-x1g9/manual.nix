@@ -9,22 +9,13 @@
     enable = true;
     platform = "ipu6ep";
   };
-  boot.loader = {
-    efi.canTouchEfiVariables = true;
-    systemd-boot.enable = true;
-  };
   environment.systemPackages = [
     pkgs.acpi
     # Calibre
     (pkgs.calibre.override { unrarSupport = true; })
   ];
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
   networking.hostName = "albemuth";
   services = {
-    fwupd.enable = true;
     thinkfan.enable = true;
     xserver.dpi = 196;
   };

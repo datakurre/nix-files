@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   programs.git = {
     enable = true;
@@ -11,13 +11,32 @@
         email = "asko.soukka@iki.fi";
         name = "Asko Soukka";
       };
+      github.user = "datakurre";
       push.default = "current";
       apply.whitespace = "nowarn";
       core.autocrlf = "input";
+      gpg.program = "gpg";
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      color = {
+        ui = true;
+        branch = {
+          current = "yellow reverse";
+          local = "yellow";
+          remote = "green";
+        };
+        diff = {
+          meta = "yellow bold";
+          frag = "magenta bold";
+          old = "red bold";
+          new = "green bold";
+        };
+        status = {
+          added = "yellow";
+          changed = "green";
+          untracked = "cyan";
+        };
+      };
     };
-  };
-  home = {
-    file.".gitconfig".source = ../programs-git-gitconfig;
-    packages = [ pkgs.git ];
   };
 }

@@ -2,7 +2,6 @@
   ./env-fonts.nix
   ./env-locale.nix
   ./env-network.nix
-  ./env-nix.nix
   ./hw-yubikey.nix
   ./programs-git.nix
   ./programs-minecraft.nix

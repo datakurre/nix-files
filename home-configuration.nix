@@ -6,12 +6,6 @@
 }:
 {
   imports = import ./modules/home/default.nix;
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "corefonts"
-      "vagrant"
-    ];
   home.file.".bashrc.d/99-nix.sh".text = ''
     . ${config.home.homeDirectory}/.nix-profile/etc/profile.d/nix.sh
     export SHELL=${config.home.homeDirectory}/.nix-profile/bin/nu

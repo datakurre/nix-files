@@ -1,12 +1,8 @@
 { config, pkgs, ... }:
 {
-  programs = {
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
-    ssh.startAgent = false;
-  };
+  # The GnuPG agent (with SSH support) is managed per-user by Home Manager
+  # (modules/home/programs-ssh.nix) so it works identically on non-NixOS hosts.
+  programs.ssh.startAgent = false;
   services.openssh = {
     allowSFTP = true;
     extraConfig = ''

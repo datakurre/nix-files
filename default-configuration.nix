@@ -1,5 +1,17 @@
 { config, pkgs, ... }:
 {
+  # Policy shared by all machines. Hardware-specific settings belong to
+  # machines/<host>/manual.nix.
+  boot.loader = {
+    efi.canTouchEfiVariables = true;
+    systemd-boot.enable = true;
+  };
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+  services.fwupd.enable = true;
+
   imports = [
     ./modules/nixos/env-base.nix
     ./modules/nixos/env-fonts.nix

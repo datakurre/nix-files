@@ -17,10 +17,6 @@
       crypttabExtraOpts = [ "fido2-device=auto" ];
     };
   };
-  boot.loader = {
-    efi.canTouchEfiVariables = true;
-    systemd-boot.enable = true;
-  };
   boot.tmp.cleanOnBoot = true;
   environment.systemPackages =
     let
@@ -39,10 +35,6 @@
   fileSystems."/" = {
     options = [ "noatime" ];
   };
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
   hardware.graphics.enable = true;
   hardware.nvidia.open = false;
   hardware.nvidia.powerManagement.enable = true;
@@ -52,7 +44,6 @@
   networking.hostName = "makondo";
   services = {
     fstrim.enable = true;
-    fwupd.enable = true;
     libinput.touchpad.tapping = false;
     libinput.touchpad.tappingDragLock = false;
     libinput.touchpad.additionalOptions = ''
