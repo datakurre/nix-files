@@ -9,7 +9,7 @@
       enable = true;
       settings.tabstop = 4;
       settings.shiftwidth = 4;
-      plugins = [ pkgs.vimPlugins.Solarized ];
+      plugins = [ pkgs.vimPlugins.vim-colors-solarized ];
       extraConfig = ''
         " Enable autoindent
         set ai

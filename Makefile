@@ -12,5 +12,8 @@ switch\ makondo:
 switch\ atsoukka:
 	home-manager switch --flake .#homeConfigurations.atsoukka
 
+check:
+	nix flake check
+
 format:
 	@nix fmt $(NIX_FILES)

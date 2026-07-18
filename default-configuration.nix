@@ -15,10 +15,10 @@
     ./modules/nixos/services-fineid.nix
     ./modules/nixos/services-virtualization.nix
     ./modules/nixos/services-xmonad.nix
-    # ./modules/nixos/services-adb.nix
-    # ./modules/nixos/services-cachix.nix
   ];
   home-manager.users.${config.user.name} = {
     imports = import ./modules/home/default.nix;
+    services.stalonetray.config.icon_size = 48;
+    xresources.properties."Xcursor.size" = "64";
   };
 }

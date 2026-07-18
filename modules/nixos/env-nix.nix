@@ -3,25 +3,26 @@
   documentation.nixos.enable = false;
   environment.systemPackages = [ pkgs.gnumake ];
   nix = {
+    channel.enable = false;
     gc = {
       automatic = true;
       dates = "weekly";
       options = "--delete-older-than 180d";
     };
-    extraOptions = ''
-      auto-optimise-store = false
-      builders-use-substitutes = true
-      keep-outputs = true
-      keep-derivations = true
-      min-free = ${toString (100 * 1024 * 1024)}
-      max-free = ${toString (1024 * 1024 * 1024)}
-      experimental-features = nix-command flakes
-    '';
     settings = {
+      auto-optimise-store = true;
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       extra-sandbox-paths = [
         "/dev/urandom"
         "/etc/ssl/certs/ca-certificates.crt"
       ];
+      keep-derivations = true;
+      keep-outputs = true;
+      max-free = 1024 * 1024 * 1024;
+      min-free = 100 * 1024 * 1024;
       sandbox = true;
       substituters = [ "https://cache.nixos.org" ];
       trusted-users = [

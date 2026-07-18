@@ -6,9 +6,11 @@
       key = "5A9D4532";
       signByDefault = true;
     };
-    userEmail = "asko.soukka@iki.fi";
-    userName = "Asko Soukka";
-    extraConfig = {
+    settings = {
+      user = {
+        email = "asko.soukka@iki.fi";
+        name = "Asko Soukka";
+      };
       push.default = "current";
       apply.whitespace = "nowarn";
       core.autocrlf = "input";

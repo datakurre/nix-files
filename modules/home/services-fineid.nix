@@ -2,7 +2,8 @@
 {
   programs.firefox = {
     enable = true;
-    package = pkgs.wrapFirefox pkgs.firefox-unwrapped {
+    configPath = ".mozilla/firefox";
+    package = pkgs.wrapFirefox pkgs.unstable.firefox-unwrapped {
       extraPolicies = {
         SecurityDevices.opensc = "${pkgs.opensc}/lib/onepin-opensc-pkcs11.so";
       };

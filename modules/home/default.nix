@@ -15,7 +15,4 @@
   ./services-redshift.nix
   ./services-virtualization.nix
   ./services-xmonad.nix
-  # ./programs-discord.nix
-  # ./programs-signal-desktop.nix
-  # ./services-cachix.nix
 ]
