@@ -16,5 +16,6 @@
     enableSshSupport = true;
     grabKeyboardAndMouse = true;
     enableScDaemon = true;
+    pinentry.package = pkgs.pinentry-qt;
   };
 }

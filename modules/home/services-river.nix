@@ -32,10 +32,21 @@ let
   '';
 in
 {
+  dconf = {
+    enable = true;
+    settings = {
+      "org/gnome/desktop/interface".scaling-factor = lib.hm.gvariant.mkUint32 2;
+    };
+  };
+
+  xresources.properties."Xft.dpi" = "192";
+
   home.packages = [
     pkgs.wl-clipboard
     pkgs.wlr-randr
     pkgs.pasystray
+    pkgs.xrandr
+    pkgs.xrdb
     layoutRotate
     layoutReset
   ];
@@ -59,13 +70,18 @@ in
     text = ''
       #!/bin/sh
 
-      export GDK_SCALE=2
-      export QT_SCALE_FACTOR=2
+      systemctl --user set-environment GDK_SCALE=2
+      systemctl --user set-environment QT_SCALE_FACTOR=2
+      systemctl --user set-environment MOZ_ENABLE_WAYLAND=1
+      systemctl --user set-environment GDK_BACKEND=wayland
 
-      systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS GDK_SCALE QT_SCALE_FACTOR
-      dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS GDK_SCALE QT_SCALE_FACTOR
+      systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS GDK_SCALE QT_SCALE_FACTOR MOZ_ENABLE_WAYLAND GDK_BACKEND
+      dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS GDK_SCALE QT_SCALE_FACTOR MOZ_ENABLE_WAYLAND GDK_BACKEND
       systemctl --user start graphical-session.target
       systemctl --user start gammastep
+
+      xrandr --dpi 192
+      xrdb -merge ~/.Xresources
 
       riverctl keyboard-layout -options "eurosign:e,caps:escape,nbsp:none" fi
       riverctl focus-follows-cursor disabled
@@ -215,83 +231,40 @@ in
       systemd.enable = false;
       settings = [
         {
+          layer = "top";
           position = "top";
-          height = 36;
+          exclusive = false;
+          passthrough = false;
+          height = 44;
           modules-left = [ ];
           modules-center = [ ];
-          modules-right = [
-            "pulseaudio"
-            "battery"
-            "tray"
-          ];
-          battery = {
-            format = "{icon}  {capacity}%";
-            format-icons = [
-              "▁"
-              "▂"
-              "▃"
-              "▅"
-              "█"
-            ];
-            states = {
-              warning = 20;
-              critical = 10;
-            };
-          };
-          pulseaudio = {
-            format = "{volume}% {icon}";
-            format-muted = "muted";
-            on-click = "pavucontrol";
-          };
+          modules-right = [ "tray" ];
           tray = {
-            icon-size = 24;
-            spacing = 8;
+            icon-size = 36;
+            spacing = 12;
           };
         }
       ];
       style = ''
         @define-color base03 #002b36;
-        @define-color base02 #073642;
-        @define-color base01 #586e75;
-        @define-color base00 #657b83;
-        @define-color base0 #839496;
-        @define-color base1 #93a1a1;
-        @define-color base2 #eee8d5;
-        @define-color base3 #fdf6e3;
-        @define-color yellow #b58900;
-        @define-color orange #cb4b16;
-        @define-color red #dc322f;
-        @define-color magenta #d33682;
-        @define-color violet #6c71c4;
-        @define-color blue #268bd2;
-        @define-color cyan #2aa198;
-        @define-color green #859900;
 
         * {
           border: none;
           border-radius: 0;
           font-family: "DejaVu Sans Mono";
-          font-size: 16px;
+          font-size: 9px;
           min-height: 0;
         }
 
         window#waybar {
+          background: transparent;
+        }
+
+        #tray {
           background: @base03;
-          color: @base0;
-        }
-
-        #battery {
-          color: @base1;
-        }
-        #battery.warning {
-          color: @orange;
-        }
-        #battery.critical {
-          color: @red;
-        }
-
-        #pulseaudio {
-          color: @base1;
+          margin: 8px 8px 0 0;
+          padding: 4px 12px;
+          border-radius: 12px;
         }
       '';
     };
