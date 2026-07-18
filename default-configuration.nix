@@ -19,18 +19,15 @@
     ./modules/nixos/env-network.nix
     ./modules/nixos/env-nix.nix
     ./modules/nixos/env-user.nix
-    ./modules/nixos/hw-marble-mouse.nix
     ./modules/nixos/hw-yubikey.nix
     ./modules/nixos/programs-obs.nix
     ./modules/nixos/programs-ssh.nix
     ./modules/nixos/programs-vim.nix
     ./modules/nixos/services-fineid.nix
     ./modules/nixos/services-virtualization.nix
-    ./modules/nixos/services-xmonad.nix
+    ./modules/nixos/services-river.nix
   ];
   home-manager.users.${config.user.name} = {
-    imports = import ./modules/home/default.nix;
-    services.stalonetray.config.icon_size = 48;
-    xresources.properties."Xcursor.size" = "64";
+    imports = (import ./modules/home/default.nix) ++ [ ./modules/home/services-river.nix ];
   };
 }

@@ -17,7 +17,6 @@
   networking.hostName = "albemuth";
   services = {
     thinkfan.enable = true;
-    xserver.dpi = 196;
   };
   system.stateVersion = "24.05";
 
@@ -30,19 +29,44 @@
 
   # Roblox
   services.flatpak.enable = true;
-  # XDG Portal configuration for XMonad
+  # XDG Portal configuration for River + Flatpak
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    extraPortals = [
+      pkgs.xdg-desktop-portal-wlr
+      pkgs.xdg-desktop-portal-gtk
+    ];
 
     # Required to prevent apps from hanging while waiting for a portal response
     config = {
       common = {
         default = [
+          "wlr"
+          "gtk"
+        ];
+      };
+      river = {
+        default = [
+          "wlr"
           "gtk"
         ];
       };
     };
+  };
+
+  home-manager.users.${config.user.name}.services.kanshi = {
+    enable = true;
+    settings = [
+      {
+        profile.name = "internal";
+        profile.outputs = [
+          {
+            criteria = "eDP-1";
+            scale = 2.0;
+          }
+        ];
+      }
+    ];
   };
 
 }

@@ -49,8 +49,22 @@
     libinput.touchpad.additionalOptions = ''
       Option "SendEventsMode" "disabled-on-external-mouse"
     '';
-    xserver.dpi = 224;
     xserver.videoDrivers = [ "nvidia" ];
   };
   system.stateVersion = "24.11";
+
+  home-manager.users.${config.user.name}.services.kanshi = {
+    enable = true;
+    settings = [
+      {
+        profile.name = "default";
+        profile.outputs = [
+          {
+            criteria = "DP-1";
+            scale = 2.0;
+          }
+        ];
+      }
+    ];
+  };
 }

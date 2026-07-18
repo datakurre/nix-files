@@ -3,6 +3,7 @@
   ./env-locale.nix
   ./env-network.nix
   ./hw-yubikey.nix
+  ./programs-discord.nix
   ./programs-git.nix
   ./programs-minecraft.nix
   ./programs-obs.nix
@@ -11,7 +12,6 @@
   ./programs-vim.nix
   ./services-battery-notifier.nix
   ./services-fineid.nix
-  ./services-redshift.nix
+  ./services-gammastep.nix
   ./services-virtualization.nix
-  ./services-xmonad.nix
 ]

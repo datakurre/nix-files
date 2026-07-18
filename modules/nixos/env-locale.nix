@@ -18,6 +18,5 @@
       LC_TIME = "fi_FI.UTF-8";
     };
   };
-  services.xserver.xkb.layout = "fi";
   time.timeZone = "Europe/Helsinki";
 }

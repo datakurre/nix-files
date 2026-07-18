@@ -5,7 +5,7 @@
   ...
 }:
 {
-  imports = import ./modules/home/default.nix;
+  imports = (import ./modules/home/default.nix) ++ [ ./modules/home/services-xmonad.nix ];
   home.file.".bashrc.d/99-nix.sh".text = ''
     . ${config.home.homeDirectory}/.nix-profile/etc/profile.d/nix.sh
     export SHELL=${config.home.homeDirectory}/.nix-profile/bin/nu

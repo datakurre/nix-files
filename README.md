@@ -10,15 +10,15 @@ describes whole machines (NixOS) as well as a standalone user environment
 
 ## What's inside
 
-- **Desktop:** XMonad window manager (config in
-  [modules/services-xmonad.hs](modules/services-xmonad.hs)), LightDM mini
-  greeter, stalonetray, nm-applet, blueman-applet, pasystray, cbatticon.
+- **Desktop:** River dynamic tiling Wayland compositor, greetd + tuigreet
+  login manager, waybar panel (tray + tags + battery + audio), nm-applet,
+  blueman-applet, pasystray.
 - **Shell:** Nushell as the login shell, with bash integration, starship
   prompt and carapace completions.
 - **Programs:** Vim, Git (GPG-signed commits), OBS, Minecraft, SSH,
   YubiKey (U2F/PAM) support.
 - **Services:** Finnish FineID/VRK root CA, virtualization (libvirt,
-  VirtualBox, rootless podman), redshift, battery notifier.
+  VirtualBox, rootless podman), gammastep, battery notifier.
 - **Nix setup:** flakes enabled, channels disabled, weekly GC, store
   auto-optimisation.
 
