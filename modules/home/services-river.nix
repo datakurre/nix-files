@@ -39,14 +39,10 @@ in
     };
   };
 
-  xresources.properties."Xft.dpi" = "192";
-
   home.packages = [
     pkgs.wl-clipboard
     pkgs.wlr-randr
     pkgs.pasystray
-    pkgs.xrandr
-    pkgs.xrdb
     layoutRotate
     layoutReset
   ];
@@ -70,23 +66,19 @@ in
     text = ''
       #!/bin/sh
 
-      systemctl --user set-environment GDK_SCALE=2
-      systemctl --user set-environment QT_SCALE_FACTOR=2
       systemctl --user set-environment MOZ_ENABLE_WAYLAND=1
       systemctl --user set-environment GDK_BACKEND=wayland
 
-      systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS GDK_SCALE QT_SCALE_FACTOR MOZ_ENABLE_WAYLAND GDK_BACKEND
-      dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS GDK_SCALE QT_SCALE_FACTOR MOZ_ENABLE_WAYLAND GDK_BACKEND
+      systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS MOZ_ENABLE_WAYLAND GDK_BACKEND
+      dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS MOZ_ENABLE_WAYLAND GDK_BACKEND
       systemctl --user start graphical-session.target
       systemctl --user start gammastep
-
-      xrandr --dpi 192
-      xrdb -merge ~/.Xresources
+      systemctl --user start kanshi
 
       riverctl keyboard-layout -options "eurosign:e,caps:escape,nbsp:none" fi
       riverctl focus-follows-cursor disabled
       riverctl set-repeat 25 660
-      riverctl xcursor-theme Adwaita 48
+      riverctl xcursor-theme Adwaita 24
       riverctl background-color 0x002b36
       riverctl border-width 1
       riverctl border-color-focused 0x268bd2
@@ -166,7 +158,7 @@ in
         };
         scrollback.lines = 1024;
         cursor.style = "block";
-        colors = {
+        colors-dark = {
           background = "002b36";
           foreground = "839496";
           regular0 = "073642";
@@ -232,16 +224,17 @@ in
       settings = [
         {
           layer = "top";
-          position = "top";
+          position = "right";
           exclusive = false;
           passthrough = false;
-          height = 44;
+          height = 22;
+          width = 22;
           modules-left = [ ];
           modules-center = [ ];
           modules-right = [ "tray" ];
           tray = {
-            icon-size = 36;
-            spacing = 12;
+            icon-size = 18;
+            spacing = 6;
           };
         }
       ];
@@ -252,7 +245,7 @@ in
           border: none;
           border-radius: 0;
           font-family: "DejaVu Sans Mono";
-          font-size: 9px;
+          font-size: 12px;
           min-height: 0;
         }
 
@@ -262,9 +255,9 @@ in
 
         #tray {
           background: @base03;
-          margin: 8px 8px 0 0;
-          padding: 4px 12px;
-          border-radius: 12px;
+          margin: 4px 4px 0 0;
+          padding: 2px 6px;
+          border-radius: 6px;
         }
       '';
     };

@@ -5,27 +5,25 @@
   ...
 }:
 let
-  hidpiEnv = {
-    GDK_SCALE = "2";
+  waylandEnv = {
     MOZ_ENABLE_WAYLAND = "1";
-    QT_SCALE_FACTOR = "2";
+    NIXOS_OZONE_WL = "1";
   };
   envCmd = lib.concatStringsSep " " (
     [
       "env"
       "XDG_CURRENT_DESKTOP=river"
     ]
-    ++ lib.mapAttrsToList (k: v: "${k}=${v}") hidpiEnv
+    ++ lib.mapAttrsToList (k: v: "${k}=${v}") waylandEnv
   );
 in
 {
   environment.sessionVariables = {
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    MOZ_ENABLE_WAYLAND = "1";
     XCURSOR_THEME = "Adwaita";
     XCURSOR_SIZE = "48";
   }
-  // hidpiEnv;
+  // waylandEnv;
   environment.systemPackages = [
     pkgs.river-classic
     pkgs.xwayland
