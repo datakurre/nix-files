@@ -7,7 +7,13 @@
   # modules/nixos/services-virtualization.nix. On other distributions the
   # administrator must add e.g. "<user>:100000:65536" to /etc/subuid and
   # /etc/subgid (newuidmap/newgidmap are part of the shadow package).
-  services.podman.enable = true;
+  services.podman = {
+    enable = true;
+    settings.registries.search = [
+      "quay.io"
+      "docker.io"
+    ];
+  };
   systemd.user = {
     services.podman = {
       Unit = {
