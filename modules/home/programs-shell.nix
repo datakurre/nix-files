@@ -8,6 +8,9 @@
     };
     nushell = {
       enable = true;
+      extraConfig = ''
+        $env.config.show_banner = false
+      '';
       environmentVariables = {
         LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
         GS_OPTIONS = "-sPAPERSIZE=a4";
