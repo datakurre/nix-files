@@ -6,13 +6,13 @@ Subject: [PATCH] replace scrolling with blank-screen restart when screen fills
 Instead of scrolling text upward when the terminal screen fills, clear
 all characters and restart from the top with fresh random margins.
 
- render/effect_xjack.c | 29 +++++++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+ render/effect_xjack.c | 35 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 32 insertions(+), 3 deletions(-)
 
 diff --git a/render/effect_xjack.c b/render/effect_xjack.c
 --- a/render/effect_xjack.c
 +++ b/render/effect_xjack.c
-@@ -137,9 +137,34 @@
+@@ -144,9 +144,40 @@
  	}
 
  	if (xj->y >= xj->rows - 1) {
@@ -23,7 +23,6 @@ diff --git a/render/effect_xjack.c b/render/effect_xjack.c
 +		xj->char_count = 0;
 +		xj->accum_char_count = 0;
  		xj->first_paint = true;
-+		xj->s = source;
 +		xj->mode = 0;
 +		xj->sentences = 0;
 +		xj->paras = 0;
@@ -37,6 +36,13 @@ diff --git a/render/effect_xjack.c b/render/effect_xjack.c
 +		xj->nfs_done = false;
 +		xj->timer = 0.0;
 +		xj->delay = 0.05;
++		if (xj->num_slots > 0) {
++			xjack_resolve_source(xj);
++			xj->cur_source = xj->rendered_source;
++		} else {
++			xj->cur_source = xj->s_source;
++		}
++		xj->s = xj->cur_source;
 +		xj->left = xjack_rnd(&xj->rng_state,
 +			(xj->columns / 2) + 1);
 +		xj->right = xj->left
