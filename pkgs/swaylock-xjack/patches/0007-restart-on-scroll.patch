@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 00:00:00 +0000
+Subject: [PATCH] replace scrolling with blank-screen restart when screen fills
+
+Instead of scrolling text upward when the terminal screen fills, clear
+all characters and restart from the top with fresh random margins.
+
+ render/effect_xjack.c | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
+
+diff --git a/render/effect_xjack.c b/render/effect_xjack.c
+--- a/render/effect_xjack.c
++++ b/render/effect_xjack.c
+@@ -137,9 +137,34 @@
+ 	}
+
+ 	if (xj->y >= xj->rows - 1) {
+-		xj->scrolling = 1;
+-		xj->subscrolling = xj->line_height;
++		xj->y = 0;
++		xj->x = xj->left;
++		xj->char_count = 0;
++		xj->accum_char_count = 0;
+ 		xj->first_paint = true;
++		xj->s = source;
++		xj->mode = 0;
++		xj->sentences = 0;
++		xj->paras = 0;
++		xj->break_para = false;
++		xj->caps = false;
++		xj->scrolling = 0;
++		xj->subscrolling = 0;
++		xj->pining = 0;
++		xj->nfs_phase = 0;
++		xj->nfs_idx = 0;
++		xj->nfs_done = false;
++		xj->timer = 0.0;
++		xj->delay = 0.05;
++		xj->left = xjack_rnd(&xj->rng_state,
++			(xj->columns / 2) + 1);
++		xj->right = xj->left
++			+ xjack_rnd(&xj->rng_state,
++				xj->columns - xj->left) + 10;
++		if (xj->right > xj->columns)
++			xj->right = xj->columns;
++		if (xj->right < xj->left + 10)
++			xj->right = xj->left + 10;
+ 	}
+ }
+
+-- 
+2.54.0

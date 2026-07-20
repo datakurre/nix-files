@@ -10,5 +10,6 @@ swaylock.overrideAttrs (old: {
     ./patches/0002-add-xjack-effect.patch
     ./patches/0003-add-xjack-cli-options.patch
     ./patches/0004-incremental-render.patch
+    ./patches/0007-restart-on-scroll.patch
   ];
 })
