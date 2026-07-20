@@ -5,6 +5,7 @@ Subject: [PATCH] add --xjack-word for weighted slot substitution in source
 
 Extends --xjack-source with slot markers {name} that are replaced by
 weighted random word choices at each sentence boundary via --xjack-word.
+Multiple slot defs can be passed in one --xjack-word separated by |.
 
 Example: swaylock --effect xjack \
   --xjack-source "All {verb} and no play makes Jack a dull boy.  " \
@@ -47,30 +48,38 @@ index xxxxxxxxx..xxxxxxxxx 100644
  		"  --xjack-source <string>           "
  			"Sets the source text for the xjack effect.\n"
 +		"  --xjack-word <def>                "
-+			"Slot definition: slot:word=weight,word=weight,...\n"
++			"Slot definition: slot:word=weight,...  Use | for multiple slots.\n"
  		"\n"
  		"All <color> options are of the form <rrggbb[aa]>.\n";
  
-@@ -1019,6 +1023,18 @@
+@@ -1019,6 +1023,26 @@
  				state->args.xjack_source = strdup(optarg);
  			}
  			break;
 +		case LO_XJACK_WORD:
 +			if (state) {
-+				int n = state->args.xjack_word_defs_count;
-+				char **p = realloc(state->args.xjack_word_defs,
-+					(size_t)(n + 1) * sizeof(char *));
-+				if (p) {
-+					state->args.xjack_word_defs = p;
-+					state->args.xjack_word_defs[n] = strdup(optarg);
-+					state->args.xjack_word_defs_count = n + 1;
++				char *dup = strdup(optarg);
++				if (!dup) break;
++				char *save = NULL;
++				char *tok = strtok_r(dup, "|", &save);
++				while (tok) {
++					int n = state->args.xjack_word_defs_count;
++					char **p = realloc(state->args.xjack_word_defs,
++						(size_t)(n + 1) * sizeof(char *));
++					if (p) {
++						state->args.xjack_word_defs = p;
++						state->args.xjack_word_defs[n] = strdup(tok);
++						state->args.xjack_word_defs_count = n + 1;
++					}
++					tok = strtok_r(NULL, "|", &save);
 +				}
++				free(dup);
 +			}
 +			break;
  		default:
  			fprintf(stderr, "%s", usage);
  			return 1;
-@@ -1197,6 +1213,8 @@
+@@ -1197,6 +1221,8 @@
  		.xjack_speed = 0.0,
  		.xjack_seed = 0,
  		.xjack_source = NULL,
@@ -79,7 +88,7 @@ index xxxxxxxxx..xxxxxxxxx 100644
  	};
  	wl_list_init(&state.images);
  	set_default_colors(&state.args.colors);
-@@ -1362,6 +1380,10 @@
+@@ -1362,6 +1388,10 @@
  	free(state.args.effect_name);
  	free(state.args.xjack_font);
  	free(state.args.xjack_source);
