@@ -3,6 +3,7 @@
   ./env-locale.nix
   ./env-network.nix
   ./hw-yubikey.nix
+  ./programs-devenv.nix
   ./programs-discord.nix
   ./programs-git.nix
   ./programs-minecraft.nix
