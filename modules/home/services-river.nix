@@ -221,7 +221,7 @@ in
         # xjack-bg-color = "000000";
         # Weighted word slot example (| separates multiple slot defs):
         xjack-source = "All {verb} and no play makes Jack a dull boy.  ";
-        xjack-word = "verb:work=0.8|verb:plone=0.1|verb:nix=0.1";
+        xjack-word = "verb:work=0.8,plone=0.1,nix=0.1";
         color = "002b36";
         inside-color = "002b36";
         ring-color = "268bd2";
