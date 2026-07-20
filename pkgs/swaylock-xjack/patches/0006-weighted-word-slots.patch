@@ -109,15 +109,15 @@ index xxxxxxxxx..xxxxxxxxx 100644
  
 +struct xjack_word_choice {
 +	char *word;
-+	int weight;
-+	int cum_weight;
++	double weight;
++	double cum_weight;
 +};
 +
 +struct xjack_word_slot {
 +	char *name;
 +	struct xjack_word_choice *choices;
 +	int num_choices;
-+	int total_weight;
++	double total_weight;
 +};
 +
 +struct xjack_token {
@@ -229,7 +229,7 @@ index xxxxxxxxx..xxxxxxxxx 100644
 +		unsigned long *rng_state) {
 +	if (slot->num_choices == 0)
 +		return "";
-+	int r = xjack_rnd(rng_state, slot->total_weight);
++	double r = xjack_frand(rng_state) * slot->total_weight;
 +	for (int i = 0; i < slot->num_choices; i++) {
 +		if (r < slot->choices[i].cum_weight)
 +			return slot->choices[i].word;
@@ -270,7 +270,7 @@ index xxxxxxxxx..xxxxxxxxx 100644
 +
 +			if (eq && eq < comma) {
 +				int wlen = (int)(eq - c);
-+				int wgt = atoi(eq + 1);
++				double wgt = strtod(eq + 1, NULL);
 +
 +				char word[256];
 +				if (wlen >= 255) wlen = 255;

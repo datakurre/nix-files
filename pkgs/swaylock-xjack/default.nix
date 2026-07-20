@@ -13,6 +13,5 @@ swaylock.overrideAttrs (old: {
     ./patches/0005-custom-source-text.patch
     ./patches/0006-weighted-word-slots.patch
     ./patches/0007-restart-on-scroll.patch
-    ./patches/0008-fix-word-weights-strtod.patch
   ];
 })
