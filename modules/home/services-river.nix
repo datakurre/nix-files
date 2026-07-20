@@ -42,6 +42,7 @@ in
   home.packages = [
     pkgs.wl-clipboard
     pkgs.wlr-randr
+    pkgs.wlopm
     pkgs.pasystray
     layoutRotate
     layoutReset
@@ -280,10 +281,15 @@ in
         timeout = 600;
         command = "${pkgs.swaylock}/bin/swaylock";
       }
+      {
+        timeout = 1200;
+        command = "${pkgs.wlopm}/bin/wlopm --off '*'";
+      }
     ];
     events = {
       "before-sleep" = "${pkgs.swaylock}/bin/swaylock";
       "lock" = "${pkgs.swaylock}/bin/swaylock";
+      "after-resume" = "${pkgs.wlopm}/bin/wlopm --on '*'";
     };
   };
 }
