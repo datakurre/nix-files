@@ -25,9 +25,23 @@
         };
       };
 
+      swaylockXjackOverlay = final: prev: {
+        swaylock = prev.swaylock.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [
+            ./pkgs/swaylock-xjack/patches/0001-add-effect-api.patch
+            ./pkgs/swaylock-xjack/patches/0002-add-xjack-effect.patch
+            ./pkgs/swaylock-xjack/patches/0003-add-xjack-cli-options.patch
+            ./pkgs/swaylock-xjack/patches/0004-incremental-render.patch
+          ];
+        });
+      };
+
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ unstableOverlay ];
+        overlays = [
+          unstableOverlay
+          swaylockXjackOverlay
+        ];
       };
 
       mkNixos =
@@ -43,7 +57,10 @@
             (
               { ... }:
               {
-                nixpkgs.overlays = [ self.overlays.default ];
+                nixpkgs.overlays = [
+                  self.overlays.default
+                  swaylockXjackOverlay
+                ];
                 user.name = name;
                 user.description = description;
                 user.home = home;
@@ -71,7 +88,10 @@
                 "vagrant"
               ];
           };
-          overlays = [ unstableOverlay ];
+          overlays = [
+            unstableOverlay
+            swaylockXjackOverlay
+          ];
         };
         modules = [
           {

@@ -208,6 +208,16 @@ in
     swaylock = {
       enable = true;
       settings = {
+        effect = "xjack";
+        xjack-opacity = "0.85";
+        xjack-font = "DejaVu Sans Mono";
+        xjack-speed = "0.8";
+        # Original colors:
+        xjack-color = "e0e0e0";
+        xjack-bg-color = "000000";
+        # Matrix green theme:
+        # xjack-color = "00ff00";
+        # xjack-bg-color = "000000";
         color = "002b36";
         inside-color = "002b36";
         ring-color = "268bd2";

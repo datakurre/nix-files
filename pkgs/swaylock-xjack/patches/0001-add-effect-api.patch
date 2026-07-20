@@ -1,0 +1,173 @@
+From 2ce35c222ce2a45c537341b559e271de44f20842 Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 05:37:55 +0000
+Subject: [PATCH] add effect api
+
+
+diff --git a/include/swaylock.h b/include/swaylock.h
+index cd4e73e..f79c611 100644
+--- a/include/swaylock.h
++++ b/include/swaylock.h
+@@ -98,6 +98,8 @@ struct swaylock_state {
+ 	uint32_t highlight_start; // position of highlight; 2048 = 1 full turn
+ 	int failed_attempts;
+ 	bool run_display, locked;
++	struct swaylock_effect *effect;
++	void *effect_data;
+ 	struct ext_session_lock_manager_v1 *ext_session_lock_manager_v1;
+ 	struct ext_session_lock_v1 *ext_session_lock_v1;
+ };
+@@ -121,6 +123,8 @@ struct swaylock_surface {
+ 	struct wl_list link;
+ 	struct wl_callback *frame;
+ 	// Dimensions of last wl_buffer committed to background surface
++	uint32_t last_frame_time;
++	double dt;
+ 	int last_buffer_width, last_buffer_height;
+ };
+ 
+diff --git a/meson.build b/meson.build
+index b6dfa96..9b15064 100644
+--- a/meson.build
++++ b/meson.build
+@@ -102,6 +102,8 @@ sources = [
+ 	'password-buffer.c',
+ 	'pool-buffer.c',
+ 	'render.c',
++	'render/effect.c',
++	'render/effect_xjack.c',
+ 	'seat.c',
+ 	'unicode.c',
+ ]
+diff --git a/render.c b/render.c
+index 9d67241..1306263 100644
+--- a/render.c
++++ b/render.c
+@@ -6,6 +6,7 @@
+ #include "background-image.h"
+ #include "swaylock.h"
+ #include "log.h"
++#include "render/effect.h"
+ 
+ #define M_PI 3.14159265358979323846
+ const float TYPE_INDICATOR_RANGE = M_PI / 3.0f;
+@@ -40,6 +41,21 @@ static void surface_frame_handle_done(void *data, struct wl_callback *callback,
+ 	wl_callback_destroy(callback);
+ 	surface->frame = NULL;
+ 
++	if (surface->state->effect && surface->state->effect->update) {
++		surface->dirty = true;
++	}
++
++	if (surface->last_frame_time != 0) {
++		double dt = (time - surface->last_frame_time) / 1000.0;
++		if (dt > 0.1) {
++			dt = 0.1;
++		}
++		surface->dt = dt;
++	} else {
++		surface->dt = 1.0 / 60.0;
++	}
++	surface->last_frame_time = time;
++
+ 	render(surface);
+ }
+ 
+@@ -63,11 +79,13 @@ void render(struct swaylock_surface *surface) {
+ 		return;
+ 	}
+ 
++	bool animated = state->effect && state->effect->update;
++
+ 	bool need_destroy = false;
+ 	struct pool_buffer buffer;
+ 
+ 	if (buffer_width != surface->last_buffer_width ||
+-			buffer_height != surface->last_buffer_height) {
++			buffer_height != surface->last_buffer_height || animated) {
+ 		need_destroy = true;
+ 		if (!create_buffer(state->shm, &buffer, buffer_width, buffer_height,
+ 				WL_SHM_FORMAT_ARGB8888)) {
+@@ -91,6 +109,15 @@ void render(struct swaylock_surface *surface) {
+ 		cairo_restore(cairo);
+ 		cairo_identity_matrix(cairo);
+ 
++		if (state->effect) {
++			if (state->effect->update) {
++				state->effect->update(state, surface->dt);
++			}
++			if (state->effect->render) {
++				state->effect->render(state, cairo, surface);
++			}
++		}
++
+ 		wl_surface_attach(surface->surface, buffer.buffer, 0, 0);
+ 		wl_surface_damage_buffer(surface->surface, 0, 0, INT32_MAX, INT32_MAX);
+ 		need_destroy = true;
+diff --git a/render/effect.c b/render/effect.c
+new file mode 100644
+index 0000000..a196b2e
+--- /dev/null
++++ b/render/effect.c
+@@ -0,0 +1,31 @@
++#include <string.h>
++#include "effect.h"
++
++extern struct swaylock_effect swaylock_effect_xjack;
++
++static struct swaylock_effect swaylock_effect_none = {
++	.name = "none",
++	.init = NULL,
++	.destroy = NULL,
++	.resize = NULL,
++	.update = NULL,
++	.render = NULL,
++};
++
++static struct swaylock_effect *effects[] = {
++	&swaylock_effect_none,
++	&swaylock_effect_xjack,
++	NULL,
++};
++
++struct swaylock_effect *swaylock_effect_find(const char *name) {
++	if (!name) {
++		return &swaylock_effect_none;
++	}
++	for (int i = 0; effects[i] != NULL; i++) {
++		if (strcmp(effects[i]->name, name) == 0) {
++			return effects[i];
++		}
++	}
++	return &swaylock_effect_none;
++}
+diff --git a/render/effect.h b/render/effect.h
+new file mode 100644
+index 0000000..cbed256
+--- /dev/null
++++ b/render/effect.h
+@@ -0,0 +1,21 @@
++#ifndef _SWAYLOCK_EFFECT_H
++#define _SWAYLOCK_EFFECT_H
++
++#include <cairo/cairo.h>
++
++struct swaylock_state;
++struct swaylock_surface;
++
++struct swaylock_effect {
++	const char *name;
++	void (*init)(struct swaylock_state *state);
++	void (*destroy)(struct swaylock_state *state);
++	void (*resize)(struct swaylock_state *state, int width, int height);
++	void (*update)(struct swaylock_state *state, double dt);
++	void (*render)(struct swaylock_state *state, cairo_t *cairo,
++		struct swaylock_surface *surface);
++};
++
++struct swaylock_effect *swaylock_effect_find(const char *name);
++
++#endif
+-- 
+2.54.0
+

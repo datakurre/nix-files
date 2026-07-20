@@ -1,0 +1,172 @@
+From 2d447ba09ca18bcc695ca1ec49811ea9465b255a Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 05:37:55 +0000
+Subject: [PATCH] add xjack cli options
+
+
+diff --git a/include/swaylock.h b/include/swaylock.h
+index f79c611..a3fac03 100644
+--- a/include/swaylock.h
++++ b/include/swaylock.h
+@@ -69,6 +69,14 @@ struct swaylock_args {
+ 	bool daemonize;
+ 	int ready_fd;
+ 	bool indicator_idle_visible;
++	// effect options
++	char *effect_name;
++	char *xjack_font;
++	uint32_t xjack_color;
++	uint32_t xjack_bg_color;
++	double xjack_opacity;
++	double xjack_speed;
++	int xjack_seed;
+ };
+ 
+ struct swaylock_password {
+diff --git a/main.c b/main.c
+index 9e6401f..e14ac11 100644
+--- a/main.c
++++ b/main.c
+@@ -25,6 +25,7 @@
+ #include "seat.h"
+ #include "swaylock.h"
+ #include "ext-session-lock-v1-client-protocol.h"
++#include "render/effect.h"
+ 
+ static uint32_t parse_color(const char *color) {
+ 	if (color[0] == '#') {
+@@ -483,6 +484,13 @@ static int parse_options(int argc, char **argv, struct swaylock_state *state,
+ 		LO_TEXT_CAPS_LOCK_COLOR,
+ 		LO_TEXT_VER_COLOR,
+ 		LO_TEXT_WRONG_COLOR,
++		LO_EFFECT,
++		LO_XJACK_FONT,
++		LO_XJACK_COLOR,
++		LO_XJACK_BG_COLOR,
++		LO_XJACK_OPACITY,
++		LO_XJACK_SPEED,
++		LO_XJACK_SEED,
+ 	};
+ 
+ 	static struct option long_options[] = {
+@@ -540,6 +548,13 @@ static int parse_options(int argc, char **argv, struct swaylock_state *state,
+ 		{"text-caps-lock-color", required_argument, NULL, LO_TEXT_CAPS_LOCK_COLOR},
+ 		{"text-ver-color", required_argument, NULL, LO_TEXT_VER_COLOR},
+ 		{"text-wrong-color", required_argument, NULL, LO_TEXT_WRONG_COLOR},
++		{"effect", required_argument, NULL, LO_EFFECT},
++		{"xjack-font", required_argument, NULL, LO_XJACK_FONT},
++		{"xjack-color", required_argument, NULL, LO_XJACK_COLOR},
++		{"xjack-bg-color", required_argument, NULL, LO_XJACK_BG_COLOR},
++		{"xjack-opacity", required_argument, NULL, LO_XJACK_OPACITY},
++		{"xjack-speed", required_argument, NULL, LO_XJACK_SPEED},
++		{"xjack-seed", required_argument, NULL, LO_XJACK_SEED},
+ 		{0, 0, 0, 0}
+ 	};
+ 
+@@ -662,6 +677,20 @@ static int parse_options(int argc, char **argv, struct swaylock_state *state,
+ 			"Sets the color of the text when verifying.\n"
+ 		"  --text-wrong-color <color>       "
+ 			"Sets the color of the text when invalid.\n"
++		"  --effect <name>                  "
++			"Selects a screen effect (none, xjack).\n"
++		"  --xjack-font <font>              "
++			"Sets the font for the xjack terminal effect.\n"
++		"  --xjack-color <color>            "
++			"Sets the font color for the xjack terminal effect.\n"
++		"  --xjack-bg-color <color>          "
++			"Sets the background color for the xjack effect.\n"
++		"  --xjack-opacity <float>           "
++			"Sets the maximum opacity of the xjack text (0.0-1.0).\n"
++		"  --xjack-speed <float>             "
++			"Sets the animation speed of the xjack effect.\n"
++		"  --xjack-seed <int>                "
++			"Sets the PRNG seed for the xjack effect.\n"
+ 		"\n"
+ 		"All <color> options are of the form <rrggbb[aa]>.\n";
+ 
+@@ -943,6 +972,43 @@ static int parse_options(int argc, char **argv, struct swaylock_state *state,
+ 				state->args.colors.text.wrong = parse_color(optarg);
+ 			}
+ 			break;
++		case LO_EFFECT:
++			if (state) {
++				free(state->args.effect_name);
++				state->args.effect_name = strdup(optarg);
++			}
++			break;
++		case LO_XJACK_FONT:
++			if (state) {
++				free(state->args.xjack_font);
++				state->args.xjack_font = strdup(optarg);
++			}
++			break;
++		case LO_XJACK_COLOR:
++			if (state) {
++				state->args.xjack_color = parse_color(optarg);
++			}
++			break;
++		case LO_XJACK_BG_COLOR:
++			if (state) {
++				state->args.xjack_bg_color = parse_color(optarg);
++			}
++			break;
++		case LO_XJACK_OPACITY:
++			if (state) {
++				state->args.xjack_opacity = atof(optarg);
++			}
++			break;
++		case LO_XJACK_SPEED:
++			if (state) {
++				state->args.xjack_speed = atof(optarg);
++			}
++			break;
++		case LO_XJACK_SEED:
++			if (state) {
++				state->args.xjack_seed = atoi(optarg);
++			}
++			break;
+ 		default:
+ 			fprintf(stderr, "%s", usage);
+ 			return 1;
+@@ -1113,6 +1179,13 @@ int main(int argc, char **argv) {
+ 		.show_failed_attempts = false,
+ 		.indicator_idle_visible = false,
+ 		.ready_fd = -1,
++		.effect_name = NULL,
++		.xjack_font = NULL,
++		.xjack_color = 0,
++		.xjack_bg_color = 0,
++		.xjack_opacity = 0.0,
++		.xjack_speed = 0.0,
++		.xjack_seed = 0,
+ 	};
+ 	wl_list_init(&state.images);
+ 	set_default_colors(&state.args.colors);
+@@ -1152,6 +1225,11 @@ int main(int argc, char **argv) {
+ 		state.args.colors.line = state.args.colors.ring;
+ 	}
+ 
++	state.effect = swaylock_effect_find(state.args.effect_name);
++	if (state.effect && state.effect->init) {
++		state.effect->init(&state);
++	}
++
+ 	state.password.len = 0;
+ 	state.password.buffer_len = 1024;
+ 	state.password.buffer = password_buffer_create(state.password.buffer_len);
+@@ -1266,6 +1344,12 @@ int main(int argc, char **argv) {
+ 		loop_poll(state.eventloop);
+ 	}
+ 
++	if (state.effect && state.effect->destroy) {
++		state.effect->destroy(&state);
++	}
++
++	free(state.args.effect_name);
++	free(state.args.xjack_font);
+ 	ext_session_lock_v1_unlock_and_destroy(state.ext_session_lock_v1);
+ 	wl_display_roundtrip(state.display);
+ 
+-- 
+2.54.0
+

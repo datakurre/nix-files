@@ -1,0 +1,686 @@
+From 251ef849c08dc142f3df38d0bfbddbef20ff7a3a Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 05:37:55 +0000
+Subject: [PATCH] add xjack effect
+
+
+diff --git a/render/effect_xjack.c b/render/effect_xjack.c
+new file mode 100644
+index 0000000..f20adbc
+--- /dev/null
++++ b/render/effect_xjack.c
+@@ -0,0 +1,603 @@
++#include <math.h>
++#include <ctype.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <time.h>
++#include <cairo/cairo.h>
++#include "effect_xjack.h"
++#include "swaylock.h"
++#include "cairo.h"
++#include "log.h"
++
++static const char source[] = "All work and no play makes Jack a dull boy.  ";
++
++static const char nfs1[] =
++	"NFS server overlook not responding, still trying...";
++static const char nfs2[] = "NFS server overlook ok.";
++
++static const char * const typo[] = {
++	"asqw", "ASQW", "bgvhn", "cxdfv", "dserfcx", "ewsdrf",
++	"Jhuikmn", "kjiol,m", "lkop;.,", "mnjk,", "nbhjm", "oiklp09",
++	"pol;(-0", "redft54", "sawedxz", "uyhji87", "wqase32",
++	"yuhgt67", ".,l;/", NULL
++};
++
++static unsigned long xjack_random(unsigned long *state) {
++	unsigned long a, b;
++	*state = *state * 1103515245UL + 12345UL;
++	a = (*state / 65536UL) % 32768UL;
++	*state = *state * 1103515245UL + 12345UL;
++	b = (*state / 65536UL) % 32768UL;
++	return (a << 15) | b;
++}
++
++static double xjack_frand(unsigned long *state) {
++	return (double)xjack_random(state) / 1073741823.0;
++}
++
++static int xjack_rnd(unsigned long *state, int n) {
++	if (n <= 0)
++		return 0;
++	return (int)(xjack_random(state) % (unsigned long)n);
++}
++
++static void xjack_add_char(struct xjack_state *xj, char c,
++		int xshift, int yshift) {
++	if (xj->char_count >= xj->char_capacity) {
++		int keep = 0;
++		for (int i = 0; i < xj->char_count; i++) {
++			if (xj->chars[i].py > -(xj->line_height * 3)) {
++				if (keep != i) {
++					xj->chars[keep] = xj->chars[i];
++				}
++				keep++;
++			}
++		}
++		xj->char_count = keep;
++
++		if (xj->char_count >= xj->char_capacity) {
++			if (xj->char_count >= XJACK_MAX_CHARS) {
++				return;
++			}
++			int nc = xj->char_capacity * 2;
++			if (nc > XJACK_MAX_CHARS)
++				nc = XJACK_MAX_CHARS;
++			struct xjack_char *ncp = realloc(xj->chars,
++					(size_t)nc * sizeof(struct xjack_char));
++			if (!ncp)
++				return;
++			xj->chars = ncp;
++			xj->char_capacity = nc;
++		}
++	}
++	xj->chars[xj->char_count].c = c;
++	xj->chars[xj->char_count].px = xj->x * xj->char_width
++		+ xj->hspace + xshift;
++	xj->chars[xj->char_count].py = xj->y * xj->line_height
++		+ xj->vspace + xj->ascent + yshift;
++	xj->char_count++;
++}
++
++static void xjack_scroll_step(struct xjack_state *xj) {
++	int inc = xj->line_height / 7;
++	if (inc < 1)
++		inc = 1;
++
++	xj->subscrolling -= inc;
++	if (xj->subscrolling <= 0)
++		xj->subscrolling = 0;
++
++	for (int i = 0; i < xj->char_count; i++) {
++		xj->chars[i].py -= inc;
++	}
++
++	if (xj->subscrolling == 0) {
++		if (xj->scrolling > 0)
++			xj->scrolling--;
++		xj->y--;
++	}
++}
++
++static void xjack_advance_line(struct xjack_state *xj) {
++	xj->x = xj->left;
++	xj->y++;
++
++	switch (xj->mode) {
++	case 1:
++	case 2:
++		xj->left += (xj->mode == 1 ? 1 : -1);
++		if (xj->left >= xj->right - 10) {
++			if ((xj->right < (xj->columns - 10))
++					&& (xjack_random(&xj->rng_state) & 1)) {
++				xj->right += xjack_rnd(&xj->rng_state,
++					xj->columns - xj->right);
++			} else {
++				xj->mode = 2;
++			}
++		} else if (xj->left <= 0) {
++			xj->left = 0;
++			xj->mode = 1;
++		}
++		break;
++	case 3:
++	case 4:
++		xj->right += (xj->mode == 3 ? 1 : -1);
++		if (xj->right >= xj->columns) {
++			xj->right = xj->columns;
++			xj->mode = 4;
++		} else if (xj->right <= xj->left + 10) {
++			xj->mode = 3;
++		}
++		break;
++	}
++
++	if (xj->y >= xj->rows - 1) {
++		xj->scrolling = 1;
++		xj->subscrolling = xj->line_height;
++	}
++}
++
++static void xjack_type_char(struct xjack_state *xj) {
++	char c = *xj->s;
++	int xshift = 0, yshift = 0;
++	double this_delay = 0.05 / xj->speed;
++
++	if (xjack_rnd(&xj->rng_state, 50) == 0) {
++		xshift = xjack_rnd(&xj->rng_state,
++			(xj->char_width / 3) + 1);
++		yshift = xjack_rnd(&xj->rng_state,
++			(xj->line_height / 6) + 1);
++		if ((xjack_random(&xj->rng_state) & 1) == 0)
++			xshift = -xshift;
++		if ((xjack_random(&xj->rng_state) & 1) == 0)
++			yshift = -yshift;
++	}
++
++	if (xjack_rnd(&xj->rng_state, 250) == 0) {
++		int i = 0;
++		while (typo[i] && typo[i][0] != c)
++			i++;
++		if (typo[i]) {
++			int ti = 1 + (int)(xjack_random(&xj->rng_state)
++				% (strlen(typo[i])));
++			c = typo[i][ti];
++		}
++	}
++
++	if (c >= 'a' && c <= 'z'
++			&& (xj->caps || xjack_rnd(&xj->rng_state, 350) == 0)) {
++		c -= ('a' - 'A');
++		if (c == 'O' && (xjack_random(&xj->rng_state) & 1))
++			c = '0';
++	}
++
++	xjack_add_char(xj, c, xshift, yshift);
++
++	int overstrike = 0;
++	while (xshift == 0 && yshift == 0
++			&& xjack_rnd(&xj->rng_state, 3000) == 0
++			&& overstrike < 3) {
++		if (xjack_random(&xj->rng_state) & 1)
++			xshift--;
++		else
++			yshift--;
++		xjack_add_char(xj, c, xshift, yshift);
++		overstrike++;
++	}
++
++	if (c != tolower(*xj->s) && c != toupper(*xj->s)) {
++		if (xjack_rnd(&xj->rng_state, 10) == 0) {
++			xj->x--;
++			xj->s--;
++			if (this_delay < 0.5)
++				this_delay += xjack_frand(&xj->rng_state)
++					* this_delay * 10.0;
++		}
++	} else {
++		if (xjack_rnd(&xj->rng_state, 400) == 0) {
++			xj->x--;
++			xj->s--;
++			if (this_delay < 0.5)
++				this_delay += xjack_frand(&xj->rng_state)
++					* this_delay * 10.0;
++		}
++	}
++
++	xj->x++;
++	xj->s++;
++
++	if (xjack_rnd(&xj->rng_state, 200) == 0) {
++		if ((xjack_random(&xj->rng_state) & 1) && xj->s != source)
++			xj->s--;
++		else if (*xj->s)
++			xj->s++;
++	}
++
++	if (xj->nfs_done) {
++		xj->pining = 0;
++		xj->nfs_phase = 0;
++		xj->nfs_idx = 0;
++		xj->nfs_done = false;
++	}
++
++	if (xjack_rnd(&xj->rng_state, 3) == 0)
++		this_delay += xjack_frand(&xj->rng_state) * this_delay * 5.0;
++
++	if (xj->break_para)
++		this_delay += xjack_frand(&xj->rng_state) * this_delay * 15.0;
++
++	xj->delay = this_delay;
++}
++
++static void xjack_type_one(struct xjack_state *xj) {
++	int word_length = 0;
++	const char *s2;
++
++	if (xj->scrolling || xj->subscrolling) {
++		xjack_scroll_step(xj);
++		xj->delay = 0.05 / xj->speed;
++		return;
++	}
++
++	if (xj->pining) {
++		const char *nfs_str = (xj->nfs_phase == 0) ? nfs2 : nfs1;
++		if (nfs_str[xj->nfs_idx]) {
++			char c = nfs_str[xj->nfs_idx];
++			xjack_add_char(xj, c, 0, 0);
++			xj->x++;
++			if (xj->x >= xj->columns) {
++				xj->x = 0;
++				xj->y++;
++			}
++			xj->nfs_idx++;
++		} else {
++			if (xj->nfs_phase == 0) {
++				xj->nfs_phase = 1;
++				xj->nfs_idx = 0;
++				xj->y++;
++				xj->x = 0;
++			} else {
++				xj->y++;
++				xj->x = 0;
++				xj->pining--;
++				if (xj->pining > 0) {
++					xj->nfs_phase = 0;
++					xj->nfs_idx = 0;
++				} else {
++					xj->nfs_done = true;
++				}
++			}
++		}
++		xj->delay = 0.05 / xj->speed;
++		return;
++	}
++
++	for (s2 = xj->s; *s2 && *s2 != ' '; s2++)
++		word_length++;
++
++	if (xj->break_para || (*xj->s != ' '
++			&& (xj->x + word_length) >= xj->right)) {
++		xj->x = xj->left;
++		xj->y++;
++
++		if (xj->break_para)
++			xj->y++;
++
++		xj->break_para = false;
++
++		xjack_advance_line(xj);
++
++		if (xj->scrolling) {
++			xjack_scroll_step(xj);
++			xj->delay = 0.05 / xj->speed;
++			return;
++		}
++	}
++
++	if (*xj->s == 0) {
++		xj->sentences++;
++		xj->caps = (xjack_rnd(&xj->rng_state, 40) == 0);
++
++		if (xjack_rnd(&xj->rng_state, 10) == 0
++				|| (xj->mode == 0
++					&& (xjack_rnd(&xj->rng_state, 10) == 0
++						|| xj->sentences > 20))) {
++			xj->break_para = true;
++			xj->sentences = 0;
++			xj->paras++;
++
++			if (xjack_random(&xj->rng_state) & 1)
++				xj->mode = 0;
++			else
++				xj->mode = xjack_rnd(&xj->rng_state, 5);
++
++			if (xjack_rnd(&xj->rng_state, 2) == 0) {
++				xj->left = xjack_rnd(&xj->rng_state,
++					xj->columns / 3);
++				xj->right = xj->columns
++					- xjack_rnd(&xj->rng_state,
++						xj->columns / 3);
++				if (xjack_rnd(&xj->rng_state, 3) == 0)
++					xj->right = xj->left
++						+ ((xj->right - xj->left) / 2);
++			}
++
++			if (xj->right - xj->left <= 10) {
++				xj->left = 0;
++				xj->right = xj->columns;
++			}
++			if (xj->right - xj->left > 50) {
++				xj->left += xjack_rnd(&xj->rng_state,
++					(xj->columns - 50) + 1);
++				xj->right = xj->left
++					+ xjack_rnd(&xj->rng_state, 40) + 10;
++			}
++			if (xj->mode == 0 && xj->right - xj->left < 25
++					&& xj->columns > 40) {
++				xj->right += 20;
++				if (xj->right > xj->columns)
++					xj->left -= (xj->right - xj->columns);
++			}
++			if (xj->right - xj->left < 5)
++				xj->left = xj->right - 5;
++			if (xj->left < 0)
++				xj->left = 0;
++			if (xj->right - xj->left < 5)
++				xj->right = xj->left + 5;
++		}
++		xj->s = source;
++	}
++
++	if (xj->paras > 5 && xjack_rnd(&xj->rng_state, 1000) == 0
++			&& xj->y < xj->rows - 2) {
++		xj->pining = 1 + xjack_rnd(&xj->rng_state, 3);
++		xj->nfs_phase = 0;
++		xj->nfs_idx = 0;
++		xj->nfs_done = false;
++		xj->delay = 0.05 / xj->speed;
++		return;
++	}
++
++	xjack_type_char(xj);
++}
++
++static void xjack_init(struct swaylock_state *state) {
++	struct xjack_state *xj = calloc(1, sizeof(struct xjack_state));
++	if (!xj) {
++		return;
++	}
++
++	state->effect_data = xj;
++
++	xj->font = state->args.xjack_font
++		? strdup(state->args.xjack_font)
++		: strdup("Courier");
++	xj->font_size = 18;
++	xj->color = state->args.xjack_color != 0
++		? state->args.xjack_color
++		: 0xe0e0e0;
++	xj->bg_color = state->args.xjack_bg_color != 0
++		? state->args.xjack_bg_color
++		: 0x000000;
++	xj->opacity = state->args.xjack_opacity > 0.0
++		? state->args.xjack_opacity
++		: 0.90;
++	xj->speed = state->args.xjack_speed > 0.0
++		? state->args.xjack_speed
++		: 1.0;
++
++	if (state->args.xjack_seed != 0) {
++		xj->seed = state->args.xjack_seed;
++	} else {
++		xj->seed = (int)time(NULL);
++	}
++	xj->rng_state = (unsigned long)xj->seed;
++
++	xj->s = source;
++	xj->break_para = false;
++	xj->caps = false;
++	xj->sentences = 0;
++	xj->paras = 0;
++	xj->scrolling = 0;
++	xj->subscrolling = 0;
++	xj->pining = 0;
++	xj->nfs_phase = 0;
++	xj->nfs_idx = 0;
++	xj->nfs_done = false;
++
++	xj->metrics_valid = false;
++	xj->initialized = true;
++
++	xj->char_capacity = 4096;
++	xj->chars = calloc((size_t)xj->char_capacity, sizeof(struct xjack_char));
++	if (!xj->chars) {
++		xj->char_capacity = 0;
++	}
++
++	xj->timer = 0.0;
++	xj->delay = 0.05;
++
++	swaylock_log(LOG_DEBUG, "xjack effect initialized (seed=%d, "
++		"color=%06x, bg=%06x)",
++		xj->seed, xj->color, xj->bg_color);
++}
++
++static void xjack_destroy(struct swaylock_state *state) {
++	struct xjack_state *xj = state->effect_data;
++	if (xj) {
++		free(xj->font);
++		free(xj->chars);
++		free(xj);
++	}
++	state->effect_data = NULL;
++}
++
++static void xjack_resize(struct swaylock_state *state, int width, int height) {
++	(void)width;
++	(void)height;
++	struct xjack_state *xj = state->effect_data;
++	if (xj) {
++		xj->metrics_valid = false;
++	}
++}
++
++static void xjack_update(struct swaylock_state *state, double dt) {
++	struct xjack_state *xj = state->effect_data;
++	if (!xj || !xj->initialized)
++		return;
++
++	if (!xj->metrics_valid)
++		return;
++
++	if (dt > 0.1)
++		dt = 0.1;
++
++	xj->timer += dt * xj->speed;
++
++	while (xj->timer >= xj->delay) {
++		xj->timer -= xj->delay;
++		xjack_type_one(xj);
++		if (xj->delay <= 0.0)
++			xj->delay = 0.001;
++	}
++}
++
++static void xjack_render(struct swaylock_state *state, cairo_t *cairo,
++		struct swaylock_surface *surface) {
++	struct xjack_state *xj = state->effect_data;
++	if (!xj || !xj->initialized)
++		return;
++
++	int w = surface->width * surface->scale;
++	int h = surface->height * surface->scale;
++	double sc = surface->scale;
++
++	if (!xj->metrics_valid) {
++		xj->scale = sc;
++
++		cairo_select_font_face(cairo, xj->font,
++			CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
++		cairo_set_font_size(cairo, xj->font_size * sc);
++
++		cairo_font_extents_t fe;
++		cairo_font_extents(cairo, &fe);
++		xj->line_height = (int)(fe.height + 0.5);
++		xj->ascent = (int)(fe.ascent + 0.5);
++		xj->descent = (int)(fe.descent + 0.5);
++
++		cairo_text_extents_t te;
++		cairo_text_extents(cairo, "n", &te);
++		xj->char_width = (int)(te.x_advance + 0.5);
++		if (xj->char_width < 1)
++			xj->char_width = (int)(sc * xj->font_size * 0.6);
++
++		xj->columns = (w - xj->hspace - xj->hspace) / xj->char_width;
++		xj->rows = (h - xj->vspace - xj->vspace) / xj->line_height;
++
++		if (xj->columns < 12)
++			xj->columns = 12;
++		if (xj->rows < 4)
++			xj->rows = 4;
++
++		xj->columns--;
++		xj->rows--;
++
++		if (w > 200 && h > 200) {
++			xj->hspace = 40 * (int)sc;
++			xj->vspace = 40 * (int)sc;
++		} else {
++			xj->hspace = 4 * (int)sc;
++			xj->vspace = 4 * (int)sc;
++		}
++
++		xj->columns = (w - xj->hspace * 2) / xj->char_width;
++		xj->rows = (h - xj->vspace * 2) / xj->line_height;
++
++		if (xj->columns < 12)
++			xj->columns = 12;
++		if (xj->rows < 4)
++			xj->rows = 4;
++
++		xj->columns--;
++		xj->rows--;
++
++		xj->left = xjack_rnd(&xj->rng_state,
++			(xj->columns / 2) + 1);
++		xj->right = xj->left
++			+ xjack_rnd(&xj->rng_state,
++				xj->columns - xj->left) + 10;
++		if (xj->right < xj->left + 10)
++			xj->right = xj->left + 10;
++		if (xj->right > xj->columns)
++			xj->right = xj->columns;
++
++		xj->x = xj->left;
++		xj->y = 0;
++
++		xj->metrics_valid = true;
++	}
++
++	cairo_save(cairo);
++
++	cairo_set_operator(cairo, CAIRO_OPERATOR_SOURCE);
++	double br = ((xj->bg_color >> 24) & 0xFF) / 255.0;
++	double bg = ((xj->bg_color >> 16) & 0xFF) / 255.0;
++	double bb = ((xj->bg_color >> 8) & 0xFF) / 255.0;
++	cairo_set_source_rgb(cairo, br, bg, bb);
++	cairo_paint(cairo);
++
++	cairo_set_operator(cairo, CAIRO_OPERATOR_OVER);
++
++	cairo_select_font_face(cairo, xj->font,
++		CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
++	cairo_set_font_size(cairo, xj->font_size * xj->scale);
++
++	double r = ((xj->color >> 24) & 0xFF) / 255.0;
++	double g = ((xj->color >> 16) & 0xFF) / 255.0;
++	double b = ((xj->color >> 8) & 0xFF) / 255.0;
++	cairo_set_source_rgba(cairo, r, g, b, xj->opacity);
++
++	int bottom = h + xj->line_height;
++
++	for (int i = 0; i < xj->char_count; ) {
++		struct xjack_char *ch = &xj->chars[i];
++
++		if (ch->py < -xj->line_height || ch->py > bottom) {
++			i++;
++			continue;
++		}
++
++		int run_len = 1;
++		while (i + run_len < xj->char_count) {
++			struct xjack_char *next = &xj->chars[i + run_len];
++			if (next->py != ch->py)
++				break;
++			if (next->px != ch->px + run_len * xj->char_width)
++				break;
++			run_len++;
++		}
++
++		char buf[512];
++		int buf_len = run_len < 512 ? run_len : 512;
++		for (int k = 0; k < buf_len; k++) {
++			buf[k] = xj->chars[i + k].c;
++		}
++
++		cairo_move_to(cairo, (double)ch->px, (double)ch->py);
++		cairo_show_text(cairo, buf);
++
++		i += buf_len;
++	}
++
++	cairo_restore(cairo);
++}
++
++struct swaylock_effect swaylock_effect_xjack = {
++	.name = "xjack",
++	.init = xjack_init,
++	.destroy = xjack_destroy,
++	.resize = xjack_resize,
++	.update = xjack_update,
++	.render = xjack_render,
++};
+diff --git a/render/effect_xjack.h b/render/effect_xjack.h
+new file mode 100644
+index 0000000..75c4d8b
+--- /dev/null
++++ b/render/effect_xjack.h
+@@ -0,0 +1,62 @@
++#ifndef _SWAYLOCK_EFFECT_XJACK_H
++#define _SWAYLOCK_EFFECT_XJACK_H
++
++#include <stdbool.h>
++#include <stdint.h>
++#include "effect.h"
++
++#define XJACK_MAX_CHARS 32768
++
++struct xjack_char {
++	char c;
++	int px;
++	int py;
++};
++
++struct xjack_state {
++	struct xjack_char *chars;
++	int char_count;
++	int char_capacity;
++
++	const char *s;
++	int columns, rows;
++	int left, right;
++	int x, y;
++	int mode;
++	int char_width, line_height;
++	int hspace, vspace;
++	int ascent;
++	int descent;
++	bool break_para;
++	bool caps;
++	int sentences;
++	int paras;
++	int scrolling;
++	int subscrolling;
++
++	int pining;
++	int nfs_phase;
++	int nfs_idx;
++	bool nfs_done;
++
++	double delay;
++	double timer;
++	double speed;
++
++	unsigned long rng_state;
++	int seed;
++
++	char *font;
++	int font_size;
++	uint32_t color;
++	uint32_t bg_color;
++	double opacity;
++	bool metrics_valid;
++	bool initialized;
++
++	double scale;
++};
++
++extern struct swaylock_effect swaylock_effect_xjack;
++
++#endif
+-- 
+2.54.0
+

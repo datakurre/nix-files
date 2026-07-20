@@ -1,0 +1,309 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 00:00:00 +0000
+Subject: [PATCH] incremental render, overlap fix, and rendering fixes
+
+Implements incremental rendering via an accumulation surface that
+persists across frames, so only newly-typed characters are drawn per
+frame instead of re-rendering all ~32K chars from scratch.  Pre-computes
+color doubles at init time.
+
+Fixes:
+- Double y-increment on line wrap (was incremented twice).
+- Antialiased glyph edge blending with stale scrolled content (clears
+  each character-run cell with CAIRO_OPERATOR_SOURCE before
+  cairo_show_text).
+- Null-termination of render buffer before cairo_show_text (UB).
+- Rest-of-line background cleared after each text run so shorter
+  lines on a given row don't inherit stale characters from a
+  previous scroll cycle.
+- xjack_add_char array compaction resetting accum_char_count/first_paint
+  so incremental rendering resumes after off-screen chars are pruned.
+
+---
+ render/effect_xjack.c | 262 +++++++++++++++++++++++++++++--------
+ render/effect_xjack.h |  14 +++
+ 2 files changed, 141 insertions(+), 46 deletions(-)
+
+diff --git a/render/effect_xjack.c b/render/effect_xjack.c
+index xxxxxxxxx..xxxxxxxxx 100644
+--- a/render/effect_xjack.c	2026-07-20 08:14:37.676122725 +0000
++++ b/render/effect_xjack.c	2026-07-20 08:16:45.307715486 +0000
+@@ -45,6 +45,7 @@
+ static void xjack_add_char(struct xjack_state *xj, char c,
+ 		int xshift, int yshift) {
+ 	if (xj->char_count >= xj->char_capacity) {
++		int old_count = xj->char_count;
+ 		int keep = 0;
+ 		for (int i = 0; i < xj->char_count; i++) {
+ 			if (xj->chars[i].py > -(xj->line_height * 3)) {
+@@ -55,6 +56,10 @@
+ 			}
+ 		}
+ 		xj->char_count = keep;
++		if (keep < old_count) {
++			xj->first_paint = true;
++			xj->accum_char_count = 0;
++		}
+ 
+ 		if (xj->char_count >= xj->char_capacity) {
+ 			if (xj->char_count >= XJACK_MAX_CHARS) {
+@@ -96,13 +101,12 @@
+ 		if (xj->scrolling > 0)
+ 			xj->scrolling--;
+ 		xj->y--;
++		xj->first_paint = true;
++		xj->accum_char_count = 0;
+ 	}
+ }
+ 
+ static void xjack_advance_line(struct xjack_state *xj) {
+-	xj->x = xj->left;
+-	xj->y++;
+-
+ 	switch (xj->mode) {
+ 	case 1:
+ 	case 2:
+@@ -135,6 +139,7 @@
+ 	if (xj->y >= xj->rows - 1) {
+ 		xj->scrolling = 1;
+ 		xj->subscrolling = xj->line_height;
++		xj->first_paint = true;
+ 	}
+ }
+ 
+@@ -376,7 +381,7 @@
+ 	xj->font_size = 18;
+ 	xj->color = state->args.xjack_color != 0
+ 		? state->args.xjack_color
+-		: 0xe0e0e0;
++		: 0xe0e0e0ff;
+ 	xj->bg_color = state->args.xjack_bg_color != 0
+ 		? state->args.xjack_bg_color
+ 		: 0x000000;
+@@ -418,6 +423,16 @@
+ 	xj->timer = 0.0;
+ 	xj->delay = 0.05;
+ 
++	xj->first_paint = true;
++	xj->accum_char_count = 0;
++
++	xj->r = ((xj->color >> 24) & 0xFF) / 255.0;
++	xj->g = ((xj->color >> 16) & 0xFF) / 255.0;
++	xj->b = ((xj->color >> 8) & 0xFF) / 255.0;
++	xj->bg_r = ((xj->bg_color >> 24) & 0xFF) / 255.0;
++	xj->bg_g = ((xj->bg_color >> 16) & 0xFF) / 255.0;
++	xj->bg_b = ((xj->bg_color >> 8) & 0xFF) / 255.0;
++
+ 	swaylock_log(LOG_DEBUG, "xjack effect initialized (seed=%d, "
+ 		"color=%06x, bg=%06x)",
+ 		xj->seed, xj->color, xj->bg_color);
+@@ -428,6 +443,9 @@
+ 	if (xj) {
+ 		free(xj->font);
+ 		free(xj->chars);
++		if (xj->accum_surface) {
++			cairo_surface_destroy(xj->accum_surface);
++		}
+ 		free(xj);
+ 	}
+ 	state->effect_data = NULL;
+@@ -463,6 +481,67 @@
+ 	}
+ }
+ 
++static void xjack_draw_chars(struct xjack_state *xj, cairo_t *cr,
++		int start, int end, int bottom) {
++	cairo_select_font_face(cr, xj->font,
++		CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
++	cairo_set_font_size(cr, xj->font_size * xj->scale);
++	cairo_set_source_rgba(cr, xj->r, xj->g, xj->b, xj->opacity);
++
++	for (int i = start; i < end; ) {
++		struct xjack_char *ch = &xj->chars[i];
++
++		if (ch->py < -xj->line_height || ch->py > bottom) {
++			i++;
++			continue;
++		}
++
++		int run_len = 1;
++		while (i + run_len < end) {
++			struct xjack_char *next = &xj->chars[i + run_len];
++			if (next->py != ch->py)
++				break;
++			if (next->px != ch->px + run_len * xj->char_width)
++				break;
++			run_len++;
++		}
++
++		char buf[513];
++		int buf_len = run_len < 512 ? run_len : 512;
++		for (int k = 0; k < buf_len; k++) {
++			buf[k] = xj->chars[i + k].c;
++		}
++		buf[buf_len] = '\0';
++
++		cairo_save(cr);
++		cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
++		cairo_set_source_rgb(cr, xj->bg_r, xj->bg_g, xj->bg_b);
++		cairo_rectangle(cr, ch->px, ch->py - xj->ascent,
++			run_len * xj->char_width, xj->line_height);
++		cairo_fill(cr);
++		cairo_restore(cr);
++
++		cairo_move_to(cr, (double)ch->px, (double)ch->py);
++		cairo_show_text(cr, buf);
++		{
++			int line_right = xj->hspace
++				+ (xj->columns + 1) * xj->char_width;
++			int clear_x = ch->px + run_len * xj->char_width;
++			if (clear_x < line_right) {
++				cairo_save(cr);
++				cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
++				cairo_set_source_rgb(cr, xj->bg_r, xj->bg_g, xj->bg_b);
++				cairo_rectangle(cr, clear_x, ch->py - xj->ascent,
++					line_right - clear_x, xj->line_height);
++				cairo_fill(cr);
++				cairo_restore(cr);
++			}
++		}
++
++		i += buf_len;
++	}
++}
++
+ static void xjack_render(struct swaylock_state *state, cairo_t *cairo,
+ 		struct swaylock_surface *surface) {
+ 	struct xjack_state *xj = state->effect_data;
+@@ -535,62 +614,72 @@
+ 		xj->x = xj->left;
+ 		xj->y = 0;
+ 
++		xj->first_paint = true;
++		xj->accum_char_count = 0;
+ 		xj->metrics_valid = true;
+ 	}
+ 
+-	cairo_save(cairo);
++	if (!xj->accum_surface ||
++			cairo_image_surface_get_width(xj->accum_surface) != w ||
++			cairo_image_surface_get_height(xj->accum_surface) != h) {
++		if (xj->accum_surface) {
++			cairo_surface_destroy(xj->accum_surface);
++		}
++		xj->accum_surface = cairo_image_surface_create(
++			CAIRO_FORMAT_ARGB32, w, h);
++		xj->first_paint = true;
++	}
+ 
+-	cairo_set_operator(cairo, CAIRO_OPERATOR_SOURCE);
+-	double br = ((xj->bg_color >> 24) & 0xFF) / 255.0;
+-	double bg = ((xj->bg_color >> 16) & 0xFF) / 255.0;
+-	double bb = ((xj->bg_color >> 8) & 0xFF) / 255.0;
+-	cairo_set_source_rgb(cairo, br, bg, bb);
+-	cairo_paint(cairo);
++	int bottom = h + xj->line_height;
+ 
+-	cairo_set_operator(cairo, CAIRO_OPERATOR_OVER);
++	if ((xj->scrolling || xj->subscrolling) && !xj->first_paint) {
++		int inc = xj->line_height / 7;
++		if (inc < 1)
++			inc = 1;
+ 
+-	cairo_select_font_face(cairo, xj->font,
+-		CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+-	cairo_set_font_size(cairo, xj->font_size * xj->scale);
++		cairo_surface_t *tmp = cairo_image_surface_create(
++			CAIRO_FORMAT_ARGB32, w, h);
++		cairo_t *tc = cairo_create(tmp);
+ 
+-	double r = ((xj->color >> 24) & 0xFF) / 255.0;
+-	double g = ((xj->color >> 16) & 0xFF) / 255.0;
+-	double b = ((xj->color >> 8) & 0xFF) / 255.0;
+-	cairo_set_source_rgba(cairo, r, g, b, xj->opacity);
++		cairo_set_operator(tc, CAIRO_OPERATOR_SOURCE);
++		cairo_set_source_surface(tc, xj->accum_surface, 0, -inc);
++		cairo_paint(tc);
+ 
+-	int bottom = h + xj->line_height;
++		cairo_set_source_rgb(tc, xj->bg_r, xj->bg_g, xj->bg_b);
++		cairo_rectangle(tc, 0, h - inc, w, inc);
++		cairo_fill(tc);
+ 
+-	for (int i = 0; i < xj->char_count; ) {
+-		struct xjack_char *ch = &xj->chars[i];
++		cairo_destroy(tc);
+ 
+-		if (ch->py < -xj->line_height || ch->py > bottom) {
+-			i++;
+-			continue;
+-		}
++		cairo_surface_destroy(xj->accum_surface);
++		xj->accum_surface = tmp;
++	}
+ 
+-		int run_len = 1;
+-		while (i + run_len < xj->char_count) {
+-			struct xjack_char *next = &xj->chars[i + run_len];
+-			if (next->py != ch->py)
+-				break;
+-			if (next->px != ch->px + run_len * xj->char_width)
+-				break;
+-			run_len++;
+-		}
++	if (xj->first_paint) {
++		cairo_t *ac = cairo_create(xj->accum_surface);
+ 
+-		char buf[512];
+-		int buf_len = run_len < 512 ? run_len : 512;
+-		for (int k = 0; k < buf_len; k++) {
+-			buf[k] = xj->chars[i + k].c;
+-		}
++		cairo_set_operator(ac, CAIRO_OPERATOR_SOURCE);
++		cairo_set_source_rgb(ac, xj->bg_r, xj->bg_g, xj->bg_b);
++		cairo_paint(ac);
+ 
+-		cairo_move_to(cairo, (double)ch->px, (double)ch->py);
+-		cairo_show_text(cairo, buf);
++		xjack_draw_chars(xj, ac, 0, xj->char_count, bottom);
+ 
+-		i += buf_len;
++		cairo_destroy(ac);
++		xj->accum_char_count = xj->char_count;
++		xj->first_paint = false;
++	} else if (xj->accum_char_count < xj->char_count) {
++		cairo_t *ac = cairo_create(xj->accum_surface);
++
++		xjack_draw_chars(xj, ac, xj->accum_char_count,
++			xj->char_count, bottom);
++
++		cairo_destroy(ac);
++		xj->accum_char_count = xj->char_count;
+ 	}
+ 
+-	cairo_restore(cairo);
++	cairo_set_operator(cairo, CAIRO_OPERATOR_SOURCE);
++	cairo_set_source_surface(cairo, xj->accum_surface, 0, 0);
++	cairo_paint(cairo);
+ }
+ 
+ struct swaylock_effect swaylock_effect_xjack = {
+
+diff --git a/render/effect_xjack.h b/render/effect_xjack.h
+index xxxxxxxxx..xxxxxxxxx 100644
+--- a/render/effect_xjack.h	2026-07-20 08:14:37.676225012 +0000
++++ b/render/effect_xjack.h	2026-07-20 08:16:45.307915260 +0000
+@@ -54,6 +54,12 @@
+ 	bool metrics_valid;
+ 	bool initialized;
+ 
++	int accum_char_count;
++	bool first_paint;
++	double r, g, b;
++	double bg_r, bg_g, bg_b;
++	cairo_surface_t *accum_surface;
++
+ 	double scale;
+ };
+ 
