@@ -287,11 +287,13 @@ in
       {
         timeout = 1200;
         command = "${pkgs.wlopm}/bin/wlopm --off '*'";
+        resumeCommand = "${pkgs.wlopm}/bin/wlopm --on '*'";
       }
     ];
     events = {
       "before-sleep" = "${pkgs.swaylock}/bin/swaylock";
       "lock" = "${pkgs.swaylock}/bin/swaylock";
+      "unlock" = "${pkgs.wlopm}/bin/wlopm --on '*'";
       "after-resume" = "${pkgs.wlopm}/bin/wlopm --on '*'";
     };
   };
