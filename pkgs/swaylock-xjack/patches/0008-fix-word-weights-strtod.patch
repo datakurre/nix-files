@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 00:00:00 +0000
+Subject: [PATCH] fix xjack-word weight parsing to use strtod for float weights
+
+Replace atoi with strtod so fractional weights (e.g. 0.8, 0.1) work
+correctly instead of truncating to zero. Also use xjack_frand for weighted
+random selection since cumulative weights are now doubles.
+
+---
+ render/effect_xjack.c | 4 ++--
+ render/effect_xjack.h | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/render/effect_xjack.h b/render/effect_xjack.h
+--- a/render/effect_xjack.h
++++ b/render/effect_xjack.h
+@@ -15,15 +15,15 @@
+ 
+ struct xjack_word_choice {
+ 	char *word;
+-	int weight;
+-	int cum_weight;
++	double weight;
++	double cum_weight;
+ };
+ 
+ struct xjack_word_slot {
+ 	char *name;
+ 	struct xjack_word_choice *choices;
+ 	int num_choices;
+-	int total_weight;
++	double total_weight;
+ };
+ 
+ struct xjack_token {
+diff --git a/render/effect_xjack.c b/render/effect_xjack.c
+--- a/render/effect_xjack.c
++++ b/render/effect_xjack.c
+@@ -518,7 +518,7 @@
+ 		unsigned long *rng_state) {
+ 	if (slot->num_choices == 0)
+ 		return "";
+-	int r = xjack_rnd(rng_state, slot->total_weight);
++	double r = xjack_frand(rng_state) * slot->total_weight;
+ 	for (int i = 0; i < slot->num_choices; i++) {
+ 		if (r < slot->choices[i].cum_weight)
+ 			return slot->choices[i].word;
+@@ -559,7 +559,7 @@
+ 
+ 			if (eq && eq < comma) {
+ 				int wlen = (int)(eq - c);
+-				int wgt = atoi(eq + 1);
++				double wgt = strtod(eq + 1, NULL);
+ 
+ 				char word[256];
+ 				if (wlen >= 255) wlen = 255;
+-- 
+2.54.0

@@ -34,6 +34,8 @@
             ./pkgs/swaylock-xjack/patches/0004-incremental-render.patch
             ./pkgs/swaylock-xjack/patches/0005-custom-source-text.patch
             ./pkgs/swaylock-xjack/patches/0006-weighted-word-slots.patch
+            ./pkgs/swaylock-xjack/patches/0007-restart-on-scroll.patch
+            ./pkgs/swaylock-xjack/patches/0008-fix-word-weights-strtod.patch
           ];
         });
       };

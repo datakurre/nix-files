@@ -10,6 +10,9 @@ swaylock.overrideAttrs (old: {
     ./patches/0002-add-xjack-effect.patch
     ./patches/0003-add-xjack-cli-options.patch
     ./patches/0004-incremental-render.patch
+    ./patches/0005-custom-source-text.patch
+    ./patches/0006-weighted-word-slots.patch
     ./patches/0007-restart-on-scroll.patch
+    ./patches/0008-fix-word-weights-strtod.patch
   ];
 })
