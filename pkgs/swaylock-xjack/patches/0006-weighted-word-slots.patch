@@ -1,0 +1,374 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 00:00:00 +0000
+Subject: [PATCH] add --xjack-word for weighted slot substitution in source
+
+Extends --xjack-source with slot markers {name} that are replaced by
+weighted random word choices at each sentence boundary via --xjack-word.
+
+Example: swaylock --effect xjack \
+  --xjack-source "All {verb} and no play makes Jack a dull boy.  " \
+  --xjack-word "verb:work=5,code=3,tinker=2"
+
+---
+diff --git a/include/swaylock.h b/include/swaylock.h
+index xxxxxxxxx..xxxxxxxxx 100644
+@@ -78,6 +78,8 @@
+ 	double xjack_opacity;
+ 	double xjack_speed;
+ 	int xjack_seed;
++	char **xjack_word_defs;
++	int xjack_word_defs_count;
+ };
+ 
+ struct swaylock_password {
+
+
+diff --git a/main.c b/main.c
+index xxxxxxxxx..xxxxxxxxx 100644
+@@ -492,6 +492,7 @@
+ 		LO_XJACK_SPEED,
+ 		LO_XJACK_SEED,
+ 		LO_XJACK_SOURCE,
++		LO_XJACK_WORD,
+ 	};
+ 
+ 	static struct option long_options[] = {
+@@ -557,6 +558,7 @@
+ 		{"xjack-speed", required_argument, NULL, LO_XJACK_SPEED},
+ 		{"xjack-seed", required_argument, NULL, LO_XJACK_SEED},
+ 		{"xjack-source", required_argument, NULL, LO_XJACK_SOURCE},
++		{"xjack-word", required_argument, NULL, LO_XJACK_WORD},
+ 		{0, 0, 0, 0}
+ 	};
+ 
+@@ -695,6 +697,8 @@
+ 			"Sets the PRNG seed for the xjack effect.\n"
+ 		"  --xjack-source <string>           "
+ 			"Sets the source text for the xjack effect.\n"
++		"  --xjack-word <def>                "
++			"Slot definition: slot:word=weight,word=weight,...\n"
+ 		"\n"
+ 		"All <color> options are of the form <rrggbb[aa]>.\n";
+ 
+@@ -1019,6 +1023,18 @@
+ 				state->args.xjack_source = strdup(optarg);
+ 			}
+ 			break;
++		case LO_XJACK_WORD:
++			if (state) {
++				int n = state->args.xjack_word_defs_count;
++				char **p = realloc(state->args.xjack_word_defs,
++					(size_t)(n + 1) * sizeof(char *));
++				if (p) {
++					state->args.xjack_word_defs = p;
++					state->args.xjack_word_defs[n] = strdup(optarg);
++					state->args.xjack_word_defs_count = n + 1;
++				}
++			}
++			break;
+ 		default:
+ 			fprintf(stderr, "%s", usage);
+ 			return 1;
+@@ -1197,6 +1213,8 @@
+ 		.xjack_speed = 0.0,
+ 		.xjack_seed = 0,
+ 		.xjack_source = NULL,
++		.xjack_word_defs = NULL,
++		.xjack_word_defs_count = 0,
+ 	};
+ 	wl_list_init(&state.images);
+ 	set_default_colors(&state.args.colors);
+@@ -1362,6 +1380,10 @@
+ 	free(state.args.effect_name);
+ 	free(state.args.xjack_font);
+ 	free(state.args.xjack_source);
++	for (int i = 0; i < state.args.xjack_word_defs_count; i++) {
++		free(state.args.xjack_word_defs[i]);
++	}
++	free(state.args.xjack_word_defs);
+ 	ext_session_lock_v1_unlock_and_destroy(state.ext_session_lock_v1);
+ 	wl_display_roundtrip(state.display);
+ 
+
+
+diff --git a/render/effect_xjack.h b/render/effect_xjack.h
+index xxxxxxxxx..xxxxxxxxx 100644
+@@ -13,6 +13,25 @@
+ 	int py;
+ };
+ 
++struct xjack_word_choice {
++	char *word;
++	int weight;
++	int cum_weight;
++};
++
++struct xjack_word_slot {
++	char *name;
++	struct xjack_word_choice *choices;
++	int num_choices;
++	int total_weight;
++};
++
++struct xjack_token {
++	int is_slot;
++	char *text;
++	int slot_id;
++};
++
+ struct xjack_state {
+ 	struct xjack_char *chars;
+ 	int char_count;
+@@ -20,6 +39,12 @@
+ 
+ 	const char *s;
+ 	const char *s_source;
++	const char *cur_source;
++	char *rendered_source;
++	struct xjack_token *tokens;
++	int num_tokens;
++	struct xjack_word_slot *slots;
++	int num_slots;
+ 	int columns, rows;
+ 	int left, right;
+ 	int x, y;
+
+
+diff --git a/render/effect_xjack.c b/render/effect_xjack.c
+index xxxxxxxxx..xxxxxxxxx 100644
+@@ -43,6 +43,12 @@
+ 	return (int)(xjack_random(state) % (unsigned long)n);
+ }
+ 
++static const char *xjack_weighted_pick(struct xjack_word_slot *slot,
++		unsigned long *rng_state);
++static void xjack_tokenize_source(struct xjack_state *xj,
++		struct swaylock_state *state);
++static void xjack_resolve_source(struct xjack_state *xj);
++
+ static void xjack_add_char(struct xjack_state *xj, char c,
+ 		int xshift, int yshift) {
+ 	if (xj->char_count >= xj->char_capacity) {
+@@ -214,7 +220,7 @@
+ 	xj->s++;
+ 
+ 	if (xjack_rnd(&xj->rng_state, 200) == 0) {
+-		if ((xjack_random(&xj->rng_state) & 1) && xj->s != xj->s_source)
++		if ((xjack_random(&xj->rng_state) & 1) && xj->s != xj->cur_source)
+ 			xj->s--;
+ 		else if (*xj->s)
+ 			xj->s++;
+@@ -352,7 +358,13 @@
+ 			if (xj->right - xj->left < 5)
+ 				xj->right = xj->left + 5;
+ 		}
+-		xj->s = xj->s_source;
++		if (xj->num_slots > 0) {
++			xjack_resolve_source(xj);
++			xj->cur_source = xj->rendered_source;
++			xj->s = xj->cur_source;
++		} else {
++			xj->s = xj->s_source;
++		}
+ 	}
+ 
+ 	if (xj->paras > 5 && xjack_rnd(&xj->rng_state, 1000) == 0
+@@ -403,7 +415,16 @@
+ 	xj->s_source = state->args.xjack_source
+ 		? state->args.xjack_source
+ 		: xjack_default_source;
+-	xj->s = xj->s_source;
++
++	if (state->args.xjack_word_defs_count > 0) {
++		xjack_tokenize_source(xj, state);
++		xjack_resolve_source(xj);
++		xj->cur_source = xj->rendered_source;
++		xj->s = xj->cur_source;
++	} else {
++		xj->cur_source = xj->s_source;
++		xj->s = xj->cur_source;
++	}
+ 	xj->break_para = false;
+ 	xj->caps = false;
+ 	xj->sentences = 0;
+@@ -447,6 +468,19 @@
+ 	if (xj) {
+ 		free(xj->font);
+ 		free(xj->chars);
++		free(xj->rendered_source);
++		for (int i = 0; i < xj->num_tokens; i++) {
++			if (!xj->tokens[i].is_slot)
++				free(xj->tokens[i].text);
++		}
++		free(xj->tokens);
++		for (int i = 0; i < xj->num_slots; i++) {
++			free(xj->slots[i].name);
++			for (int j = 0; j < xj->slots[i].num_choices; j++)
++				free(xj->slots[i].choices[j].word);
++			free(xj->slots[i].choices);
++		}
++		free(xj->slots);
+ 		if (xj->accum_surface) {
+ 			cairo_surface_destroy(xj->accum_surface);
+ 		}
+@@ -455,6 +489,157 @@
+ 	state->effect_data = NULL;
+ }
+ 
++static const char *xjack_weighted_pick(struct xjack_word_slot *slot,
++		unsigned long *rng_state) {
++	if (slot->num_choices == 0)
++		return "";
++	int r = xjack_rnd(rng_state, slot->total_weight);
++	for (int i = 0; i < slot->num_choices; i++) {
++		if (r < slot->choices[i].cum_weight)
++			return slot->choices[i].word;
++	}
++	return slot->choices[slot->num_choices - 1].word;
++}
++
++static void xjack_tokenize_source(struct xjack_state *xj,
++		struct swaylock_state *state) {
++	xj->num_slots = state->args.xjack_word_defs_count;
++	xj->slots = calloc((size_t)xj->num_slots, sizeof(struct xjack_word_slot));
++
++	for (int i = 0; i < xj->num_slots; i++) {
++		const char *def = state->args.xjack_word_defs[i];
++		const char *colon = strchr(def, ':');
++		if (!colon) continue;
++
++		int nlen = (int)(colon - def);
++		char name[256];
++		if (nlen >= 255) nlen = 255;
++		snprintf(name, sizeof(name), "%.*s", nlen, def);
++		xj->slots[i].name = strdup(name);
++
++		const char *c = colon + 1;
++		int max_choices = 64;
++		xj->slots[i].choices = calloc((size_t)max_choices,
++			sizeof(struct xjack_word_choice));
++		xj->slots[i].num_choices = 0;
++		xj->slots[i].total_weight = 0;
++
++		while (*c) {
++			while (*c == ' ') c++;
++			if (!*c) break;
++
++			const char *eq = strchr(c, '=');
++			const char *comma = strchr(c, ',');
++			if (!comma && *c) comma = c + strlen(c);
++
++			if (eq && eq < comma) {
++				int wlen = (int)(eq - c);
++				int wgt = atoi(eq + 1);
++
++				char word[256];
++				if (wlen >= 255) wlen = 255;
++				snprintf(word, sizeof(word), "%.*s", wlen, c);
++
++				int ci = xj->slots[i].num_choices;
++				if (ci >= max_choices - 1) break;
++				xj->slots[i].choices[ci].word = strdup(word);
++				xj->slots[i].choices[ci].weight = wgt;
++				xj->slots[i].total_weight += wgt;
++				xj->slots[i].choices[ci].cum_weight =
++					xj->slots[i].total_weight;
++				xj->slots[i].num_choices++;
++			}
++
++			c = *comma ? comma + 1 : comma;
++		}
++	}
++
++	int max_tokens = 64;
++	xj->tokens = calloc((size_t)max_tokens, sizeof(struct xjack_token));
++	xj->num_tokens = 0;
++
++	const char *p = xj->s_source;
++
++	while (*p) {
++		if (*p == '{') {
++			const char *end = p + 1;
++			while (*end && *end != '}')
++				end++;
++			if (*end == '}' && end > p + 1) {
++				int slen = (int)(end - p - 1);
++				char sname[256];
++				if (slen >= 255) slen = 255;
++				snprintf(sname, sizeof(sname), "%.*s", slen, p + 1);
++
++				int slot_id = -1;
++				for (int i = 0; i < xj->num_slots; i++) {
++					if (strcmp(xj->slots[i].name, sname) == 0) {
++						slot_id = i;
++						break;
++					}
++				}
++
++				if (slot_id >= 0) {
++					struct xjack_token *t = &xj->tokens[xj->num_tokens++];
++					t->is_slot = 1;
++					t->slot_id = slot_id;
++					t->text = NULL;
++				} else {
++					int full = (int)(end - p + 1);
++					char *lit = malloc((size_t)full + 1);
++					snprintf(lit, (size_t)full + 1, "%.*s", full, p);
++					struct xjack_token *t = &xj->tokens[xj->num_tokens++];
++					t->is_slot = 0;
++					t->text = lit;
++				}
++				p = end + 1;
++				continue;
++			}
++		}
++
++		const char *start = p;
++		while (*p && *p != '{')
++			p++;
++		if (p > start) {
++			int len = (int)(p - start);
++			char *lit = malloc((size_t)len + 1);
++			snprintf(lit, (size_t)len + 1, "%.*s", len, start);
++			struct xjack_token *t = &xj->tokens[xj->num_tokens++];
++			t->is_slot = 0;
++			t->text = lit;
++		}
++	}
++}
++
++static void xjack_resolve_source(struct xjack_state *xj) {
++	free(xj->rendered_source);
++
++	char buf[4096];
++	int pos = 0;
++
++	for (int i = 0; i < xj->num_tokens; i++) {
++		if (xj->tokens[i].is_slot) {
++			struct xjack_word_slot *slot =
++				&xj->slots[xj->tokens[i].slot_id];
++			const char *word = xjack_weighted_pick(slot,
++				&xj->rng_state);
++			int wlen = (int)strlen(word);
++			if (pos + wlen < 4095) {
++				memcpy(buf + pos, word, (size_t)wlen);
++				pos += wlen;
++			}
++		} else {
++			int tlen = (int)strlen(xj->tokens[i].text);
++			if (pos + tlen < 4095) {
++				memcpy(buf + pos, xj->tokens[i].text, (size_t)tlen);
++				pos += tlen;
++			}
++		}
++	}
++	buf[pos] = '\0';
++	xj->rendered_source = strdup(buf);
++}
++
+ static void xjack_resize(struct swaylock_state *state, int width, int height) {
+ 	(void)width;
+ 	(void)height;
+
+

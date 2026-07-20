@@ -219,6 +219,9 @@ in
         # Matrix green theme:
         # xjack-color = "00ff00";
         # xjack-bg-color = "000000";
+        # Weighted word slot example (replicates default behavior):
+        # xjack-source = "All {verb} and no play makes Jack a dull boy.  ";
+        # xjack-words = [ "verb:work=1" ];
         color = "002b36";
         inside-color = "002b36";
         ring-color = "268bd2";

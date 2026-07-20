@@ -33,6 +33,7 @@
             ./pkgs/swaylock-xjack/patches/0003-add-xjack-cli-options.patch
             ./pkgs/swaylock-xjack/patches/0004-incremental-render.patch
             ./pkgs/swaylock-xjack/patches/0005-custom-source-text.patch
+            ./pkgs/swaylock-xjack/patches/0006-weighted-word-slots.patch
           ];
         });
       };
