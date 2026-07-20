@@ -1,0 +1,138 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 00:00:00 +0000
+Subject: [PATCH] add --xjack-source CLI option for custom source text
+
+Allows overriding the hardcoded "All work and no play makes Jack a dull
+boy." text with a custom source string passed via --xjack-source.
+
+Example: swaylock --effect xjack --xjack-source "Hello world.  "
+
+---
+diff --git a/include/swaylock.h b/include/swaylock.h
+index xxxxxxxxx..xxxxxxxxx 100644
+--- a/include/swaylock.h
++++ b/include/swaylock.h
+@@ -72,6 +72,7 @@ struct swaylock_args {
+ 	// effect options
+ 	char *effect_name;
+ 	char *xjack_font;
++	char *xjack_source;
+ 	uint32_t xjack_color;
+ 	uint32_t xjack_bg_color;
+ 	double xjack_opacity;
+
+diff --git a/main.c b/main.c
+index xxxxxxxxx..xxxxxxxxx 100644
+--- a/main.c
++++ b/main.c
+@@ -491,6 +491,7 @@ static int parse_options(int argc, char **argv, struct swaylock_state *state,
+ 		LO_XJACK_OPACITY,
+ 		LO_XJACK_SPEED,
+ 		LO_XJACK_SEED,
++		LO_XJACK_SOURCE,
+ 	};
+ 
+ 	static struct option long_options[] = {
+@@ -555,6 +556,7 @@ static int parse_options(int argc, char **argv, struct swaylock_state *state,
+ 		{"xjack-opacity", required_argument, NULL, LO_XJACK_OPACITY},
+ 		{"xjack-speed", required_argument, NULL, LO_XJACK_SPEED},
+ 		{"xjack-seed", required_argument, NULL, LO_XJACK_SEED},
++		{"xjack-source", required_argument, NULL, LO_XJACK_SOURCE},
+ 		{0, 0, 0, 0}
+ 	};
+ 
+@@ -691,6 +693,8 @@ static int parse_options(int argc, char **argv, struct swaylock_state *state,
+ 			"Sets the animation speed of the xjack effect.\n"
+ 		"  --xjack-seed <int>                "
+ 			"Sets the PRNG seed for the xjack effect.\n"
++		"  --xjack-source <string>           "
++			"Sets the source text for the xjack effect.\n"
+ 		"\n"
+ 		"All <color> options are of the form <rrggbb[aa]>.\n";
+ 
+@@ -1009,6 +1013,12 @@ static int parse_options(int argc, char **argv, struct swaylock_state *state,
+ 				state->args.xjack_seed = atoi(optarg);
+ 			}
+ 			break;
++		case LO_XJACK_SOURCE:
++			if (state) {
++				free(state->args.xjack_source);
++				state->args.xjack_source = strdup(optarg);
++			}
++			break;
+ 		default:
+ 			fprintf(stderr, "%s", usage);
+ 			return 1;
+@@ -1186,6 +1196,7 @@ int main(int argc, char **argv) {
+ 		.xjack_opacity = 0.0,
+ 		.xjack_speed = 0.0,
+ 		.xjack_seed = 0,
++		.xjack_source = NULL,
+ 	};
+ 	wl_list_init(&state.images);
+ 	set_default_colors(&state.args.colors);
+@@ -1350,6 +1361,7 @@ int main(int argc, char **argv) {
+ 
+ 	free(state.args.effect_name);
+ 	free(state.args.xjack_font);
++	free(state.args.xjack_source);
+ 	ext_session_lock_v1_unlock_and_destroy(state.ext_session_lock_v1);
+ 	wl_display_roundtrip(state.display);
+
+diff --git a/render/effect_xjack.h b/render/effect_xjack.h
+index xxxxxxxxx..xxxxxxxxx 100644
+--- a/render/effect_xjack.h
++++ b/render/effect_xjack.h
+@@ -19,6 +19,7 @@ struct xjack_state {
+ 	int char_capacity;
+ 
+ 	const char *s;
++	const char *s_source;
+ 	int columns, rows;
+ 	int left, right;
+ 	int x, y;
+diff --git a/render/effect_xjack.c b/render/effect_xjack.c
+index xxxxxxxxx..xxxxxxxxx 100644
+--- a/render/effect_xjack.c
++++ b/render/effect_xjack.c
+@@ -10,7 +10,8 @@
+ #include "cairo.h"
+ #include "log.h"
+ 
+-static const char source[] = "All work and no play makes Jack a dull boy.  ";
++static const char xjack_default_source[] =
++	"All work and no play makes Jack a dull boy.  ";
+ 
+ static const char nfs1[] =
+ 	"NFS server overlook not responding, still trying...";
+@@ -213,7 +214,7 @@ static void xjack_type_char(struct xjack_state *xj) {
+ 	xj->s++;
+ 
+ 	if (xjack_rnd(&xj->rng_state, 200) == 0) {
+-		if ((xjack_random(&xj->rng_state) & 1) && xj->s != source)
++		if ((xjack_random(&xj->rng_state) & 1) && xj->s != xj->s_source)
+ 			xj->s--;
+ 		else if (*xj->s)
+ 			xj->s++;
+@@ -351,7 +352,7 @@ static void xjack_type_one(struct xjack_state *xj) {
+ 			if (xj->right - xj->left < 5)
+ 				xj->right = xj->left + 5;
+ 		}
+-		xj->s = source;
++		xj->s = xj->s_source;
+ 	}
+ 
+ 	if (xj->paras > 5 && xjack_rnd(&xj->rng_state, 1000) == 0
+@@ -399,7 +400,10 @@ static void xjack_init(struct swaylock_state *state) {
+ 	}
+ 	xj->rng_state = (unsigned long)xj->seed;
+ 
+-	xj->s = source;
++	xj->s_source = state->args.xjack_source
++		? state->args.xjack_source
++		: xjack_default_source;
++	xj->s = xj->s_source;
+ 	xj->break_para = false;
+ 	xj->caps = false;
+ 	xj->sentences = 0;
