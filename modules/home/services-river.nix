@@ -282,7 +282,7 @@ in
     timeouts = [
       {
         timeout = 600;
-        command = "${pkgs.swaylock}/bin/swaylock";
+        command = "${pkgs.swaylock}/bin/swaylock -f";
       }
       {
         timeout = 1200;
@@ -291,8 +291,8 @@ in
       }
     ];
     events = {
-      "before-sleep" = "${pkgs.swaylock}/bin/swaylock";
-      "lock" = "${pkgs.swaylock}/bin/swaylock";
+      "before-sleep" = "${pkgs.swaylock}/bin/swaylock -f";
+      "lock" = "${pkgs.swaylock}/bin/swaylock -f";
       "unlock" = "${pkgs.wlopm}/bin/wlopm --on '*'";
       "after-resume" = "${pkgs.wlopm}/bin/wlopm --on '*'";
     };
