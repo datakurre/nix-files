@@ -1,0 +1,152 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: dev <dev@localhost>
+Date: Mon, 20 Jul 2026 00:00:00 +0000
+Subject: [PATCH] performance: avoid continuous rendering when effect is idle
+
+Make effect->update return bool: true if visual state changed.
+
+In surface_frame_handle_done, only set dirty when the effect produces
+output.  In render(), split the early-return guard: when dirty is false
+and an animated effect is active, request a new frame callback without
+rendering so the effect continues to be ticked but without the expense
+of buffer allocation and compositor repaint.
+
+In xjack_update, return true only when characters were typed.
+Clamp to at most 10 characters per frame to prevent catch-up spikes
+after display sleep.  Return true on first call (metrics not yet
+valid) to force an initial render pass.
+
+Remove the duplicate update call from inside render().
+
+These changes eliminate perpetual buffer allocation + full-screen
+damage, reducing CPU/GPU load to near-zero when no new text is being
+typed, while keeping the frame loop alive for effect updates.
+---
+ render/effect.h       |  3 ++-
+ render.c              | 43 ++++++++++++++++++++++++++++---------------
+ render/effect_xjack.c | 19 ++++++++++++++++---
+ 3 files changed, 46 insertions(+), 19 deletions(-)
+
+diff --git a/render/effect.h b/render/effect.h
+index cbed256..4b8f0d2 100644
+--- a/render/effect.h
++++ b/render/effect.h
+@@ -1,6 +1,7 @@
+ #ifndef _SWAYLOCK_EFFECT_H
+ #define _SWAYLOCK_EFFECT_H
+ 
++#include <stdbool.h>
+ #include <cairo/cairo.h>
+ 
+ struct swaylock_state;
+@@ -11,7 +12,7 @@ struct swaylock_effect {
+ 	void (*init)(struct swaylock_state *state);
+ 	void (*destroy)(struct swaylock_state *state);
+ 	void (*resize)(struct swaylock_state *state, int width, int height);
+-	void (*update)(struct swaylock_state *state, double dt);
++	bool (*update)(struct swaylock_state *state, double dt);
+ 	void (*render)(struct swaylock_state *state, cairo_t *cairo,
+ 		struct swaylock_surface *surface);
+ };
+diff --git a/render.c b/render.c
+index 1306263..8e3c02a 100644
+--- a/render.c
++++ b/render.c
+@@ -41,10 +41,6 @@ static void surface_frame_handle_done(void *data, struct wl_callback *callback,
+ 	wl_callback_destroy(callback);
+ 	surface->frame = NULL;
+ 
+-	if (surface->state->effect && surface->state->effect->update) {
+-		surface->dirty = true;
+-	}
+-
+ 	if (surface->last_frame_time != 0) {
+ 		double dt = (time - surface->last_frame_time) / 1000.0;
+ 		if (dt > 0.1) {
+@@ -56,6 +52,15 @@ static void surface_frame_handle_done(void *data, struct wl_callback *callback,
+ 	}
+ 	surface->last_frame_time = time;
+ 
++	int effect_changed = 0;
++	if (surface->state->effect && surface->state->effect->update) {
++		effect_changed = surface->state->effect->update(
++				surface->state, surface->dt);
++		if (effect_changed) {
++			surface->dirty = true;
++		}
++	}
++
+ 	render(surface);
+ }
+ 
+@@ -74,8 +79,16 @@ void render(struct swaylock_surface *surface) {
+ 		return; // not yet configured
+ 	}
+ 
+-	if (!surface->dirty || surface->frame) {
+-		// Nothing to do or frame already pending
++	if (surface->frame) {
++		return;
++	}
++	if (!surface->dirty) {
++		if (surface->state->effect && surface->state->effect->update) {
++			surface->frame = wl_surface_frame(surface->surface);
++			wl_callback_add_listener(surface->frame,
++					&surface_frame_listener, surface);
++			wl_surface_commit(surface->surface);
++		}
+ 		return;
+ 	}
+ 
+@@ -110,9 +123,6 @@ void render(struct swaylock_surface *surface) {
+ 		cairo_identity_matrix(cairo);
+ 
+ 		if (state->effect) {
+-			if (state->effect->update) {
+-				state->effect->update(state, surface->dt);
+-			}
+ 			if (state->effect->render) {
+ 				state->effect->render(state, cairo, surface);
+ 			}
+diff --git a/render/effect_xjack.c b/render/effect_xjack.c
+index f20adbc..7b3d91f 100644
+--- a/render/effect_xjack.c
++++ b/render/effect_xjack.c
+@@ -680,25 +680,34 @@ static void xjack_resize(struct swaylock_state *state, int width, int height) {
+ 	}
+ }
+ 
+-static void xjack_update(struct swaylock_state *state, double dt) {
++static bool xjack_update(struct swaylock_state *state, double dt) {
+ 	struct xjack_state *xj = state->effect_data;
+ 	if (!xj || !xj->initialized)
+-		return;
++		return false;
+ 
+ 	if (!xj->metrics_valid)
+-		return;
++		return true;
+ 
+ 	if (dt > 0.1)
+ 		dt = 0.1;
+ 
+ 	xj->timer += dt * xj->speed;
+ 
++	int chars_before = xj->char_count;
++	int typed = 0;
++
+ 	while (xj->timer >= xj->delay) {
+ 		xj->timer -= xj->delay;
+ 		xjack_type_one(xj);
++		typed++;
+ 		if (xj->delay <= 0.0)
+ 			xj->delay = 0.001;
++		if (typed >= 10) {
++			break;
++		}
+ 	}
++
++	return (xj->char_count != chars_before);
+ }
+ 
+ static void xjack_draw_chars(struct xjack_state *xj, cairo_t *cr,
