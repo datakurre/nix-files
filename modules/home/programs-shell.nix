@@ -1,5 +1,13 @@
-{ pkgs, ... }:
 {
+  pkgs,
+  lib,
+  ...
+}:
+{
+  home.activation.regenerateCarapaceInit = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    mkdir -p $HOME/.cache/carapace
+    $DRY_RUN_CMD ${pkgs.carapace}/bin/carapace _carapace nushell > $HOME/.cache/carapace/init.nu
+  '';
   programs = {
     carapace = {
       enable = true;
