@@ -10,5 +10,5 @@
     };
     u2f.enable = true;
   };
-  services.pcscd.enable = false;
+
 }
