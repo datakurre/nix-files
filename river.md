@@ -115,6 +115,14 @@ River uses tags (bitmask): a window can be on multiple tags simultaneously.
 | `Super + left button` + drag | Move floating window |
 | `Super + right button` + drag | Resize floating window |
 
+Pointer devices are configured from `~/.config/river/init`. The Logitech
+trackball uses button-scroll (hold `BTN_SIDE` and roll). On **makondo** every
+other pointer and touch device is muted with `riverctl input <dev> events
+disabled` — the touchpad, its trackpoint node, the ELAN touchscreen, a phantom
+`PS/2 Generic Mouse` and the Ergodox's spurious pointer endpoints all inject
+stray motion otherwise. List what the compositor sees with
+`riverctl list-inputs`.
+
 ## Configuration
 
 ### Session (bindings, tool startup, layout)
@@ -153,7 +161,12 @@ home-manager.users.${config.user.name}.services.kanshi = {
   }];
 };
 ```
-Run `wlr-randr` to discover output names if the connector name is wrong.
+Run `wlr-randr` to discover output names if the connector name is wrong. Get
+this wrong and *nothing* happens: kanshi silently applies no profile and every
+output stays at scale 1, which looks like "HiDPI is broken for half my apps".
+Check the connectors the kernel actually sees with
+`grep -l '^connected$' /sys/class/drm/card*-*/status`; internal panels are `eDP-1`,
+and an unconnected `DP-1` often exists alongside it.
 
 ### Tray applets
 
@@ -168,14 +181,29 @@ Their icons appear in the waybar tray module (top right of the bar).
 
 ### Firefox / GUI apps look tiny
 
-`GDK_SCALE=2` and `QT_SCALE_FACTOR=2` are set globally (for XWayland apps).
-Native Wayland apps read scale from the compositor. Verify Firefox is on
-Wayland: `about:support` → "Window Protocol" = "wayland". If it still says
-"x11" even after setting `MOZ_ENABLE_WAYLAND=1`, run `MOZ_ENABLE_WAYLAND=1
-firefox` from the terminal.
+Scaling is owned entirely by kanshi (see above). `GDK_SCALE` and
+`QT_SCALE_FACTOR` are deliberately **not** set anywhere: native Wayland clients
+read the scale from the compositor, and forcing those variables on top makes
+them scale twice.
 
-If Firefox IS on Wayland but still tiny, open `about:config` and set
-`layout.css.devPixelsPerPx` to `2.0`.
+Check the compositor is actually reporting a scale before blaming the app:
+```
+wlr-randr | grep -A3 eDP-1   # expect "Scale: 2.000000"
+```
+If it says 1, the kanshi profile is not matching — fix `criteria`, then
+`journalctl --user -u kanshi -b`.
+
+If the scale is right and one app is still tiny, it is on XWayland, which
+wlroots does not scale. Verify Firefox: `about:support` → "Window Protocol"
+should be "wayland"; if it says "x11", run `MOZ_ENABLE_WAYLAND=1 firefox` from
+the terminal. `layout.css.devPixelsPerPx` is a last resort and must be cleared
+again once the compositor scale is correct, or Firefox ends up at 4x.
+
+Qt apps launched from systemd user services (notably `pinentry-qt` from
+gpg-agent) pick XWayland when they start before the river init imports
+`WAYLAND_DISPLAY` into the user manager. The init restarts gpg-agent after the
+import to close that race; check with
+`systemctl --user show-environment | grep WAYLAND_DISPLAY`.
 
 ### Tray icons missing
 
