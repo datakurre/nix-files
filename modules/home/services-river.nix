@@ -179,6 +179,7 @@ in
           dpi-aware = "yes";
         };
         scrollback.lines = 1024;
+        scrollback.multiplier = 9.0;
         cursor.style = "block";
         colors-dark = {
           background = "002b36";
