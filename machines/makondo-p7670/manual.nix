@@ -14,7 +14,6 @@
       device = "/dev/nvme0n1p1";
       preLVM = true;
       bypassWorkqueues = true;
-      crypttabExtraOpts = [ "fido2-device=auto" ];
     };
   };
   boot.tmp.cleanOnBoot = true;
@@ -53,18 +52,21 @@
   };
   system.stateVersion = "24.11";
 
-  home-manager.users.${config.user.name}.services.kanshi = {
-    enable = true;
-    settings = [
-      {
-        profile.name = "default";
-        profile.outputs = [
-          {
-            criteria = "DP-1";
-            scale = 2.0;
-          }
-        ];
-      }
-    ];
+  home-manager.users.${config.user.name} = {
+    programs.firefox.profiles."default".settings."layout.css.devPixelsPerPx" = "2.0";
+    services.kanshi = {
+      enable = true;
+      settings = [
+        {
+          profile.name = "default";
+          profile.outputs = [
+            {
+              criteria = "DP-1";
+              scale = 2.0;
+            }
+          ];
+        }
+      ];
+    };
   };
 }
