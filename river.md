@@ -179,6 +179,43 @@ Their icons appear in the waybar tray module (top right of the bar).
 
 ## Troubleshooting
 
+### River fails on proprietary NVIDIA (`ERROR_INCOMPATIBLE_DRIVER`)
+
+If River exits with:
+
+`error(wlroots): ... Could not create instance: ERROR_INCOMPATIBLE_DRIVER (-9)`
+
+wlroots failed Vulkan renderer initialization on the current NVIDIA stack.
+Force a non-Vulkan renderer in the GDM session entry:
+
+```ini
+# /usr/share/wayland-sessions/river.desktop
+Exec=env WLR_RENDERER=gles2 /home/atsoukka/.nix-profile/bin/river
+```
+
+If `gles2` still fails, use software rendering temporarily:
+
+```ini
+Exec=env WLR_RENDERER=pixman /home/atsoukka/.nix-profile/bin/river
+```
+
+Restart GDM (or reboot), then retry.
+
+Verify you are in a Wayland session before deeper debugging:
+
+```sh
+echo $XDG_SESSION_TYPE   # expect: wayland
+echo $WAYLAND_DISPLAY    # expect: wayland-*
+```
+
+Collect logs:
+
+```sh
+sudo journalctl -b -u gdm --no-pager
+journalctl --user -b --no-pager
+journalctl -b --no-pager | grep -Ei 'river|wlroots|wayland|vulkan|nvidia'
+```
+
 ### Firefox / GUI apps look tiny
 
 Scaling is owned entirely by kanshi (see above). `GDK_SCALE` and

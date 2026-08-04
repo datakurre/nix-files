@@ -163,6 +163,42 @@ The `~/.config/xdg-desktop-portal/portals.conf` written by Home Manager
 routes River sessions to `wlr;gtk` backends. On RHEL 9, the system's
 `xdg-desktop-portal-gnome` serves as the GTK fallback backend.
 
+**NVIDIA (proprietary driver): River does not start**
+
+If logs show wlroots Vulkan errors like:
+`ERROR_INCOMPATIBLE_DRIVER (-9)`, force a non-Vulkan renderer in the GDM
+session entry.
+
+Edit `/usr/share/wayland-sessions/river.desktop`:
+
+```ini
+Exec=env WLR_RENDERER=gles2 /home/atsoukka/.nix-profile/bin/river
+```
+
+If that still fails, use a software fallback:
+
+```ini
+Exec=env WLR_RENDERER=pixman /home/atsoukka/.nix-profile/bin/river
+```
+
+Then restart GDM (or reboot) and try again.
+
+Before debugging renderer issues further, verify River is actually launched
+as Wayland (not Xorg):
+
+```sh
+echo $XDG_SESSION_TYPE   # must be "wayland"
+echo $WAYLAND_DISPLAY    # must be set
+```
+
+Useful logs:
+
+```sh
+sudo journalctl -b -u gdm --no-pager
+journalctl --user -b --no-pager
+journalctl -b --no-pager | grep -Ei 'river|wlroots|wayland|vulkan|nvidia'
+```
+
 See [river.md](river.md) for keybindings, layout, and further
 troubleshooting.
 
