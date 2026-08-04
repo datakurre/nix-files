@@ -89,6 +89,7 @@
               pkg:
               builtins.elem (nixpkgs.lib.getName pkg) [
                 "corefonts"
+                "discord"
                 "vagrant"
               ];
           };

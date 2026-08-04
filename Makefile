@@ -8,7 +8,10 @@ switch\ makondo:
 	nixos-rebuild switch --flake .#makondo
 
 switch\ atsoukka:
-	home-manager switch --flake .#homeConfigurations.atsoukka
+	home-manager --extra-experimental-features "nix-command flakes" switch --flake .#atsoukka
+
+atsoukka:
+	home-manager --extra-experimental-features "nix-command flakes" switch --flake .#atsoukka
 
 check:
 	nix flake check

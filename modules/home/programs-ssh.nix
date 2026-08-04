@@ -1,4 +1,12 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  osConfig ? null,
+  ...
+}:
+let
+  usePcsc = osConfig != null && (osConfig.services.pcscd.enable or false);
+in
 {
   programs = {
     bash.bashrcExtra = ''
@@ -7,15 +15,30 @@
     nushell.envFile.text = ''
       ''$env.SSH_AUTH_SOCK = $"(gpgconf --list-dirs agent-ssh-socket)"
     '';
-    ssh.enable = true;
+    ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      settings."*" = {
+        ForwardAgent = false;
+        AddKeysToAgent = "no";
+        Compression = false;
+        ServerAliveInterval = 0;
+        ServerAliveCountMax = 3;
+        HashKnownHosts = false;
+        UserKnownHostsFile = "~/.ssh/known_hosts";
+        ControlMaster = "no";
+        ControlPath = "~/.ssh/master-%r@%n:%p";
+        ControlPersist = "no";
+      };
+    };
   };
   home.packages = [ pkgs.gnupg ];
 
-  # Route scdaemon through pcscd instead of GnuPG's internal CCID driver; the two cannot
-  # both claim the YubiKey's CCID interface. Pairs with services.pcscd.enable in
-  # modules/nixos/hw-yubikey.nix. Declared here rather than left as a hand-written
-  # ~/.gnupg/scdaemon.conf so both machines stay in step.
-  home.file.".gnupg/scdaemon.conf".text = "disable-ccid\n";
+  # When pcscd is present (NixOS path), force scdaemon to use it.
+  # On standalone Home Manager hosts pcscd is not managed here, so leave CCID enabled.
+  home.file.".gnupg/scdaemon.conf" = lib.mkIf usePcsc {
+    text = "disable-ccid\n";
+  };
 
   services.gpg-agent = {
     enable = true;
