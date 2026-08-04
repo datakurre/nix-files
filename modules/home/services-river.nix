@@ -39,11 +39,30 @@ in
     };
   };
 
+  home.sessionVariables = {
+    _JAVA_AWT_WM_NONREPARENTING = "1";
+    NIXOS_OZONE_WL = "1";
+    XCURSOR_THEME = "Adwaita";
+    XCURSOR_SIZE = "24";
+  };
+
   home.packages = [
+    pkgs.river-classic
+    pkgs.xwayland
+    pkgs.adwaita-icon-theme
+    pkgs.nemo
+    pkgs.nemo-fileroller
+    pkgs.networkmanagerapplet
+    pkgs.blueman
+    pkgs.paprefs
+    pkgs.pavucontrol
+    pkgs.qpaeq
+    pkgs.kanshi
     pkgs.wl-clipboard
     pkgs.wlr-randr
     pkgs.wlopm
     pkgs.pasystray
+    pkgs.xdg-desktop-portal-wlr
     layoutRotate
     layoutReset
   ];
@@ -60,6 +79,10 @@ in
         "nemo.desktop"
       ];
     };
+    configFile."xdg-desktop-portal/portals.conf".text = ''
+      [preferred]
+      default=wlr;gtk
+    '';
   };
 
   xdg.configFile."river/init" = {

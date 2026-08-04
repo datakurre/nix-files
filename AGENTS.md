@@ -117,8 +117,7 @@ the user on the actual machine; do not run `nixos-rebuild switch` yourself.
 
 - Makefile targets `switch albemuth|makondo|atsoukka` contain a literal
   space; quote them when invoking.
-- `home-manager switch` attrpath is `.#homeConfigurations.atsoukka` (quote
-  the attr in shells that need it).
+- `home-manager switch` attrpath is `.#atsoukka`.
 - The standalone HM config forces its own `.Xmodmap` and HiDPI xresources —
   be careful when touching [home-configuration.nix](home-configuration.nix).
 - `documentation.nixos.enable = false` and channels are disabled globally;

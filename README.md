@@ -65,17 +65,26 @@ $ make "switch makondo"
 ### Apply the user environment (Home Manager, non-NixOS)
 
 The standalone configuration targets a **single-user Nix install** (no
-daemon), e.g. on RHEL. One-time root prerequisites on such a host:
+daemon), e.g. on RHEL.
+
+Apply/update it with:
+
+```console
+$ home-manager switch --flake .#atsoukka
+# or
+$ make atsoukka
+# or
+$ make "switch atsoukka"
+```
+
+One-time root prerequisites on such a host:
 
 - Add `<user>:100000:65536` to `/etc/subuid` and `/etc/subgid` (rootless
   podman). `newuidmap`/`newgidmap` from the shadow package must be setuid
   (already the case on RHEL).
-
-```console
-$ home-manager switch --flake .#homeConfigurations.atsoukka
-# or
-$ make "switch atsoukka"
-```
+- Enable River as a Wayland session in GDM — see
+  [Enabling River on RHEL 9 with GDM](#enabling-river-on-rhel-9-with-gdm)
+  below.
 
 ### Update dependencies
 
@@ -92,6 +101,86 @@ $ make format     # format all *.nix with nixfmt
 ```
 
 Run `make help` to list all targets.
+
+## Enabling River on RHEL 9 with GDM
+
+RHEL 9 ships GDM with Wayland support enabled by default. polkit and
+logind already provide the necessary seat access for wlroots compositors —
+no extra system packages are required for River to start.
+
+### 1. Apply the Home Manager config
+
+```console
+$ make atsoukka
+```
+
+This writes `~/.config/river/init`, `~/.config/foot/`, `~/.config/fuzzel/`,
+etc. Do this **before** logging in to a River session for the first time.
+
+### 2. Register the River session with GDM
+
+Create `/usr/share/wayland-sessions/river.desktop` as root:
+
+```console
+$ sudo tee /usr/share/wayland-sessions/river.desktop <<'EOF'
+[Desktop Entry]
+Name=River
+Comment=Dynamic tiling Wayland compositor
+Exec=/home/atsoukka/.nix-profile/bin/river
+Type=Application
+DesktopNames=river
+EOF
+```
+
+> **Note:** The `Exec` path is user-specific. If you ever move the Nix
+> store or change the username, update this file accordingly.
+
+### 3. Log in to River
+
+Restart GDM (or reboot), select **River** from the session menu in GDM, and
+log in. River reads `~/.config/river/init` automatically on startup.
+
+To verify you are on Wayland:
+
+```sh
+echo $XDG_SESSION_TYPE   # should print "wayland"
+echo $WAYLAND_DISPLAY     # should be set (e.g. "wayland-0")
+```
+
+### Troubleshooting
+
+**XDG portals** (file picker, screen share) are provided by
+`xdg-desktop-portal-wlr` from the Nix profile. The portal daemon is
+socket-activated via systemd user session. If portals are not working,
+check:
+
+```sh
+journalctl --user -u xdg-desktop-portal -b
+journalctl --user -u xdg-desktop-portal-wlr -b
+```
+
+The `~/.config/xdg-desktop-portal/portals.conf` written by Home Manager
+routes River sessions to `wlr;gtk` backends. On RHEL 9, the system's
+`xdg-desktop-portal-gnome` serves as the GTK fallback backend.
+
+See [river.md](river.md) for keybindings, layout, and further
+troubleshooting.
+
+## Home Manager-only differences (`atsoukka`)
+
+Compared to NixOS hosts in this repo:
+
+- `make atsoukka` only updates user-space Home Manager state; it does not
+  manage system services, boot, users, PAM, display manager or `/etc`.
+- River compositor config, keybindings and user applets are managed by
+  Home Manager (`modules/home/services-river.nix`), but the login manager and
+  Wayland session registration on RHEL remain manual system configuration.
+- The standalone profile still includes the legacy XMonad/X11 session module
+  as a fallback, while River is available as a Wayland session.
+- dconf/gsettings management is disabled (`dconf.enable = false`) because
+  the dconf D-Bus service is not set up by standalone Home Manager on
+  non-NixOS hosts. GTK HiDPI scaling from dconf is therefore not managed;
+  the Wayland compositor scale (kanshi) handles HiDPI instead.
 
 ## Adding a new machine
 
