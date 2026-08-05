@@ -5,33 +5,31 @@
   ...
 }:
 
-with lib;
-
 let
   cfg = config.services.batteryNotifier;
 in
 {
   options = {
     services.batteryNotifier = {
-      enable = mkOption {
+      enable = lib.mkOption {
         default = true;
         description = ''
           Whether to enable battery notifier.
         '';
       };
-      device = mkOption {
+      device = lib.mkOption {
         default = "BAT0";
         description = ''
           Device to monitor.
         '';
       };
-      notifyCapacity = mkOption {
+      notifyCapacity = lib.mkOption {
         default = 10;
         description = ''
           Battery level at which a notification shall be sent.
         '';
       };
-      suspendCapacity = mkOption {
+      suspendCapacity = lib.mkOption {
         default = 5;
         description = ''
           Battery level at which a suspend unless connected shall be sent.
@@ -40,7 +38,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     systemd.user.timers.lowbatt = {
       Unit = {
         Description = "check battery level";

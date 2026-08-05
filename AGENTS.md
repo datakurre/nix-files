@@ -23,8 +23,7 @@ Key contracts — do not break these:
 1. **Custom `user.*` options.** `user.name`, `user.description`, `user.home`
    are declared in [modules/nixos/env-user.nix](modules/nixos/env-user.nix)
    and set per host in `flake.nix`. Many modules reference
-   `config.user.name` (env-base, env-nix, hw-yubikey, services-river,
-   services-virtualization). New NixOS modules needing the username must use
+   `config.user.name` (env-base, env-nix, services-virtualization). New NixOS modules needing the username must use
    `config.user.name`, never a hardcoded string.
 2. **Shared Home Manager module list.**
    [modules/home/default.nix](modules/home/default.nix) is a plain **list of
@@ -49,10 +48,8 @@ Key contracts — do not break these:
    appearance — lives entirely in the HM-managed
    `~/.config/river/init` from
    `modules/home/services-river.nix`. Never spawn session tools
-   from NixOS service modules — they would duplicate.
-   The legacy X11 session for non-NixOS hosts remains in
-   `modules/home/services-xmonad.nix`. That module is imported
-   only by `home-configuration.nix`, not by `default-configuration.nix`.
+   from NixOS service modules (except `services.blueman.enable` which is intentionally system-level).
+   The standalone Home Manager host also uses the `services-river.nix` Wayland session.
 6. **flake-compat.** [default.nix](default.nix) and [shell.nix](shell.nix)
    are `flake-compat` shims so non-flake commands keep working; the
    `flake-compat` input is pinned in `flake.lock`. Keep them as-is.
@@ -118,8 +115,6 @@ the user on the actual machine; do not run `nixos-rebuild switch` yourself.
 - Makefile targets `switch albemuth|makondo|atsoukka` contain a literal
   space; quote them when invoking.
 - `home-manager switch` attrpath is `.#atsoukka`.
-- The standalone HM config forces its own `.Xmodmap` and HiDPI xresources —
-  be careful when touching [home-configuration.nix](home-configuration.nix).
 - `documentation.nixos.enable = false` and channels are disabled globally;
   don't reintroduce channel-based patterns.
 - `.gitignore` excludes `/deprecated/` (old experiments, ignored on purpose).

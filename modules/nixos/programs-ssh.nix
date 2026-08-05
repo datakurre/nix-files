@@ -4,16 +4,13 @@
   # (modules/home/programs-ssh.nix) so it works identically on non-NixOS hosts.
   programs.ssh.startAgent = false;
   services.openssh = {
-    allowSFTP = true;
-    extraConfig = ''
-      HostkeyAlgorithms +ssh-rsa +ed25519
-      PubkeyAcceptedAlgorithms +ssh-rsa +ed25519
-    '';
     settings = {
       X11Forwarding = true;
-      PermitRootLogin = false;
+      PermitRootLogin = "no";
       PasswordAuthentication = false;
-      LoginGraceTime = 0;
+      LoginGraceTime = 60;
+      HostKeyAlgorithms = "+ssh-rsa,+ssh-ed25519";
+      PubkeyAcceptedAlgorithms = "+ssh-rsa,+ssh-ed25519";
     };
   };
 }

@@ -1,9 +1,14 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   options = {
-    user.name = pkgs.lib.mkOption { type = pkgs.lib.types.str; };
-    user.description = pkgs.lib.mkOption { type = pkgs.lib.types.str; };
-    user.home = pkgs.lib.mkOption { type = pkgs.lib.types.str; };
+    user.name = lib.mkOption { type = lib.types.str; };
+    user.description = lib.mkOption { type = lib.types.str; };
+    user.home = lib.mkOption { type = lib.types.str; };
   };
   config = {
     users.users.${config.user.name} = {

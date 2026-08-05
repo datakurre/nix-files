@@ -2,12 +2,13 @@
   config,
   pkgs,
   lib,
+  osConfig ? null,
   ...
 }:
 
-with lib;
-
 let
+  isStandalone = osConfig == null;
+
   layoutRotate = pkgs.writeShellScriptBin "river-layout-rotate" ''
     state="$HOME/.cache/river-main-location"
     curr=$(cat "$state" 2>/dev/null || echo left)
@@ -32,7 +33,7 @@ let
   '';
 in
 {
-  dconf = {
+  dconf = lib.mkIf (!isStandalone) {
     enable = true;
     settings = {
       "org/gnome/desktop/interface".scaling-factor = lib.hm.gvariant.mkUint32 2;
@@ -41,13 +42,24 @@ in
 
   home.sessionVariables = {
     _JAVA_AWT_WM_NONREPARENTING = "1";
+  }
+  // lib.optionalAttrs isStandalone {
     NIXOS_OZONE_WL = "1";
     XCURSOR_THEME = "Adwaita";
     XCURSOR_SIZE = "24";
   };
 
   home.packages = [
+    pkgs.wl-clipboard
+    pkgs.wlr-randr
+    pkgs.wlopm
+    pkgs.pasystray
+    layoutRotate
+    layoutReset
+  ]
+  ++ lib.optionals isStandalone [
     pkgs.river-classic
+    pkgs.foot
     pkgs.xwayland
     pkgs.adwaita-icon-theme
     pkgs.nemo
@@ -58,13 +70,8 @@ in
     pkgs.pavucontrol
     pkgs.qpaeq
     pkgs.kanshi
-    pkgs.wl-clipboard
-    pkgs.wlr-randr
-    pkgs.wlopm
-    pkgs.pasystray
+    pkgs.xdg-desktop-portal
     pkgs.xdg-desktop-portal-wlr
-    layoutRotate
-    layoutReset
   ];
 
   xdg = {
@@ -79,10 +86,12 @@ in
         "nemo.desktop"
       ];
     };
-    configFile."xdg-desktop-portal/portals.conf".text = ''
-      [preferred]
-      default=wlr;gtk
-    '';
+    configFile."xdg-desktop-portal/portals.conf" = lib.mkIf isStandalone {
+      text = ''
+        [preferred]
+        default=wlr;gtk
+      '';
+    };
   };
 
   xdg.configFile."river/init" = {
@@ -95,13 +104,24 @@ in
 
       systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE DBUS_SESSION_BUS_ADDRESS MOZ_ENABLE_WAYLAND NIXOS_OZONE_WL GDK_BACKEND XCURSOR_THEME XCURSOR_SIZE
       dbus-update-activation-environment --systemd --all
-      systemctl --user start graphical-session.target
+
+      # We must *restart* graphical-session.target here, not just *start* it.
+      # If the target is already active (e.g., from a display manager), services
+      # like kanshi, gammastep, waybar, and applets may have started before 
+      # WAYLAND_DISPLAY was exported, causing them to fail or fall back to XWayland.
+      # Restarting ensures they all pick up the newly exported Wayland environment.
+      systemctl --user restart graphical-session.target
+
       # gpg-agent is often socket-activated before the import above, leaving
       # pinentry-qt without WAYLAND_DISPLAY -- it then falls back to XWayland,
       # which wlroots does not scale. try-restart is a no-op if it isn't up yet.
       systemctl --user try-restart gpg-agent.service || true
-      systemctl --user start gammastep
-      systemctl --user start kanshi
+
+      # Explicitly restart kanshi as a workaround for a startup race condition.
+      # When graphical-session.target is restarted, kanshi may start before River 
+      # has completely registered its wlr-output-management globals, causing it 
+      # to fail or miss the outputs. This ensures it applies HiDPI configurations.
+      systemctl --user restart kanshi || true
 
       riverctl keyboard-layout -options "eurosign:e,caps:escape,nbsp:none" fi
       riverctl focus-follows-cursor disabled
@@ -114,28 +134,35 @@ in
       riverctl border-color-urgent 0xdc322f
       riverctl hide-cursor when-typing enabled
 
-'' + (if config.home.username == "atsoukka" then ''
-        # BTN_TASK, not BTN_SIDE: hwdb remaps the small left button (see
-        # machines/makondo-p7670/manual.nix) so libinput's replayed click is inert
-        # instead of triggering Firefox's "Back".
-        for dev in $(riverctl list-inputs | grep -iE 'trackball|marble'); do
-          riverctl input "$dev" scroll-method button
-          riverctl input "$dev" scroll-button BTN_TASK
-          riverctl input "$dev" scroll-button-lock disabled
-          riverctl input "$dev" middle-emulation disabled
-        done
-        # Trackball only: mute the touchpad, its trackpoint node, the ELAN
-        # touchscreen, the phantom PS/2 mouse and the Ergodox's pointer endpoints.
-        for dev in $(riverctl list-inputs | grep -E '^(pointer|touch)-' | grep -viE 'trackball|marble'); do
-          riverctl input "$dev" events disabled
-        done
-'' else ''
-        for dev in $(riverctl list-inputs | grep -i trackball); do
-          riverctl input "$dev" scroll-method button
-          riverctl input "$dev" scroll-button BTN_SIDE
-          riverctl input "$dev" scroll-button-lock enabled
-        done
-'') + ''
+    ''
+    + (
+      if config.home.username == "atsoukka" then
+        ''
+          # BTN_TASK, not BTN_SIDE: hwdb remaps the small left button (see
+          # machines/makondo-p7670/manual.nix) so libinput's replayed click is inert
+          # instead of triggering Firefox's "Back".
+          for dev in $(riverctl list-inputs | grep -iE 'trackball|marble'); do
+            riverctl input "$dev" scroll-method button
+            riverctl input "$dev" scroll-button BTN_TASK
+            riverctl input "$dev" scroll-button-lock disabled
+            riverctl input "$dev" middle-emulation disabled
+          done
+          # Trackball only: mute the touchpad, its trackpoint node, the ELAN
+          # touchscreen, the phantom PS/2 mouse and the Ergodox's pointer endpoints.
+          for dev in $(riverctl list-inputs | grep -E '^(pointer|touch)-' | grep -viE 'trackball|marble'); do
+            riverctl input "$dev" events disabled
+          done
+        ''
+      else
+        ''
+          for dev in $(riverctl list-inputs | grep -i trackball); do
+            riverctl input "$dev" scroll-method button
+            riverctl input "$dev" scroll-button BTN_SIDE
+            riverctl input "$dev" scroll-button-lock enabled
+          done
+        ''
+    )
+    + ''
 
       riverctl map normal Super+Shift Return spawn foot
       riverctl map normal Super P spawn fuzzel
@@ -186,10 +213,7 @@ in
       riverctl default-layout rivertile
       rivertile -main-location left -main-count 1 -main-ratio 0.5 -view-padding 0 -outer-padding 0 &
 
-      nm-applet --indicator &
-      blueman-applet &
       pasystray &
-      waybar &
     '';
   };
 
@@ -200,7 +224,7 @@ in
         main = {
           font = "DejaVu Sans Mono for Powerline:size=9";
           dpi-aware = "yes";
-          term = "xterm-256color";
+          term = "foot";
         };
         scrollback.lines = 1024;
         scrollback.multiplier = 9.0;
@@ -280,7 +304,7 @@ in
 
     waybar = {
       enable = true;
-      systemd.enable = false;
+      systemd.enable = true;
       settings = [
         {
           layer = "top";
@@ -342,5 +366,13 @@ in
       "unlock" = "${pkgs.wlopm}/bin/wlopm --on '*'";
       "after-resume" = "${pkgs.wlopm}/bin/wlopm --on '*'";
     };
+  };
+
+  # Prevent rapid crash loops (start-limit-hit) when River is still initializing
+  systemd.user.services.waybar.Service.RestartSec = "2";
+  systemd.user.services.swayidle.Service.RestartSec = "2";
+
+  systemd.user.services.kanshi = lib.mkIf config.services.kanshi.enable {
+    Service.RestartSec = "2";
   };
 }

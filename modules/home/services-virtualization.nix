@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   # Rootless podman with a Docker-compatible user API socket.
   #
@@ -22,7 +22,7 @@
         After = [ "podman.socket" ];
       };
       Service = {
-        ExecStart = "${config.services.podman.package}/bin/podman system service";
+        ExecStart = "${pkgs.podman}/bin/podman system service";
         Delegate = true;
         KillMode = "process";
       };

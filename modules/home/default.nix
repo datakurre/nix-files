@@ -15,5 +15,5 @@
   ./services-fineid.nix
   ./services-gammastep.nix
   ./services-virtualization.nix
-# ./services-email.nix
+  # ./services-email.nix # Uncomment after encrypting secrets/email.yaml with sops
 ]

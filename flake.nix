@@ -78,6 +78,7 @@
     in
     {
       overlays.default = unstableOverlay;
+      overlays.swaylock-xjack = swaylockXjackOverlay;
 
       formatter.${system} = pkgs.nixfmt;
 

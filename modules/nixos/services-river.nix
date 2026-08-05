@@ -21,7 +21,7 @@ in
   environment.sessionVariables = {
     _JAVA_AWT_WM_NONREPARENTING = "1";
     XCURSOR_THEME = "Adwaita";
-    XCURSOR_SIZE = "48";
+    XCURSOR_SIZE = "24";
   }
   // waylandEnv;
   environment.systemPackages = [
@@ -41,7 +41,10 @@ in
     blueman.enable = true;
     gnome.at-spi2-core.enable = true;
     gvfs.enable = true;
-    udev.packages = [ pkgs.gnome-settings-daemon ];
+    udev.packages = [
+      pkgs.gnome-settings-daemon
+      pkgs.brightnessctl
+    ];
     greetd = {
       enable = true;
       settings.default_session = {
@@ -56,8 +59,12 @@ in
       pkgs.xdg-desktop-portal-wlr
       pkgs.xdg-desktop-portal-gtk
     ];
-    config.river = {
-      default = [
+    config = {
+      common.default = [
+        "wlr"
+        "gtk"
+      ];
+      river.default = [
         "wlr"
         "gtk"
       ];

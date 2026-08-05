@@ -29,30 +29,6 @@
 
   # Roblox
   services.flatpak.enable = true;
-  # XDG Portal configuration for River + Flatpak
-  xdg.portal = {
-    enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-wlr
-      pkgs.xdg-desktop-portal-gtk
-    ];
-
-    # Required to prevent apps from hanging while waiting for a portal response
-    config = {
-      common = {
-        default = [
-          "wlr"
-          "gtk"
-        ];
-      };
-      river = {
-        default = [
-          "wlr"
-          "gtk"
-        ];
-      };
-    };
-  };
 
   home-manager.users.${config.user.name}.services.kanshi = {
     enable = true;

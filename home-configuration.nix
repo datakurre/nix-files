@@ -70,12 +70,6 @@ in
     Type=Application
     DesktopNames=river
   '';
-  home.file.".Xmodmap".source = lib.mkForce (
-    builtins.toFile "Xmodmap" ''
-      pointer = 1 2 3 4 5 6 7 0 9 10
-    ''
-  );
-  xsession.enable = true;
 
   services.kanshi = {
     enable = true;
