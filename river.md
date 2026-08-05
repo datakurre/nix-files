@@ -179,24 +179,35 @@ Their icons appear in the waybar tray module (top right of the bar).
 
 ## Troubleshooting
 
-### River fails on proprietary NVIDIA (`ERROR_INCOMPATIBLE_DRIVER`)
+### River fails on proprietary NVIDIA (`ERROR_INCOMPATIBLE_DRIVER` / EGL errors)
 
 If River exits with:
 
 `error(wlroots): ... Could not create instance: ERROR_INCOMPATIBLE_DRIVER (-9)`
 
-wlroots failed Vulkan renderer initialization on the current NVIDIA stack.
-Force a non-Vulkan renderer in the GDM session entry:
+wlroots failed renderer initialization on the current NVIDIA stack.
+Common signatures include:
+
+- `ERROR_INCOMPATIBLE_DRIVER (-9)`
+- `EGL_EXT_platform_base not supported`
+- `RendererCreateFailed`
+
+On RHEL 9 GDM, use a system session entry and keep `Exec` pointed at the
+managed wrapper:
 
 ```ini
 # /usr/share/wayland-sessions/river.desktop
-Exec=env WLR_RENDERER=gles2 /home/atsoukka/.nix-profile/bin/river
+Exec=/home/atsoukka/.nix-profile/bin/river-session
 ```
 
-If `gles2` still fails, use software rendering temporarily:
+The wrapper prefers `nixGLNvidia` on NVIDIA hosts when available, starts with
+`WLR_RENDERER=${WLR_RENDERER:-gles2}`, and retries with `pixman` if startup
+fails immediately.
+
+To force software rendering temporarily, set:
 
 ```ini
-Exec=env WLR_RENDERER=pixman /home/atsoukka/.nix-profile/bin/river
+Exec=env WLR_RENDERER=pixman /home/atsoukka/.nix-profile/bin/river-session
 ```
 
 Restart GDM (or reboot), then retry.

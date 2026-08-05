@@ -115,25 +115,33 @@ $ make atsoukka
 ```
 
 This writes `~/.config/river/init`, `~/.config/foot/`, `~/.config/fuzzel/`,
-etc. Do this **before** logging in to a River session for the first time.
+and `~/.nix-profile/bin/river-session`. Do this **before** logging in to a
+River session for the first time.
 
-### 2. Register the River session with GDM
+### 2. River session registration (required for GDM on RHEL 9)
 
-Create `/usr/share/wayland-sessions/river.desktop` as root:
+Home Manager writes a user-local session file at
+`~/.local/share/wayland-sessions/river.desktop`, but on RHEL 9 GDM the reliable
+discovery path is system-wide:
+
+`/usr/share/wayland-sessions/river.desktop`
+
+Create it as root:
 
 ```console
 $ sudo tee /usr/share/wayland-sessions/river.desktop <<'EOF'
 [Desktop Entry]
 Name=River
 Comment=Dynamic tiling Wayland compositor
-Exec=/home/atsoukka/.nix-profile/bin/river
+Exec=/home/atsoukka/.nix-profile/bin/river-session
 Type=Application
 DesktopNames=river
 EOF
 ```
 
-> **Note:** The `Exec` path is user-specific. If you ever move the Nix
-> store or change the username, update this file accordingly.
+> **Note:** The `Exec` path is user-specific, and the wrapper handles NVIDIA
+> launch with `nixGLNvidia` when available, with a `pixman` fallback if the
+> preferred renderer fails early.
 
 ### 3. Log in to River
 
@@ -165,20 +173,23 @@ routes River sessions to `wlr;gtk` backends. On RHEL 9, the system's
 
 **NVIDIA (proprietary driver): River does not start**
 
-If logs show wlroots Vulkan errors like:
-`ERROR_INCOMPATIBLE_DRIVER (-9)`, force a non-Vulkan renderer in the GDM
-session entry.
-
-Edit `/usr/share/wayland-sessions/river.desktop`:
+If logs show EGL/renderer failures such as:
+`EGL_EXT_platform_base not supported` or `RendererCreateFailed`, keep the
+desktop entry `Exec` as:
 
 ```ini
-Exec=env WLR_RENDERER=gles2 /home/atsoukka/.nix-profile/bin/river
+Exec=/home/atsoukka/.nix-profile/bin/river-session
 ```
 
-If that still fails, use a software fallback:
+The wrapper will:
+1. Prefer `nixGLNvidia` on NVIDIA hosts when available.
+2. Start with `WLR_RENDERER=${WLR_RENDERER:-gles2}`.
+3. Fall back to `WLR_RENDERER=pixman` if startup fails immediately.
+
+To force software rendering for diagnosis, temporarily use:
 
 ```ini
-Exec=env WLR_RENDERER=pixman /home/atsoukka/.nix-profile/bin/river
+Exec=env WLR_RENDERER=pixman /home/atsoukka/.nix-profile/bin/river-session
 ```
 
 Then restart GDM (or reboot) and try again.
