@@ -116,7 +116,21 @@ River uses tags (bitmask): a window can be on multiple tags simultaneously.
 | `Super + right button` + drag | Resize floating window |
 
 Pointer devices are configured from `~/.config/river/init`. The Logitech
-trackball uses button-scroll (hold `BTN_SIDE` and roll). On **makondo** every
+trackball uses button-scroll (hold `BTN_SIDE` and roll). On **makondo** and **atsoukka**,
+it expects the host OS to remap the small buttons to `BTN_TASK` via a udev hwdb rule,
+and uses `BTN_TASK` for scrolling instead to prevent accidental "Back" navigation in
+browsers. On standalone Home Manager hosts (like **atsoukka**), this udev rule must
+be installed manually:
+
+```ini
+# /etc/udev/hwdb.d/99-logitech-trackball.hwdb
+evdev:name:Logitech USB Trackball:*
+ KEYBOARD_KEY_90004=btn_task
+ KEYBOARD_KEY_90005=btn_task
+```
+*(Run `sudo systemd-hwdb update && sudo udevadm trigger` to apply it.)*
+
+Additionally, on **makondo** and **atsoukka** every
 other pointer and touch device is muted with `riverctl input <dev> events
 disabled` — the touchpad, its trackpoint node, the ELAN touchscreen, a phantom
 `PS/2 Generic Mouse` and the Ergodox's spurious pointer endpoints all inject

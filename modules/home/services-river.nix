@@ -114,7 +114,7 @@ in
       riverctl border-color-urgent 0xdc322f
       riverctl hide-cursor when-typing enabled
 
-      if [ "$(hostname)" = "makondo" ]; then
+      if [ "$(hostname)" = "makondo" ] || [ "$(hostname)" = "atsoukka" ]; then
         # BTN_TASK, not BTN_SIDE: hwdb remaps the small left button (see
         # machines/makondo-p7670/manual.nix) so libinput's replayed click is inert
         # instead of triggering Firefox's "Back".
@@ -200,6 +200,7 @@ in
         main = {
           font = "DejaVu Sans Mono for Powerline:size=9";
           dpi-aware = "yes";
+          term = "xterm-256color";
         };
         scrollback.lines = 1024;
         scrollback.multiplier = 9.0;

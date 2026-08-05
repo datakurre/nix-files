@@ -6,6 +6,9 @@
 }:
 let
   riverSession = pkgs.writeShellScriptBin "river-session" ''
+    if [ -f "${config.home.homeDirectory}/.bashrc.d/99-nix.sh" ]; then
+      . "${config.home.homeDirectory}/.bashrc.d/99-nix.sh"
+    fi
     export PATH="${config.home.homeDirectory}/.nix-profile/bin:$PATH"
     export XDG_DATA_DIRS="${config.home.homeDirectory}/.nix-profile/share:''${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
     export XDG_CURRENT_DESKTOP=river
@@ -67,9 +70,20 @@ in
       pointer = 1 2 3 4 5 6 7 0 9 10
     ''
   );
-  xresources.properties."Xft.dpi" = "192";
   xsession.enable = true;
-  xsession.initExtra = ''
-    xrandr --dpi 192
-  '';
+
+  services.kanshi = {
+    enable = true;
+    settings = [
+      {
+        profile.name = "default";
+        profile.outputs = [
+          {
+            criteria = "*";
+            scale = 2.0;
+          }
+        ];
+      }
+    ];
+  };
 }
