@@ -130,6 +130,18 @@ evdev:name:Logitech USB Trackball:*
 ```
 *(Run `sudo systemd-hwdb update && sudo udevadm trigger` to apply it.)*
 
+To apply phantom click preventions on standalone hosts, install `interception-tools`
+on the host system and configure `udevmon` to use the `evdev-debounce` binary
+provided by this flake:
+
+```yaml
+# /etc/interception/udevmon.yaml
+- JOB: "intercept -g $DEVNODE | /home/atsoukka/.nix-profile/bin/evdev-debounce | uinput -d $DEVNODE"
+  DEVICE:
+    NAME: "Logitech USB Trackball"
+```
+*(Run `sudo systemctl enable --now udevmon` to apply it.)*
+
 Additionally, on **makondo** and **atsoukka** every
 other pointer and touch device is muted with `riverctl input <dev> events
 disabled` — the touchpad, its trackpoint node, the ELAN touchscreen, a phantom
@@ -192,6 +204,32 @@ Started from `~/.config/river/init`:
 Their icons appear in the waybar tray module (top right of the bar).
 
 ## Troubleshooting
+
+### Swaylock fails to unlock with Yubikey on standalone hosts (RHEL)
+
+On NixOS machines like **makondo**, Yubikey authentication for swaylock is automatically configured by the system. On standalone hosts like **atsoukka**, swaylock reads the host OS's `/etc/pam.d/swaylock`. If this file doesn't exist or isn't configured for `pam_u2f`, Yubikey unlock will fail (and may lock you out completely if no fallback exists).
+
+To fix this, create `/etc/pam.d/swaylock` manually on the host OS:
+```pam
+# /etc/pam.d/swaylock
+auth sufficient pam_u2f.so
+auth include login
+```
+*(Ensure `pam_u2f` is installed on the host OS and your keys are enrolled in `~/.config/Yubico/u2f_keys`.)*
+
+### Screen locks surprisingly
+
+On River hosts, the screen is normally locked after 10 minutes of inactivity via `swayidle` (configured in `modules/home/services-river.nix`).
+
+For the standalone Home Manager profile (`switch atsoukka`), `swayidle` is currently **temporarily disabled** in `home-configuration.nix` because activity-reset behavior has been intermittently incorrect on that host/session stack.
+
+What was observed during probing on `atsoukka`:
+
+- timeout callbacks can fire even while keyboard/pointer activity is ongoing
+- `swayidle -S seat0` reports `Seat seat0 not found` although logind seat is `seat0`
+- this points more to seat/activity integration (River/wlroots/session stack) than to `swaylock` itself
+
+So yes, `swaylock` runs in user space, but that is unlikely to be the root cause here: `swaylock` is only executed after `swayidle` decides the session is idle.
 
 ### River fails on proprietary NVIDIA (`ERROR_INCOMPATIBLE_DRIVER` / EGL errors)
 

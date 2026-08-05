@@ -114,7 +114,7 @@ in
       riverctl border-color-urgent 0xdc322f
       riverctl hide-cursor when-typing enabled
 
-      if [ "$(hostname)" = "makondo" ] || [ "$(hostname)" = "atsoukka" ]; then
+'' + (if config.home.username == "atsoukka" then ''
         # BTN_TASK, not BTN_SIDE: hwdb remaps the small left button (see
         # machines/makondo-p7670/manual.nix) so libinput's replayed click is inert
         # instead of triggering Firefox's "Back".
@@ -129,13 +129,13 @@ in
         for dev in $(riverctl list-inputs | grep -E '^(pointer|touch)-' | grep -viE 'trackball|marble'); do
           riverctl input "$dev" events disabled
         done
-      else
+'' else ''
         for dev in $(riverctl list-inputs | grep -i trackball); do
           riverctl input "$dev" scroll-method button
           riverctl input "$dev" scroll-button BTN_SIDE
           riverctl input "$dev" scroll-button-lock enabled
         done
-      fi
+'') + ''
 
       riverctl map normal Super+Shift Return spawn foot
       riverctl map normal Super P spawn fuzzel
@@ -328,7 +328,7 @@ in
     timeouts = [
       {
         timeout = 600;
-        command = "${pkgs.swaylock}/bin/swaylock -f";
+        command = "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f";
       }
       {
         timeout = 1200;
@@ -337,8 +337,8 @@ in
       }
     ];
     events = {
-      "before-sleep" = "${pkgs.swaylock}/bin/swaylock -f";
-      "lock" = "${pkgs.swaylock}/bin/swaylock -f";
+      "before-sleep" = "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f";
+      "lock" = "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f";
       "unlock" = "${pkgs.wlopm}/bin/wlopm --on '*'";
       "after-resume" = "${pkgs.wlopm}/bin/wlopm --on '*'";
     };

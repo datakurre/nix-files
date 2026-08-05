@@ -37,7 +37,6 @@ in
 {
   imports = (import ./modules/home/default.nix) ++ [
     ./modules/home/services-river.nix
-    ./modules/home/services-xmonad.nix
   ];
   programs.home-manager.enable = true;
   # dconf D-Bus activation requires a running GNOME/dconf session; on RHEL 9
@@ -45,8 +44,14 @@ in
   # NixOS does this via programs.dconf.enable).  Disable here to prevent
   # `home-manager switch` from failing outside a desktop session.
   dconf.enable = lib.mkForce false;
+  # Temporary mitigation for standalone atsoukka profile: disable automatic
+  # idle locking until River/wlroots seat/activity handling is fully diagnosed.
+  services.swayidle.enable = lib.mkForce false;
   home.sessionVariables.TMPDIR = tmpDir;
-  home.packages = [ riverSession ];
+  home.packages = [
+    riverSession
+    (pkgs.callPackage ./pkgs/evdev-debounce { })
+  ];
   programs.nushell.environmentVariables.TMPDIR = tmpDir;
   xdg.configFile."nix/nix.conf".text = ''
     experimental-features = nix-command flakes
