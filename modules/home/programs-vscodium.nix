@@ -48,13 +48,15 @@ in
       java = {
         extensions =
           commonExtensions
-          ++ (with pkgs.vscode-marketplace; [
-            redhat.java
-          ])
           ++ (with pkgs.vscode-extensions; [
-            vscjava.vscode-java-debug
+            (vscjava.vscode-java-debug.overrideAttrs (old: {
+              postInstall = (old.postInstall or "") + ''
+                sed -i 's|".noConfigDebugAdapterEndpoints"|(require("os").tmpdir()+"/.noConfigDebugAdapterEndpoints")|g' $out/share/vscode/extensions/vscjava.vscode-java-debug/dist/extension.js
+              '';
+            }))
             vscjava.vscode-java-test
             vscjava.vscode-maven
+            redhat.java
           ]);
       };
 
@@ -127,15 +129,19 @@ in
         extensions =
           commonExtensions
           ++ (with pkgs.vscode-marketplace; [
-            redhat.java
             d-biehl.robotcode
           ])
           ++ (with pkgs.vscode-extensions; [
-            vscjava.vscode-java-debug
+            (vscjava.vscode-java-debug.overrideAttrs (old: {
+              postInstall = (old.postInstall or "") + ''
+                sed -i 's|".noConfigDebugAdapterEndpoints"|(require("os").tmpdir()+"/.noConfigDebugAdapterEndpoints")|g' $out/share/vscode/extensions/vscjava.vscode-java-debug/dist/extension.js
+              '';
+            }))
             vscjava.vscode-java-test
             vscjava.vscode-maven
             ms-python.python
             ms-python.debugpy
+            redhat.java
           ]);
       };
     };
