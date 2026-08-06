@@ -167,7 +167,8 @@ in
       riverctl map normal Super+Shift Return spawn foot
       riverctl map normal Super P spawn fuzzel
       riverctl map normal Super+Shift X spawn fuzzel
-      riverctl map normal Super C resize vertical -9999
+      riverctl map normal Super C set-view-tags 2147483648
+      riverctl map normal Super V toggle-focused-tags 2147483648
       riverctl map normal Super+Shift C close
       riverctl map normal Super Space spawn river-layout-rotate
       riverctl map normal Super+Shift Space spawn river-layout-reset
@@ -191,8 +192,6 @@ in
       riverctl map normal Super Period send-layout-cmd rivertile "main-count -1"
       riverctl map normal Super Up send-layout-cmd rivertile "main-count +1"
       riverctl map normal Super Down send-layout-cmd rivertile "main-count -1"
-      riverctl map normal Super+Shift Up send-layout-cmd rivertile "main-count +1"
-      riverctl map normal Super+Shift Down send-layout-cmd rivertile "main-count -1"
       riverctl map normal Super T toggle-float
       riverctl map normal Super F toggle-fullscreen
       riverctl map normal Super+Shift F toggle-float
