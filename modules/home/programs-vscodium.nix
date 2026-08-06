@@ -1,9 +1,23 @@
 { pkgs, ... }:
 
 let
+  devenv-pin = builtins.fromJSON (builtins.readFile ./datakurre.devenv.json);
+  devenv-ext = pkgs.vscode-utils.buildVscodeExtension {
+    name = "datakurre.devenv-${devenv-pin.version}";
+    pname = "datakurre.devenv";
+    version = devenv-pin.version;
+    vscodeExtPublisher = "datakurre";
+    vscodeExtName = "devenv";
+    vscodeExtUniqueId = "datakurre.devenv";
+    src = pkgs.fetchurl {
+      url = devenv-pin.url;
+      sha256 = devenv-pin.sha256;
+    };
+  };
+
   commonExtensions = with pkgs.vscode-marketplace; [
     vscodevim.vim
-    datakurre.devenv
+    devenv-ext
     datakurre.vscode-operaton-form-js-modeler
     datakurre.vscode-operaton-bpmn-js-modeler
     datakurre.vscode-operaton-dmn-js-modeler
