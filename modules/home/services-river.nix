@@ -167,6 +167,7 @@ in
       riverctl map normal Super+Shift Return spawn foot
       riverctl map normal Super P spawn fuzzel
       riverctl map normal Super+Shift X spawn fuzzel
+      riverctl map normal Super C resize vertical -9999
       riverctl map normal Super+Shift C close
       riverctl map normal Super Space spawn river-layout-rotate
       riverctl map normal Super+Shift Space spawn river-layout-reset
@@ -178,12 +179,20 @@ in
       riverctl map normal Super+Shift K swap previous
       riverctl map normal Super H send-layout-cmd rivertile "main-ratio -0.01"
       riverctl map normal Super L send-layout-cmd rivertile "main-ratio +0.01"
-      riverctl map normal Super+Shift H send-layout-cmd rivertile "main-ratio -0.01"
-      riverctl map normal Super+Shift L send-layout-cmd rivertile "main-ratio +0.01"
+      riverctl map normal Super Left send-layout-cmd rivertile "main-ratio -0.01"
+      riverctl map normal Super Right send-layout-cmd rivertile "main-ratio +0.01"
+      riverctl map normal Super+Shift H send-layout-cmd rivertile "main-ratio -0.05"
+      riverctl map normal Super+Shift L send-layout-cmd rivertile "main-ratio +0.05"
+      riverctl map normal Super+Shift Left send-layout-cmd rivertile "main-ratio -0.05"
+      riverctl map normal Super+Shift Right send-layout-cmd rivertile "main-ratio +0.05"
       riverctl map normal Super+Shift A send-layout-cmd rivertile "main-count +1"
       riverctl map normal Super+Shift Z send-layout-cmd rivertile "main-count -1"
       riverctl map normal Super Comma send-layout-cmd rivertile "main-count +1"
       riverctl map normal Super Period send-layout-cmd rivertile "main-count -1"
+      riverctl map normal Super Up send-layout-cmd rivertile "main-count +1"
+      riverctl map normal Super Down send-layout-cmd rivertile "main-count -1"
+      riverctl map normal Super+Shift Up send-layout-cmd rivertile "main-count +1"
+      riverctl map normal Super+Shift Down send-layout-cmd rivertile "main-count -1"
       riverctl map normal Super T toggle-float
       riverctl map normal Super F toggle-fullscreen
       riverctl map normal Super+Shift F toggle-float
