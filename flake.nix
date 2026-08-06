@@ -98,7 +98,16 @@
       overlays.swaylock-xjack = swaylockXjackOverlay;
       overlays.agent-sandbox = agentSandboxOverlay;
 
-      formatter.${system} = pkgs.nixfmt;
+      formatter.${system} = pkgs.writeShellApplication {
+        name = "formatter";
+        runtimeInputs = [
+          pkgs.treefmt
+          pkgs.nixfmt
+        ];
+        text = ''
+          treefmt "$@"
+        '';
+      };
 
       homeConfigurations."atsoukka" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
