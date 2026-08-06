@@ -6,6 +6,7 @@
     flake-compat.flake = false;
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
   outputs =
     {
@@ -43,6 +44,7 @@
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
+          inputs.nix-vscode-extensions.overlays.default
           unstableOverlay
           swaylockXjackOverlay
         ];
@@ -62,6 +64,7 @@
               { ... }:
               {
                 nixpkgs.overlays = [
+                  inputs.nix-vscode-extensions.overlays.default
                   self.overlays.default
                   swaylockXjackOverlay
                 ];
@@ -95,6 +98,7 @@
               ];
           };
           overlays = [
+            inputs.nix-vscode-extensions.overlays.default
             unstableOverlay
             swaylockXjackOverlay
           ];

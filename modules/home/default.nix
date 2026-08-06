@@ -11,6 +11,7 @@
   ./programs-shell.nix
   ./programs-ssh.nix
   ./programs-vim.nix
+  ./programs-vscodium.nix
   ./services-battery-notifier.nix
   ./services-fineid.nix
   ./services-gammastep.nix
