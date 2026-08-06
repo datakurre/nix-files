@@ -51,7 +51,7 @@ in
           ++ (with pkgs.vscode-extensions; [
             (vscjava.vscode-java-debug.overrideAttrs (old: {
               postInstall = (old.postInstall or "") + ''
-                sed -i 's|".noConfigDebugAdapterEndpoints"|(require("os").tmpdir()+"/.noConfigDebugAdapterEndpoints")|g' $out/share/vscode/extensions/vscjava.vscode-java-debug/dist/extension.js
+                sed -i 's|".noConfigDebugAdapterEndpoints"|"../../../../../../../../../../tmp/.noConfigDebugAdapterEndpoints"|g' $out/share/vscode/extensions/vscjava.vscode-java-debug/dist/extension.js
               '';
             }))
             vscjava.vscode-java-test
@@ -121,7 +121,11 @@ in
           ])
           ++ (with pkgs.vscode-extensions; [
             ms-python.python
-            ms-python.debugpy
+            (ms-python.debugpy.overrideAttrs (old: {
+              postInstall = (old.postInstall or "") + ''
+                sed -i 's|".noConfigDebugAdapterEndpoints"|"../../../../../../../../../../tmp/.noConfigDebugAdapterEndpoints"|g' $out/share/vscode/extensions/ms-python.debugpy/dist/extension.js
+              '';
+            }))
           ]);
       };
 
@@ -134,13 +138,17 @@ in
           ++ (with pkgs.vscode-extensions; [
             (vscjava.vscode-java-debug.overrideAttrs (old: {
               postInstall = (old.postInstall or "") + ''
-                sed -i 's|".noConfigDebugAdapterEndpoints"|(require("os").tmpdir()+"/.noConfigDebugAdapterEndpoints")|g' $out/share/vscode/extensions/vscjava.vscode-java-debug/dist/extension.js
+                sed -i 's|".noConfigDebugAdapterEndpoints"|"../../../../../../../../../../tmp/.noConfigDebugAdapterEndpoints"|g' $out/share/vscode/extensions/vscjava.vscode-java-debug/dist/extension.js
               '';
             }))
             vscjava.vscode-java-test
             vscjava.vscode-maven
             ms-python.python
-            ms-python.debugpy
+            (ms-python.debugpy.overrideAttrs (old: {
+              postInstall = (old.postInstall or "") + ''
+                sed -i 's|".noConfigDebugAdapterEndpoints"|"../../../../../../../../../../tmp/.noConfigDebugAdapterEndpoints"|g' $out/share/vscode/extensions/ms-python.debugpy/dist/extension.js
+              '';
+            }))
             redhat.java
           ]);
       };
