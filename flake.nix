@@ -7,6 +7,7 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    agent-sandbox.url = "github:datakurre/agent-sandbox";
   };
   outputs =
     {
@@ -41,12 +42,24 @@
         });
       };
 
+      agentSandboxOverlay = final: prev: {
+        agent-sandbox = prev.symlinkJoin {
+          name = "agent-sandbox";
+          paths = [ inputs.agent-sandbox.packages.${prev.stdenv.hostPlatform.system}.default ];
+          nativeBuildInputs = [ prev.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/agent-sandbox --add-flags "--workspace --ssh --git --gpg-agent --gpg-sign --devenv --nix --ports"
+          '';
+        };
+      };
+
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
           inputs.nix-vscode-extensions.overlays.default
           unstableOverlay
           swaylockXjackOverlay
+          agentSandboxOverlay
         ];
       };
 
@@ -67,6 +80,7 @@
                   inputs.nix-vscode-extensions.overlays.default
                   self.overlays.default
                   swaylockXjackOverlay
+                  agentSandboxOverlay
                 ];
                 user.name = name;
                 user.description = description;
@@ -82,6 +96,7 @@
     {
       overlays.default = unstableOverlay;
       overlays.swaylock-xjack = swaylockXjackOverlay;
+      overlays.agent-sandbox = agentSandboxOverlay;
 
       formatter.${system} = pkgs.nixfmt;
 
@@ -101,6 +116,7 @@
             inputs.nix-vscode-extensions.overlays.default
             unstableOverlay
             swaylockXjackOverlay
+            agentSandboxOverlay
           ];
         };
         modules = [

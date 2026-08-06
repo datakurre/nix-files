@@ -5,6 +5,7 @@
   ./hw-yubikey.nix
   ./programs-devenv.nix
   ./programs-discord.nix
+  ./programs-agent-sandbox.nix
   ./programs-git.nix
   ./programs-minecraft.nix
   ./programs-obs.nix
