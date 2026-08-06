@@ -61,16 +61,28 @@ in
           d-biehl.robotcode
         ]);
       };
+
+      java-python-robot = {
+        extensions = commonExtensions ++ (with pkgs.vscode-marketplace; [
+          redhat.java
+          vscjava.vscode-java-debug
+          vscjava.vscode-java-test
+          vscjava.vscode-maven
+          ms-python.python
+          d-biehl.robotcode
+        ]);
+      };
     };
   };
 
   home.packages = with pkgs; [
-    (writeShellScriptBin "codium-java" ''exec ${vscodium}/bin/codium --profile java "$@"'')
-    (writeShellScriptBin "codium-python-rust" ''exec ${vscodium}/bin/codium --profile python-rust "$@"'')
-    (writeShellScriptBin "codium-elm" ''exec ${vscodium}/bin/codium --profile elm "$@"'')
-    (writeShellScriptBin "codium-react" ''exec ${vscodium}/bin/codium --profile react "$@"'')
-    (writeShellScriptBin "codium-svelte" ''exec ${vscodium}/bin/codium --profile svelte "$@"'')
-    (writeShellScriptBin "codium-python-robot" ''exec ${vscodium}/bin/codium --profile python-robot "$@"'')
+    (writeShellScriptBin "codium-java" ''exec ${vscodium}/bin/codium --new-window --profile java "$@"'')
+    (writeShellScriptBin "codium-python-rust" ''exec ${vscodium}/bin/codium --new-window --profile python-rust "$@"'')
+    (writeShellScriptBin "codium-elm" ''exec ${vscodium}/bin/codium --new-window --profile elm "$@"'')
+    (writeShellScriptBin "codium-react" ''exec ${vscodium}/bin/codium --new-window --profile react "$@"'')
+    (writeShellScriptBin "codium-svelte" ''exec ${vscodium}/bin/codium --new-window --profile svelte "$@"'')
+    (writeShellScriptBin "codium-python-robot" ''exec ${vscodium}/bin/codium --new-window --profile python-robot "$@"'')
+    (writeShellScriptBin "codium-java-python-robot" ''exec ${vscodium}/bin/codium --new-window --profile java-python-robot "$@"'')
 
     vite
     ruff
