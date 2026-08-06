@@ -29,7 +29,10 @@
     libvirtd.enable = true;
     # Rootless podman support (subuid helpers, newuidmap wrappers). The
     # user session API socket is managed by modules/home/services-virtualization.nix.
-    podman.enable = true;
+    podman = {
+      enable = true;
+      dockerCompat = true;
+    };
     virtualbox.host.enable = true;
   };
 }

@@ -30,11 +30,14 @@
     sockets.podman = {
       Unit.Description = "Podman API Socket";
       Socket = {
-        ListenStream = "%t/podman/podman.sock";
+        ListenStream = [
+          "%t/podman/podman.sock"
+          "%t/docker.sock"
+        ];
         SocketMode = "0660";
       };
       Install.WantedBy = [ "sockets.target" ];
     };
   };
-  programs.nushell.environmentVariables.DOCKER_HOST = "unix://$XDG_RUNTIME_DIR/podman/podman.sock";
+  programs.nushell.environmentVariables.DOCKER_HOST = "unix://$XDG_RUNTIME_DIR/docker.sock";
 }
