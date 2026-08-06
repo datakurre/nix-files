@@ -7,6 +7,16 @@ let
     datakurre.vscode-operaton-bpmn-js-modeler
     datakurre.vscode-operaton-dmn-js-modeler
   ];
+  codiumProfiles = [
+    "java"
+    "python"
+    "python-rust"
+    "elm"
+    "react"
+    "svelte"
+    "python-robot"
+    "java-python-robot"
+  ];
 in
 {
   programs.vscodium = {
@@ -82,16 +92,17 @@ in
     };
   };
 
-  home.packages = with pkgs; [
-    (writeShellScriptBin "codium-java" ''exec ${vscodium}/bin/codium --new-window --profile java "$@"'')
-    (writeShellScriptBin "codium-python" ''exec ${vscodium}/bin/codium --new-window --profile python "$@"'')
-    (writeShellScriptBin "codium-python-rust" ''exec ${vscodium}/bin/codium --new-window --profile python-rust "$@"'')
-    (writeShellScriptBin "codium-elm" ''exec ${vscodium}/bin/codium --new-window --profile elm "$@"'')
-    (writeShellScriptBin "codium-react" ''exec ${vscodium}/bin/codium --new-window --profile react "$@"'')
-    (writeShellScriptBin "codium-svelte" ''exec ${vscodium}/bin/codium --new-window --profile svelte "$@"'')
-    (writeShellScriptBin "codium-python-robot" ''exec ${vscodium}/bin/codium --new-window --profile python-robot "$@"'')
-    (writeShellScriptBin "codium-java-python-robot" ''exec ${vscodium}/bin/codium --new-window --profile java-python-robot "$@"'')
-
+  home.packages = with pkgs; (map (profile: writeShellScriptBin "codium-${profile}" ''exec ${vscodium}/bin/codium --new-window --profile ${profile} "$@"'') codiumProfiles) ++
+    (map (profile: makeDesktopItem {
+      name = "codium-${profile}";
+      desktopName = "VSCodium (${profile})";
+      exec = "codium-${profile} %F";
+      icon = "vscodium";
+      terminal = false;
+      type = "Application";
+      categories = [ "TextEditor" "Development" "IDE" ];
+      startupWMClass = "vscodium";
+    }) codiumProfiles) ++ [
     vite
     ruff
     uv
