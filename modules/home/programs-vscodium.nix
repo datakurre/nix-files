@@ -1,28 +1,32 @@
 { pkgs, ... }:
 
 let
-  devenv-pin = builtins.fromJSON (builtins.readFile ./datakurre.devenv.json);
-  devenv-ext = pkgs.vscode-utils.buildVscodeExtension {
-    name = "datakurre.devenv-${devenv-pin.version}";
-    pname = "datakurre.devenv";
-    version = devenv-pin.version;
-    vscodeExtPublisher = "datakurre";
-    vscodeExtName = "devenv";
-    vscodeExtUniqueId = "datakurre.devenv";
-    src = pkgs.fetchurl {
-      url = devenv-pin.url;
-      sha256 = devenv-pin.sha256;
-    };
-  };
+  manualExtsData = builtins.fromJSON (builtins.readFile ./manual-extensions.json);
 
-  commonExtensions = with pkgs.vscode-marketplace; [
-    vscodevim.vim
-    devenv-ext
-    datakurre.vscode-operaton-form-js-modeler
-    datakurre.vscode-operaton-bpmn-js-modeler
-    datakurre.vscode-operaton-dmn-js-modeler
-    jnoortheen.nix-ide
-  ];
+  buildManualExt =
+    id: data:
+    pkgs.vscode-utils.buildVscodeExtension {
+      name = "${id}-${data.version}";
+      pname = id;
+      version = data.version;
+      vscodeExtPublisher = data.publisher;
+      vscodeExtName = data.name;
+      vscodeExtUniqueId = id;
+      src = pkgs.fetchurl {
+        name = "${id}-${data.version}.vsix";
+        url = data.url;
+        sha256 = data.sha256;
+      };
+    };
+
+  manualExtensions = pkgs.lib.mapAttrsToList buildManualExt manualExtsData;
+
+  commonExtensions =
+    (with pkgs.open-vsx; [
+      vscodevim.vim
+      jnoortheen.nix-ide
+    ])
+    ++ manualExtensions;
   codiumProfiles = [
     "plain"
     "java"
@@ -38,7 +42,7 @@ in
 {
   programs.vscodium = {
     enable = true;
-    package = pkgs.vscodium;
+    package = pkgs.unstable.vscodium;
 
     profiles = {
       plain = {
@@ -63,7 +67,7 @@ in
       python = {
         extensions =
           commonExtensions
-          ++ (with pkgs.vscode-marketplace; [
+          ++ (with pkgs.open-vsx; [
             charliermarsh.ruff
           ])
           ++ (with pkgs.vscode-extensions; [
@@ -74,7 +78,7 @@ in
       python-rust = {
         extensions =
           commonExtensions
-          ++ (with pkgs.vscode-marketplace; [
+          ++ (with pkgs.open-vsx; [
             charliermarsh.ruff
             rust-lang.rust-analyzer
             tamasfe.even-better-toml
@@ -87,7 +91,7 @@ in
       elm = {
         extensions =
           commonExtensions
-          ++ (with pkgs.vscode-marketplace; [
+          ++ (with pkgs.open-vsx; [
             elmtooling.elm-ls-vscode
           ]);
       };
@@ -95,7 +99,7 @@ in
       react = {
         extensions =
           commonExtensions
-          ++ (with pkgs.vscode-marketplace; [
+          ++ (with pkgs.open-vsx; [
             dbaeumer.vscode-eslint
             esbenp.prettier-vscode
             dsznajder.es7-react-js-snippets
@@ -106,7 +110,7 @@ in
       svelte = {
         extensions =
           commonExtensions
-          ++ (with pkgs.vscode-marketplace; [
+          ++ (with pkgs.open-vsx; [
             svelte.svelte-vscode
             dbaeumer.vscode-eslint
             esbenp.prettier-vscode
@@ -116,7 +120,7 @@ in
       python-robot = {
         extensions =
           commonExtensions
-          ++ (with pkgs.vscode-marketplace; [
+          ++ (with pkgs.open-vsx; [
             d-biehl.robotcode
           ])
           ++ (with pkgs.vscode-extensions; [
@@ -132,7 +136,7 @@ in
       java-python-robot = {
         extensions =
           commonExtensions
-          ++ (with pkgs.vscode-marketplace; [
+          ++ (with pkgs.open-vsx; [
             d-biehl.robotcode
           ])
           ++ (with pkgs.vscode-extensions; [
@@ -159,7 +163,7 @@ in
     with pkgs;
     (map (
       profile:
-      writeShellScriptBin "codium-${profile}" ''exec ${vscodium}/bin/codium --new-window --profile ${profile} "$@"''
+      writeShellScriptBin "codium-${profile}" ''exec ${pkgs.unstable.vscodium}/bin/codium --new-window --profile ${profile} "$@"''
     ) codiumProfiles)
     ++ (map (
       profile:

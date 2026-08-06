@@ -1,0 +1,30 @@
+{
+  "datakurre.devenv": {
+    "version": "0.7.1",
+    "url": "https://open-vsx.org/api/datakurre/devenv/0.7.1/file/datakurre.devenv-0.7.1.vsix",
+    "sha256": "0vxra11g19209b862p890bsid7bjqncwpn4bfl17p5ah1ysr8pws",
+    "publisher": "datakurre",
+    "name": "devenv"
+  },
+  "datakurre.vscode-operaton-form-js-modeler": {
+    "version": "0.1.0",
+    "url": "https://datakurre.gallerycdn.vsassets.io/extensions/datakurre/vscode-operaton-form-js-modeler/0.1.0/1773905012867/Microsoft.VisualStudio.Services.VSIXPackage",
+    "sha256": "1kjvsizpv3qviynwvv06hag2drlb575l2dk0qb9c1n03vm9nrxyq",
+    "publisher": "datakurre",
+    "name": "vscode-operaton-form-js-modeler"
+  },
+  "datakurre.vscode-operaton-bpmn-js-modeler": {
+    "version": "0.7.1",
+    "url": "https://datakurre.gallerycdn.vsassets.io/extensions/datakurre/vscode-operaton-bpmn-js-modeler/0.7.1/1786018009157/Microsoft.VisualStudio.Services.VSIXPackage",
+    "sha256": "1363plfx1wk7rny28nmx2pvgjxjzjdsx4dwwdxwyfydjnldvl42m",
+    "publisher": "datakurre",
+    "name": "vscode-operaton-bpmn-js-modeler"
+  },
+  "datakurre.vscode-operaton-dmn-js-modeler": {
+    "version": "0.2.0",
+    "url": "https://datakurre.gallerycdn.vsassets.io/extensions/datakurre/vscode-operaton-dmn-js-modeler/0.2.0/1774018803210/Microsoft.VisualStudio.Services.VSIXPackage",
+    "sha256": "1s1nwqviaanxlxd0l9x3lc1ky8p28k9a7f724ykipz8bbcipxiyr",
+    "publisher": "datakurre",
+    "name": "vscode-operaton-dmn-js-modeler"
+  }
+}

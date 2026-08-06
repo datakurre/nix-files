@@ -16,5 +16,8 @@ atsoukka:  ## Switch home-manager on atsoukka
 check:  ## Run nix flake check
 	nix flake check
 
+update-extensions:  ## Fetch latest versions and hashes for manual VS Code extensions
+	python3 modules/home/update-manual-extensions.py
+
 format:  ## Format nix files
 	@nix fmt
