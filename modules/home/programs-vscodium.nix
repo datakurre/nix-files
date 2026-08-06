@@ -2,6 +2,7 @@
 
 let
   commonExtensions = with pkgs.vscode-marketplace; [
+    vscodevim.vim
     datakurre.devenv
     datakurre.vscode-operaton-form-js-modeler
     datakurre.vscode-operaton-bpmn-js-modeler
