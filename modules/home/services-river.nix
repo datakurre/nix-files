@@ -204,6 +204,10 @@ in
       riverctl map -repeat normal None XF86AudioLowerVolume    spawn "amixer set Master 5%- unmute"
       riverctl map normal None XF86AudioMute                   spawn "amixer set Master toggle"
       riverctl map normal None XF86AudioMicMute                spawn "amixer set Capture toggle"
+      riverctl map normal None XF86AudioPlay                   spawn "playerctl play-pause"
+      riverctl map normal None XF86AudioPause                  spawn "playerctl play-pause"
+      riverctl map normal None XF86AudioNext                   spawn "playerctl next"
+      riverctl map normal None XF86AudioPrev                   spawn "playerctl previous"
       riverctl map normal None XF86Favorites                   spawn swaylock
       riverctl map normal None Cancel                          spawn "systemctl suspend"
 

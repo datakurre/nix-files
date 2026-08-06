@@ -35,6 +35,9 @@ in
     pkgs.paprefs
     pkgs.pavucontrol
     pkgs.qpaeq
+    pkgs.alsa-utils
+    pkgs.brightnessctl
+    pkgs.playerctl
   ];
   programs.dconf.enable = true;
   services = {
