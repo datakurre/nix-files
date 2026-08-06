@@ -91,6 +91,7 @@ One-time root prerequisites on such a host:
 ```console
 $ nix flake update                              # all inputs
 $ nix flake lock --update-input nixpkgs         # a single input
+$ ./modules/home/update-devenv.sh                 # update datakurre.devenv extension pin
 ```
 
 ### Check and format
