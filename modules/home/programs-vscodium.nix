@@ -7,6 +7,7 @@ let
     datakurre.vscode-operaton-form-js-modeler
     datakurre.vscode-operaton-bpmn-js-modeler
     datakurre.vscode-operaton-dmn-js-modeler
+    jnoortheen.nix-ide
   ];
   codiumProfiles = [
     "java"
