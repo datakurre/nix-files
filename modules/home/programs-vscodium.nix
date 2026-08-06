@@ -23,6 +23,13 @@ in
         ]);
       };
       
+      python = {
+        extensions = commonExtensions ++ (with pkgs.vscode-marketplace; [
+          ms-python.python
+          charliermarsh.ruff
+        ]);
+      };
+
       python-rust = {
         extensions = commonExtensions ++ (with pkgs.vscode-marketplace; [
           ms-python.python
@@ -77,6 +84,7 @@ in
 
   home.packages = with pkgs; [
     (writeShellScriptBin "codium-java" ''exec ${vscodium}/bin/codium --new-window --profile java "$@"'')
+    (writeShellScriptBin "codium-python" ''exec ${vscodium}/bin/codium --new-window --profile python "$@"'')
     (writeShellScriptBin "codium-python-rust" ''exec ${vscodium}/bin/codium --new-window --profile python-rust "$@"'')
     (writeShellScriptBin "codium-elm" ''exec ${vscodium}/bin/codium --new-window --profile elm "$@"'')
     (writeShellScriptBin "codium-react" ''exec ${vscodium}/bin/codium --new-window --profile react "$@"'')
