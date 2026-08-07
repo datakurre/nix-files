@@ -31,6 +31,21 @@ let
     riverctl send-layout-cmd rivertile "main-ratio 0.5"
     riverctl send-layout-cmd rivertile "main-count 1"
   '';
+
+  riverStash = pkgs.writeShellScriptBin "river-stash" ''
+    riverctl set-view-tags 2147483648
+    ${pkgs.libnotify}/bin/notify-send -t 1500 "Scratchpad" "Window stashed to Tag 32"
+  '';
+
+  riverStashList = pkgs.writeShellScriptBin "river-stash-list" ''
+    titles=$(${pkgs.lswt}/bin/lswt -j | ${pkgs.jq}/bin/jq -r '.[] | select(.tags == 2147483648) | "• " + .title' 2>/dev/null)
+    
+    if [ -z "$titles" ]; then
+        ${pkgs.libnotify}/bin/notify-send -t 2000 "Scratchpad" "Empty"
+    else
+        ${pkgs.libnotify}/bin/notify-send -t 4000 "Scratchpad Contents" "$titles"
+    fi
+  '';
 in
 {
   dconf = lib.mkIf (!isStandalone) {
@@ -56,6 +71,10 @@ in
     pkgs.pasystray
     layoutRotate
     layoutReset
+    riverStash
+    riverStashList
+    pkgs.lswt
+    pkgs.jq
   ]
   ++ lib.optionals isStandalone [
     pkgs.river-classic
@@ -167,8 +186,9 @@ in
       riverctl map normal Super+Shift Return spawn foot
       riverctl map normal Super P spawn fuzzel
       riverctl map normal Super+Shift X spawn fuzzel
-      riverctl map normal Super C set-view-tags 2147483648
+      riverctl map normal Super C spawn river-stash
       riverctl map normal Super V toggle-focused-tags 2147483648
+      riverctl map normal Super+Shift V spawn river-stash-list
       riverctl map normal Super+Shift C close
       riverctl map normal Super Space spawn river-layout-rotate
       riverctl map normal Super+Shift Space spawn river-layout-reset
