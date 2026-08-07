@@ -46,6 +46,20 @@ let
         ${pkgs.libnotify}/bin/notify-send -t 4000 "Scratchpad Contents" "$titles"
     fi
   '';
+
+  riverStashToggle = pkgs.writeShellScriptBin "river-stash-toggle" ''
+    state="$HOME/.cache/river-scratchpad-visible"
+    if [ -f "$state" ]; then
+        rm -f "$state"
+        riverctl toggle-focused-tags 2147483648
+        riverctl border-color-focused 0x268bd2
+    else
+        mkdir -p "$HOME/.cache"
+        touch "$state"
+        riverctl toggle-focused-tags 2147483648
+        riverctl border-color-focused 0x859900
+    fi
+  '';
 in
 {
   dconf = lib.mkIf (!isStandalone) {
@@ -73,6 +87,7 @@ in
     layoutReset
     riverStash
     riverStashList
+    riverStashToggle
     pkgs.lswt
     pkgs.jq
   ]
@@ -187,7 +202,7 @@ in
       riverctl map normal Super P spawn fuzzel
       riverctl map normal Super+Shift X spawn fuzzel
       riverctl map normal Super C spawn river-stash
-      riverctl map normal Super V toggle-focused-tags 2147483648
+      riverctl map normal Super V spawn river-stash-toggle
       riverctl map normal Super+Shift V spawn river-stash-list
       riverctl map normal Super+Shift C close
       riverctl map normal Super Space spawn river-layout-rotate
