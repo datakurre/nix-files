@@ -45,9 +45,9 @@ in
         }
 
         let ai_config = (open $config_file)
-        let endpoint = ($ai_config | get -i endpoint)
-        let model = ($ai_config | get -i model)
-        let api_key = ($ai_config | get -i api_key)
+        let endpoint = ($ai_config | get --optional endpoint)
+        let model = ($ai_config | get --optional model)
+        let api_key = ($ai_config | get --optional api_key)
 
         if ($endpoint | is-empty) or ($model | is-empty) or ($api_key | is-empty) {
           print -e $"Error: Configuration file ($config_file) must contain 'endpoint', 'model', and 'api_key'."
@@ -115,7 +115,7 @@ in
           print -e ($response | to json)
         }
 
-        if ($response | get -i choices | is-empty) {
+        if ($response | get --optional choices | is-empty) {
           print -e $"API Error: ($response)"
           return
         }
