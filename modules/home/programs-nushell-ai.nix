@@ -89,7 +89,7 @@ in
         }
 
         let spinner_pid = if not $verbose {
-          (^bash -c 'while true; do for c in / - \\ \|; do printf "\r\033[2K$c Asking AI..." >&2; sleep 0.1; done; done & echo $!' | str trim | into int)
+          (^bash -c '{ trap - INT; while true; do for c in / - \\ \|; do printf "\r\033[2K$c Asking AI..." >&2; sleep 0.1; done; done; } & echo $!' | str trim | into int)
         } else {
           0
         }
