@@ -36,11 +36,11 @@ in
         if not ($config_file | path exists) {
           print -e $"Error: Configuration file not found at ($config_file)"
           print -e $"Please create it with the following JSON content:"
-          print -e $"{"{"}"
-          print -e $"  \"endpoint\": \"https://opencode.ai/zen/v1/chat/completions\","
-          print -e $"  \"model\": \"deepseek-v4-flash-free\","
-          print -e $"  \"api_key\": \"your_api_key_here\""
-          print -e $"{"}"}"
+          print -e '{'
+          print -e '  "endpoint": "https://opencode.ai/zen/v1/chat/completions",'
+          print -e '  "model": "deepseek-v4-flash-free",'
+          print -e '  "api_key": "your_api_key_here"'
+          print -e '}'
           return
         }
 
