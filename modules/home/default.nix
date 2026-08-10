@@ -10,7 +10,9 @@
   ./programs-minecraft.nix
   ./programs-obs.nix
   ./programs-shell.nix
+  ./programs-nushell-ai.nix
   ./programs-ssh.nix
+  ./programs-taskwarrior.nix
   ./programs-vim.nix
   ./programs-vscodium.nix
   ./services-battery-notifier.nix

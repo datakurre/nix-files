@@ -24,6 +24,7 @@
         GS_OPTIONS = "-sPAPERSIZE=a4";
       };
     };
+    nushell-ai.enable = true;
     starship = {
       enable = true;
       enableBashIntegration = true;

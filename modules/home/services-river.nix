@@ -39,7 +39,7 @@ let
 
   riverStashList = pkgs.writeShellScriptBin "river-stash-list" ''
     titles=$(${pkgs.lswt}/bin/lswt -j | ${pkgs.jq}/bin/jq -r '.[] | select(.tags == 2147483648) | "• " + .title' 2>/dev/null)
-    
+
     if [ -z "$titles" ]; then
         ${pkgs.libnotify}/bin/notify-send -t 2000 "Scratchpad" "Empty"
     else
