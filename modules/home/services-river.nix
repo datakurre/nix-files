@@ -359,10 +359,26 @@ in
           exclusive = false;
           passthrough = false;
           height = 22;
-          width = 22;
           modules-left = [ ];
           modules-center = [ ];
-          modules-right = [ "tray" ];
+          modules-right = [
+            "battery"
+            "tray"
+          ];
+          battery = {
+            format = "{capacity}% {icon}";
+            format-icons = [
+              "▁"
+              "▂"
+              "▃"
+              "▅"
+              "█"
+            ];
+            states = {
+              warning = 20;
+              critical = 10;
+            };
+          };
           tray = {
             icon-size = 18;
             spacing = 6;
@@ -384,11 +400,21 @@ in
           background: transparent;
         }
 
-        #tray {
+        #tray,
+        #battery {
           background: @base03;
           margin: 4px 4px 0 0;
           padding: 2px 6px;
           border-radius: 6px;
+          color: #839496;
+        }
+
+        #battery.warning {
+          color: #b58900;
+        }
+
+        #battery.critical {
+          color: #dc322f;
         }
       '';
     };
