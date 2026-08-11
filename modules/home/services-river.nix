@@ -316,7 +316,7 @@ in
         main = {
           font = "DejaVu Sans Mono for Powerline:size=9";
           dpi-aware = "yes";
-          term = "foot";
+          term = "xterm-256color";
         };
         scrollback.lines = 1024;
         scrollback.multiplier = 9.0;
