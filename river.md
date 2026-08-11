@@ -205,17 +205,44 @@ Their icons appear in the waybar tray module (top right of the bar).
 
 ## Troubleshooting
 
-### Swaylock fails to unlock with Yubikey on standalone hosts (RHEL)
+### Swaylock fails to unlock with Yubikey on standalone hosts (RHEL/SELinux)
 
-On NixOS machines like **makondo**, Yubikey authentication for swaylock is automatically configured by the system. On standalone hosts like **atsoukka**, swaylock reads the host OS's `/etc/pam.d/swaylock`. If this file doesn't exist or isn't configured for `pam_u2f`, Yubikey unlock will fail (and may lock you out completely if no fallback exists).
+On NixOS machines like **makondo**, Yubikey authentication for swaylock is configured declaratively. On standalone hosts like **atsoukka**, swaylock uses host PAM and SELinux policy, so `/etc/pam.d/swaylock` must be configured manually.
 
-To fix this, create `/etc/pam.d/swaylock` manually on the host OS:
+Use the same model that already works for `xsecurelock` on this host:
+
 ```pam
 # /etc/pam.d/swaylock
-auth sufficient pam_u2f.so
-auth include login
+#%PAM-1.0
+auth       sufficient   pam_u2f.so     authfile=/etc/pam.d/u2f_keys cue
+auth       include      system-auth
+account    required     pam_permit.so
 ```
-*(Ensure `pam_u2f` is installed on the host OS and your keys are enrolled in `~/.config/Yubico/u2f_keys`.)*
+
+Host prerequisites:
+
+```sh
+sudo dnf install -y pam-u2f
+```
+
+- Enroll key mappings into `/etc/pam.d/u2f_keys` (same file used by `xsecurelock`).
+- Keep fallback (`auth include system-auth`) to avoid lockout if key is missing.
+
+SELinux checks on RHEL:
+
+```sh
+sudo restorecon -v /etc/pam.d/swaylock /etc/pam.d/u2f_keys
+sudo ls -lZ /etc/pam.d/swaylock /etc/pam.d/u2f_keys
+```
+
+If unlock still fails, inspect AVC denials:
+
+```sh
+sudo ausearch -m AVC -ts recent | grep -Ei 'pam_u2f|swaylock|u2f' || true
+sudo journalctl -t setroubleshoot --since "10 min ago" --no-pager
+```
+
+This setup keeps U2F-first behavior while preserving password fallback.
 
 ### Screen locks surprisingly
 
@@ -230,6 +257,28 @@ What was observed during probing on `atsoukka`:
 - this points more to seat/activity integration (River/wlroots/session stack) than to `swaylock` itself
 
 So yes, `swaylock` runs in user space, but that is unlikely to be the root cause here: `swaylock` is only executed after `swayidle` decides the session is idle.
+
+When re-enabling `swayidle` for standalone hosts, validate in this order:
+
+1. Confirm session environment is Wayland-native:
+   ```sh
+   echo "$XDG_SESSION_TYPE $XDG_CURRENT_DESKTOP $WAYLAND_DISPLAY"
+   systemctl --user show-environment | grep -E 'WAYLAND_DISPLAY|XDG_CURRENT_DESKTOP'
+   ```
+2. Confirm idle daemon runs in user session and is not crash-looping:
+   ```sh
+   systemctl --user status swayidle --no-pager
+   journalctl --user -u swayidle -b --no-pager
+   ```
+3. Verify lock path independently before idle path:
+   ```sh
+   swaylock -f
+   ```
+4. Then verify idle-triggered lock and before-sleep lock:
+   ```sh
+   loginctl lock-session
+   systemctl suspend
+   ```
 
 ### River fails on proprietary NVIDIA (`ERROR_INCOMPATIBLE_DRIVER` / EGL errors)
 
