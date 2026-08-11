@@ -103,6 +103,7 @@ in
     pkgs.paprefs
     pkgs.pavucontrol
     pkgs.qpaeq
+    pkgs.brightnessctl
     pkgs.kanshi
     pkgs.xdg-desktop-portal
     pkgs.xdg-desktop-portal-wlr
@@ -251,7 +252,7 @@ in
       riverctl map normal None XF86AudioPause                  spawn "playerctl play-pause"
       riverctl map normal None XF86AudioNext                   spawn "playerctl next"
       riverctl map normal None XF86AudioPrev                   spawn "playerctl previous"
-      riverctl map normal None XF86Favorites                   spawn swaylock
+      riverctl map normal None XF86Favorites                   spawn "${if isStandalone then "${pkgs.coreutils}/bin/true" else "${pkgs.swaylock}/bin/swaylock -f"}"
       riverctl map normal None Cancel                          spawn "systemctl suspend"
 
       riverctl map-pointer normal Super BTN_LEFT move-view
@@ -323,7 +324,7 @@ in
       };
     };
 
-    swaylock = {
+    swaylock = lib.mkIf (!isStandalone) {
       enable = true;
       settings = {
         effect = "xjack";
@@ -425,7 +426,7 @@ in
     timeouts = [
       {
         timeout = 600;
-        command = "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f";
+        command = "${if isStandalone then "${pkgs.coreutils}/bin/true" else "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f"}";
       }
       {
         timeout = 1200;
@@ -434,8 +435,8 @@ in
       }
     ];
     events = {
-      "before-sleep" = "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f";
-      "lock" = "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f";
+      "before-sleep" = "${if isStandalone then "${pkgs.coreutils}/bin/true" else "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f"}";
+      "lock" = "${if isStandalone then "${pkgs.coreutils}/bin/true" else "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f"}";
       "unlock" = "${pkgs.wlopm}/bin/wlopm --on '*'";
       "after-resume" = "${pkgs.wlopm}/bin/wlopm --on '*'";
     };

@@ -58,7 +58,6 @@
         overlays = [
           inputs.nix-vscode-extensions.overlays.default
           unstableOverlay
-          swaylockXjackOverlay
           agentSandboxOverlay
         ];
       };

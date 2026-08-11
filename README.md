@@ -223,10 +223,6 @@ Compared to NixOS hosts in this repo:
 - River compositor config, keybindings and user applets are managed by
   Home Manager (`modules/home/services-river.nix`), but the login manager and
   Wayland session registration on RHEL remain manual system configuration.
-- On RHEL/SELinux, `swaylock` authentication is host PAM-managed: mirror the
-  working `xsecurelock` `pam_u2f` pattern in `/etc/pam.d/swaylock` (with
-  password fallback via `system-auth`). See the troubleshooting checklist in
-  [river.md](river.md#swaylock-fails-to-unlock-with-yubikey-on-standalone-hosts-rhelselinux).
 - The standalone profile still includes the legacy XMonad/X11 session module
   as a fallback, while River is available as a Wayland session.
 - dconf/gsettings management is disabled (`dconf.enable = false`) because

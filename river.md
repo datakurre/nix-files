@@ -20,7 +20,7 @@ Firefox `about:support` → Graphics → "Window Protocol" should say "wayland".
 | Terminal | **foot** | `Ctrl+Shift+C` copy, `Ctrl+Shift+V` paste, middle-click paste from primary selection |
 | Launcher | **fuzzel** | `Super+Shift+X` or `Super+P` — app/drun launcher |
 | Bar | **waybar** | Top bar: tags (left), pulseaudio / battery / tray icons (right) |
-| Lock screen | **swaylock** | `Super+F12` (Favorites key) locks; also after 10 min idle or before suspend |
+| Lock screen | **swaylock (NixOS) / disabled (standalone)** | `Super+F12` locks on NixOS; standalone profile leaves locking disabled |
 | Night light | **gammastep** | Auto color temperature; config in `modules/home/services-gammastep.nix` |
 | Clipboard | **wl-clipboard** | `wl-copy` / `wl-paste` from scripts; GUI apps share clipboard via wayland protocols |
 | Screen layout | **kanshi** | Auto-apply HiDPI scale per output; config per machine `manual.nix` |
@@ -105,7 +105,7 @@ River uses tags (bitmask): a window can be on multiple tags simultaneously.
 
 | Key | Action |
 |---|---|
-| `Favorites` (XF86Favorites) | Lock screen (swaylock) |
+| `Favorites` (XF86Favorites) | Lock screen on NixOS; no-op on standalone profile |
 | `Cancel` (break/pause) | Suspend |
 
 ### Mouse
@@ -163,7 +163,7 @@ All configured via Home Manager module options in
 - `programs.foot` — terminal (font, colors)
 - `programs.fuzzel` — launcher (font, theme)
 - `programs.waybar` — top bar (modules, style)
-- `programs.swaylock` — lock screen (colors)
+- `programs.swaylock` — lock screen config on NixOS-backed profiles
 - `services.swayidle` — idle timeout (seconds) and lock on sleep
 
 ### Night light (gammastep)
@@ -204,45 +204,6 @@ Started from `~/.config/river/init`:
 Their icons appear in the waybar tray module (top right of the bar).
 
 ## Troubleshooting
-
-### Swaylock fails to unlock with Yubikey on standalone hosts (RHEL/SELinux)
-
-On NixOS machines like **makondo**, Yubikey authentication for swaylock is configured declaratively. On standalone hosts like **atsoukka**, swaylock uses host PAM and SELinux policy, so `/etc/pam.d/swaylock` must be configured manually.
-
-Use the same model that already works for `xsecurelock` on this host:
-
-```pam
-# /etc/pam.d/swaylock
-#%PAM-1.0
-auth       sufficient   pam_u2f.so     authfile=/etc/pam.d/u2f_keys cue
-auth       include      system-auth
-account    required     pam_permit.so
-```
-
-Host prerequisites:
-
-```sh
-sudo dnf install -y pam-u2f
-```
-
-- Enroll key mappings into `/etc/pam.d/u2f_keys` (same file used by `xsecurelock`).
-- Keep fallback (`auth include system-auth`) to avoid lockout if key is missing.
-
-SELinux checks on RHEL:
-
-```sh
-sudo restorecon -v /etc/pam.d/swaylock /etc/pam.d/u2f_keys
-sudo ls -lZ /etc/pam.d/swaylock /etc/pam.d/u2f_keys
-```
-
-If unlock still fails, inspect AVC denials:
-
-```sh
-sudo ausearch -m AVC -ts recent | grep -Ei 'pam_u2f|swaylock|u2f' || true
-sudo journalctl -t setroubleshoot --since "10 min ago" --no-pager
-```
-
-This setup keeps U2F-first behavior while preserving password fallback.
 
 ### Screen locks surprisingly
 
