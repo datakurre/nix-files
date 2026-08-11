@@ -44,9 +44,6 @@ in
   # NixOS does this via programs.dconf.enable).  Disable here to prevent
   # `home-manager switch` from failing outside a desktop session.
   dconf.enable = lib.mkForce false;
-  # Temporary mitigation for standalone atsoukka profile: disable automatic
-  # idle locking until River/wlroots seat/activity handling is fully diagnosed.
-  services.swayidle.enable = lib.mkForce false;
   home.sessionVariables.TMPDIR = tmpDir;
   home.packages = [
     riverSession

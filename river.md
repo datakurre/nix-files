@@ -20,7 +20,7 @@ Firefox `about:support` → Graphics → "Window Protocol" should say "wayland".
 | Terminal | **foot** | `Ctrl+Shift+C` copy, `Ctrl+Shift+V` paste, middle-click paste from primary selection |
 | Launcher | **fuzzel** | `Super+Shift+X` or `Super+P` — app/drun launcher |
 | Bar | **waybar** | Top bar: tags (left), pulseaudio / battery / tray icons (right) |
-| Lock screen | **swaylock (NixOS) / disabled (standalone)** | `Super+F12` locks on NixOS; standalone profile leaves locking disabled |
+| Lock screen | **swaylock-xjack** | `Super+F12` locks via `river-lock`; standalone expects host-installed `/usr/local/bin/swaylock` |
 | Night light | **gammastep** | Auto color temperature; config in `modules/home/services-gammastep.nix` |
 | Clipboard | **wl-clipboard** | `wl-copy` / `wl-paste` from scripts; GUI apps share clipboard via wayland protocols |
 | Screen layout | **kanshi** | Auto-apply HiDPI scale per output; config per machine `manual.nix` |
@@ -105,7 +105,7 @@ River uses tags (bitmask): a window can be on multiple tags simultaneously.
 
 | Key | Action |
 |---|---|
-| `Favorites` (XF86Favorites) | Lock screen on NixOS; no-op on standalone profile |
+| `Favorites` (XF86Favorites) | Lock screen (`river-lock` helper) |
 | `Cancel` (break/pause) | Suspend |
 
 ### Mouse
@@ -207,19 +207,22 @@ Their icons appear in the waybar tray module (top right of the bar).
 
 ### Screen locks surprisingly
 
-On River hosts, the screen is normally locked after 10 minutes of inactivity via `swayidle` (configured in `modules/home/services-river.nix`).
+On River hosts, the screen is locked after 10 minutes of inactivity via `swayidle`
+(configured in `modules/home/services-river.nix`) using the `river-lock` helper.
 
-For the standalone Home Manager profile (`switch atsoukka`), `swayidle` is currently **temporarily disabled** in `home-configuration.nix` because activity-reset behavior has been intermittently incorrect on that host/session stack.
+For standalone Home Manager (`switch atsoukka`), `river-lock` expects a host
+binary at `/usr/local/bin/swaylock` (or `RIVER_STANDALONE_SWAYLOCK` override).
+Build/install it from `pkgs/swaylock-xjack`:
 
-What was observed during probing on `atsoukka`:
+```sh
+cd pkgs/swaylock-xjack
+make deps-rhel
+make install
+make install-pam-service
+make auth-check
+```
 
-- timeout callbacks can fire even while keyboard/pointer activity is ongoing
-- `swayidle -S seat0` reports `Seat seat0 not found` although logind seat is `seat0`
-- this points more to seat/activity integration (River/wlroots/session stack) than to `swaylock` itself
-
-So yes, `swaylock` runs in user space, but that is unlikely to be the root cause here: `swaylock` is only executed after `swayidle` decides the session is idle.
-
-When re-enabling `swayidle` for standalone hosts, validate in this order:
+Then validate in this order:
 
 1. Confirm session environment is Wayland-native:
    ```sh

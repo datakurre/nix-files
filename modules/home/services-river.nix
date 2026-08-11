@@ -8,6 +8,45 @@
 
 let
   isStandalone = osConfig == null;
+  standaloneSwaylock = "/usr/local/bin/swaylock";
+  standaloneSwaylockConfig = ''
+    effect=xjack
+    xjack-opacity=0.85
+    xjack-font=DejaVu Sans Mono
+    xjack-speed=0.8
+    xjack-color=e0e0e0
+    xjack-bg-color=000000
+    xjack-source=All {verb} and no play makes Jack a dull boy.  
+    xjack-word=verb:work=0.8,plone=0.1,nix=0.1
+    color=002b36
+    inside-color=002b36
+    ring-color=268bd2
+    key-hl-color=859900
+    text-color=839496
+    font=DejaVu Sans Mono
+    indicator-radius=100
+  '';
+
+  riverLock = pkgs.writeShellScriptBin "river-lock" ''
+    set -eu
+    swaylock_bin="${if isStandalone then "${standaloneSwaylock}" else "${pkgs.swaylock}/bin/swaylock"}"
+    if [ -n "''${RIVER_STANDALONE_SWAYLOCK:-}" ]; then
+      swaylock_bin="$RIVER_STANDALONE_SWAYLOCK"
+    fi
+
+    if [ ! -x "$swaylock_bin" ]; then
+      ${pkgs.libnotify}/bin/notify-send -u critical -t 5000 \
+        "Lock failed" \
+        "Missing $swaylock_bin. Build/install pkgs/swaylock-xjack on host RHEL."
+      exit 1
+    fi
+
+    if ${pkgs.procps}/bin/pgrep -x swaylock >/dev/null 2>&1; then
+      exit 0
+    fi
+
+    exec "$swaylock_bin" -f
+  '';
 
   layoutRotate = pkgs.writeShellScriptBin "river-layout-rotate" ''
     state="$HOME/.cache/river-main-location"
@@ -90,6 +129,7 @@ in
     riverStashToggle
     pkgs.lswt
     pkgs.jq
+    riverLock
   ]
   ++ lib.optionals isStandalone [
     pkgs.river-classic
@@ -127,6 +167,10 @@ in
         default=wlr;gtk
       '';
     };
+  };
+
+  xdg.configFile."swaylock/config" = lib.mkIf isStandalone {
+    text = standaloneSwaylockConfig;
   };
 
   xdg.configFile."river/init" = {
@@ -252,7 +296,7 @@ in
       riverctl map normal None XF86AudioPause                  spawn "playerctl play-pause"
       riverctl map normal None XF86AudioNext                   spawn "playerctl next"
       riverctl map normal None XF86AudioPrev                   spawn "playerctl previous"
-      riverctl map normal None XF86Favorites                   spawn "${if isStandalone then "${pkgs.coreutils}/bin/true" else "${pkgs.swaylock}/bin/swaylock -f"}"
+      riverctl map normal None XF86Favorites                   spawn "${lib.getExe riverLock}"
       riverctl map normal None Cancel                          spawn "systemctl suspend"
 
       riverctl map-pointer normal Super BTN_LEFT move-view
@@ -426,7 +470,7 @@ in
     timeouts = [
       {
         timeout = 600;
-        command = "${if isStandalone then "${pkgs.coreutils}/bin/true" else "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f"}";
+        command = "${lib.getExe riverLock}";
       }
       {
         timeout = 1200;
@@ -435,8 +479,8 @@ in
       }
     ];
     events = {
-      "before-sleep" = "${if isStandalone then "${pkgs.coreutils}/bin/true" else "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f"}";
-      "lock" = "${if isStandalone then "${pkgs.coreutils}/bin/true" else "${pkgs.procps}/bin/pgrep -x swaylock || ${pkgs.swaylock}/bin/swaylock -f"}";
+      "before-sleep" = "${lib.getExe riverLock}";
+      "lock" = "${lib.getExe riverLock}";
       "unlock" = "${pkgs.wlopm}/bin/wlopm --on '*'";
       "after-resume" = "${pkgs.wlopm}/bin/wlopm --on '*'";
     };
