@@ -48,7 +48,7 @@
           paths = [ inputs.agent-sandbox.packages.${prev.stdenv.hostPlatform.system}.default ];
           nativeBuildInputs = [ prev.makeWrapper ];
           postBuild = ''
-            wrapProgram $out/bin/agent-sandbox --add-flags "--workspace --ssh --git --gpg-agent --gpg-sign --devenv --nix --ports --meter-network"
+            wrapProgram $out/bin/agent-sandbox --add-flags "--nix --devenv --proxy --ports --workspace"
           '';
         };
       };
