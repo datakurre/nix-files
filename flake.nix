@@ -42,16 +42,21 @@
         });
       };
 
-      agentSandboxOverlay = final: prev: {
+      mkAgentSandboxOverlay = selinux: final: prev: {
         agent-sandbox = prev.symlinkJoin {
           name = "agent-sandbox";
           paths = [ inputs.agent-sandbox.packages.${prev.stdenv.hostPlatform.system}.default ];
           nativeBuildInputs = [ prev.makeWrapper ];
           postBuild = ''
-            wrapProgram $out/bin/agent-sandbox --add-flags "--nix --devenv --proxy --ports --workspace"
+            wrapProgram $out/bin/agent-sandbox --add-flags "--nix --devenv --proxy --ports --workspace${
+              if selinux then " --selinux" else ""
+            }"
           '';
         };
       };
+
+      agentSandboxOverlay = mkAgentSandboxOverlay false;
+      agentSandboxSelinuxOverlay = mkAgentSandboxOverlay true;
 
       pkgs = import nixpkgs {
         inherit system;
@@ -124,7 +129,7 @@
             inputs.nix-vscode-extensions.overlays.default
             unstableOverlay
             swaylockXjackOverlay
-            agentSandboxOverlay
+            agentSandboxSelinuxOverlay
           ];
         };
         modules = [
