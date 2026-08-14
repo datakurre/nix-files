@@ -7,7 +7,7 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    agent-sandbox.url = "github:datakurre/agent-sandbox/mitm-proxy";
+    agent-sandbox.url = "github:datakurre/agent-sandbox";
   };
   outputs =
     {
