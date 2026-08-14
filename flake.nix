@@ -7,7 +7,7 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    agent-sandbox.url = "github:datakurre/agent-sandbox";
+    agent-sandbox.url = "github:datakurre/agent-sandbox/mitm-proxy";
   };
   outputs =
     {
@@ -48,7 +48,7 @@
           paths = [ inputs.agent-sandbox.packages.${prev.stdenv.hostPlatform.system}.default ];
           nativeBuildInputs = [ prev.makeWrapper ];
           postBuild = ''
-            wrapProgram $out/bin/agent-sandbox --add-flags "--nix --devenv --proxy --ports --workspace${
+            wrapProgram $out/bin/agent-sandbox --add-flags "--nix --devenv --proxy --ports --mounts --proxy --secrets --git --ssh --workspace${
               if selinux then " --selinux" else ""
             }"
           '';
