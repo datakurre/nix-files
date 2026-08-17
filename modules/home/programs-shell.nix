@@ -3,6 +3,18 @@
   lib,
   ...
 }:
+let
+  gitChangelog = pkgs.writeShellApplication {
+    name = "git-changelog";
+    runtimeInputs = [
+      pkgs.git
+      pkgs.python3
+    ];
+    text = ''
+      exec ${pkgs.python3}/bin/python3 ${./git-changelog.py} "$@"
+    '';
+  };
+in
 {
   home.activation.regenerateCarapaceInit = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p $HOME/.cache/carapace
@@ -31,5 +43,8 @@
       enableNushellIntegration = true;
     };
   };
-  home.packages = [ pkgs.jq ];
+  home.packages = [
+    gitChangelog
+    pkgs.jq
+  ];
 }

@@ -103,6 +103,23 @@ $ make format     # format all *.nix with nixfmt
 
 Run `make help` to list all targets.
 
+### Generate a changelog
+
+The `git-changelog` command shows commits after the latest reachable tag in
+release-note format. If no tag exists, it shows the complete history:
+
+```console
+$ git-changelog
+```
+
+Use `--update` to prepend the entries to the first existing file in this
+priority order: `CHANGES.md`, `CHANGELOG.md`, `CHANGES.rst`, and
+`CHANGELOG.rst`. Existing unreleased or undated version sections are reused;
+otherwise the next patch version is created as an unreleased section. Repeating
+`--update` does not add the same commit blocks again. Use `--stamp` to replace
+the unreleased section header with today's date; combine it with `--update` to
+update commits and stamp the resulting section.
+
 ## Enabling River on RHEL 9 with GDM
 
 RHEL 9 ships GDM with Wayland support enabled by default. polkit and
