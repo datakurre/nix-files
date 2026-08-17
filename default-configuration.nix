@@ -15,7 +15,7 @@
   environment.systemPackages = [
     pkgs.chromium
     pkgs.jfrog-cli
-    pkgs.unzip
+    pkgs.zip
   ];
 
   imports = [
