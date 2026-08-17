@@ -11,6 +11,11 @@
     powerOnBoot = true;
   };
   services.fwupd.enable = true;
+  programs.chromium.enable = true;
+  environment.systemPackages = [
+    pkgs.chromium
+    pkgs.jfrog-cli
+  ];
 
   imports = [
     ./modules/nixos/env-base.nix
