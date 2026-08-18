@@ -34,7 +34,7 @@ let
   '';
   tmpDir = "${config.home.homeDirectory}/MyTemp";
   evdev-debounce = pkgs.callPackage ./pkgs/evdev-debounce { };
-  evdev-debounce-window = 300;
+  evdev-debounce-window = 60;
   interceptionConfig = pkgs.writeText "udevmon.yaml" ''
     - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${lib.getExe evdev-debounce} ${toString evdev-debounce-window} | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
       DEVICE:
