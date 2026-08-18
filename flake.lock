@@ -6,11 +6,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1787080447,
-        "narHash": "sha256-6F7p+nsbGyX6Oq3WnedGD+Tif4xdDDQOChVhvrHiS9g=",
+        "lastModified": 1787082048,
+        "narHash": "sha256-4rS20SKS1ZsPzyVQHfIzApZY3udighnEZ+cOXCjpjdI=",
         "owner": "datakurre",
         "repo": "agent-sandbox",
-        "rev": "ae32e4adb8ae2800f9e949ac1cf92f7aa020f9f3",
+        "rev": "119740dfa3a08c7935c78ca3ae14ff3fb9c0587d",
         "type": "github"
       },
       "original": {
