@@ -130,17 +130,28 @@ evdev:name:Logitech USB Trackball:*
 ```
 *(Run `sudo systemd-hwdb update && sudo udevadm trigger` to apply it.)*
 
-To apply phantom click preventions on standalone hosts, install `interception-tools`
-on the host system and configure `udevmon` to use the `evdev-debounce` binary
-provided by this flake:
+The standalone `atsoukka` Home Manager profile installs `interception-tools`
+and `evdev-debounce`, and starts a user-level `udevmon` service on graphical
+session startup. Apply it with:
 
-```yaml
-# /etc/interception/udevmon.yaml
-- JOB: "intercept -g $DEVNODE | /home/atsoukka/.nix-profile/bin/evdev-debounce | uinput -d $DEVNODE"
-  DEVICE:
-    NAME: "Logitech USB Trackball"
+```console
+$ make "switch atsoukka"
 ```
-*(Run `sudo systemctl enable --now udevmon` to apply it.)*
+
+The service runs:
+
+```text
+intercept -g $DEVNODE | evdev-debounce 300 | uinput -d $DEVNODE
+```
+
+The standalone profile uses a 300 ms release debounce window. This covers the
+observed release-to-repress gap on the trackball; genuine button releases can
+therefore be delayed by up to 300 ms.
+
+This remains userspace, but the host must grant the user read access to the
+trackball's `/dev/input/event*` node and write access to `/dev/uinput` (usually
+by adding the user to the `input` and `uinput` groups, or by a udev rule).
+Check the service with `systemctl --user status evdev-debounce`.
 
 Additionally, on **makondo** and **atsoukka** every
 other pointer and touch device is muted with `riverctl input <dev> events

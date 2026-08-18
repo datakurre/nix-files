@@ -33,6 +33,13 @@ let
     exit 1
   '';
   tmpDir = "${config.home.homeDirectory}/MyTemp";
+  evdev-debounce = pkgs.callPackage ./pkgs/evdev-debounce { };
+  evdev-debounce-window = 300;
+  interceptionConfig = pkgs.writeText "udevmon.yaml" ''
+    - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${lib.getExe evdev-debounce} ${toString evdev-debounce-window} | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
+      DEVICE:
+        NAME: "Logitech USB Trackball"
+  '';
 in
 {
   imports = (import ./modules/home/default.nix) ++ [
@@ -47,8 +54,21 @@ in
   home.sessionVariables.TMPDIR = tmpDir;
   home.packages = [
     riverSession
-    (pkgs.callPackage ./pkgs/evdev-debounce { })
+    evdev-debounce
+    pkgs.interception-tools
   ];
+  systemd.user.services.evdev-debounce = {
+    Unit = {
+      Description = "Debounce Logitech USB Trackball input events";
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.interception-tools}/bin/udevmon -c ${interceptionConfig}";
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
   programs.nushell.environmentVariables.TMPDIR = tmpDir;
   xdg.configFile."nix/nix.conf".text = ''
     experimental-features = nix-command flakes
