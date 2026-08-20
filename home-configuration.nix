@@ -46,6 +46,7 @@ in
     ./modules/home/services-river.nix
   ];
   programs.home-manager.enable = true;
+  programs.chromium.enable = true;
   # dconf D-Bus activation requires a running GNOME/dconf session; on RHEL 9
   # the system-level dconf service is not set up by Home Manager alone (only
   # NixOS does this via programs.dconf.enable).  Disable here to prevent
