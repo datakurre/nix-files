@@ -8,6 +8,7 @@
   ./programs-agent-sandbox.nix
   ./programs-git.nix
   ./programs-lock-session.nix
+  ./programs-libreoffice.nix
   ./programs-minecraft.nix
   ./programs-obs.nix
   ./programs-shell.nix
