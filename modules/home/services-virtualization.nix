@@ -14,6 +14,7 @@
       "docker.io"
     ];
   };
+  home.packages = [ pkgs.podman-compose ];
   systemd.user = {
     services.podman = {
       Unit = {
