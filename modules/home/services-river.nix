@@ -157,9 +157,13 @@ in
     };
     mimeApps = {
       enable = true;
-      defaultApplications."inode/directory" = [
-        "nemo.desktop"
-      ];
+      defaultApplications = {
+        "application/xhtml+xml" = [ "firefox.desktop" ];
+        "inode/directory" = [ "nemo.desktop" ];
+        "text/html" = [ "firefox.desktop" ];
+        "x-scheme-handler/http" = [ "firefox.desktop" ];
+        "x-scheme-handler/https" = [ "firefox.desktop" ];
+      };
     };
     configFile."xdg-desktop-portal/portals.conf" = lib.mkIf isStandalone {
       text = ''
