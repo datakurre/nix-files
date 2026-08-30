@@ -8,6 +8,8 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     agent-sandbox.url = "github:datakurre/agent-sandbox";
+    bpmn-to-image.url = "github:datakurre/bpmn-to-image";
+    bpmn-to-image.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs =
     {
@@ -62,6 +64,7 @@
         inherit system;
         overlays = [
           inputs.nix-vscode-extensions.overlays.default
+          inputs.bpmn-to-image.overlays.default
           unstableOverlay
           agentSandboxOverlay
         ];
@@ -82,6 +85,7 @@
               {
                 nixpkgs.overlays = [
                   inputs.nix-vscode-extensions.overlays.default
+                  inputs.bpmn-to-image.overlays.default
                   self.overlays.default
                   swaylockXjackOverlay
                   agentSandboxOverlay
@@ -101,6 +105,7 @@
       overlays.default = unstableOverlay;
       overlays.swaylock-xjack = swaylockXjackOverlay;
       overlays.agent-sandbox = agentSandboxOverlay;
+      overlays.bpmn-to-image = inputs.bpmn-to-image.overlays.default;
 
       formatter.${system} = pkgs.writeShellApplication {
         name = "formatter";
@@ -127,6 +132,7 @@
           };
           overlays = [
             inputs.nix-vscode-extensions.overlays.default
+            inputs.bpmn-to-image.overlays.default
             unstableOverlay
             swaylockXjackOverlay
             agentSandboxSelinuxOverlay

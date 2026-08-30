@@ -32,6 +32,7 @@
     ./modules/nixos/services-fineid.nix
     ./modules/nixos/services-virtualization.nix
     ./modules/nixos/services-river.nix
+    ./modules/nixos/services-minecraft-bedrock.nix
   ];
   home-manager.users.${config.user.name} = {
     imports = (import ./modules/home/default.nix) ++ [ ./modules/home/services-river.nix ];
