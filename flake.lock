@@ -3,18 +3,20 @@
     "agent-sandbox": {
       "inputs": {
         "antigravity-nix": "antigravity-nix",
+        "graph-agent": "graph-agent",
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1787826386,
-        "narHash": "sha256-LHBcnCwcG8E/S4Z/CvMDZYZh9h9OC+19Zv8ryiqt3J0=",
+        "lastModified": 1788205772,
+        "narHash": "sha256-Cr7p+u7FQyHKYWvjNz0bvchSuj1DvQS02PikGTa/5Sg=",
         "owner": "datakurre",
         "repo": "agent-sandbox",
-        "rev": "d579bb54e75e6075f9a02ad7664ac7638a9e32ad",
+        "rev": "7d21671704e487a6d900a08550a7eb890525182e",
         "type": "github"
       },
       "original": {
         "owner": "datakurre",
+        "ref": "graph-agent",
         "repo": "agent-sandbox",
         "type": "github"
       }
@@ -28,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787469401,
-        "narHash": "sha256-SO6H7d/lmCK7wGrlXUmNRzSjSutHVmu0d98vGGAczAw=",
+        "lastModified": 1787826217,
+        "narHash": "sha256-cqvukKd9jzytRTvPwsFOy2SO81Ch9fpRzSbimlT+f3E=",
         "owner": "jacopone",
         "repo": "antigravity-nix",
-        "rev": "5cca36bb5e898c18cd62f1a8fb01ce2cd2980b3b",
+        "rev": "cc74d8ab4679b432e5697b70140869e467564f4a",
         "type": "github"
       },
       "original": {
@@ -114,6 +116,27 @@
         "type": "github"
       }
     },
+    "graph-agent": {
+      "inputs": {
+        "nixpkgs": [
+          "agent-sandbox",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788205743,
+        "narHash": "sha256-pDuUHWE/CoyP2eUUNTkSiZaidfUyDMKhJn0D7ZwiZXM=",
+        "owner": "datakurre",
+        "repo": "graph-agent",
+        "rev": "b00ebbe3f99a5b83dd48cc04deeff2964ca949da",
+        "type": "github"
+      },
+      "original": {
+        "owner": "datakurre",
+        "repo": "graph-agent",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -155,11 +178,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1787360063,
-        "narHash": "sha256-dt4WdcvsA8/RCe+VZZwqU0X+XMM3wBbGCWA0/sFWzGo=",
+        "lastModified": 1788039129,
+        "narHash": "sha256-pa4Q0qErvCvzCaaUph7Sm37RhR4xvPrYI8Lgz6k85+A=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "2c423e03bbafcff28bfadc6781a4a8257f205cb5",
+        "rev": "d2f67949798825fe853f7c5d0492b8bf016d3f88",
         "type": "github"
       },
       "original": {
@@ -217,6 +240,26 @@
         "type": "github"
       }
     },
+    "outline-editor": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788205195,
+        "narHash": "sha256-0Vmi/BujJZJZcqnxEZAr3sCFVRiqv3Ewz0d8RsCJccw=",
+        "owner": "datakurre",
+        "repo": "outline",
+        "rev": "4ccc2d848d7d8d4e46899c49a8cc32ee591ccc34",
+        "type": "github"
+      },
+      "original": {
+        "owner": "datakurre",
+        "repo": "outline",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agent-sandbox": "agent-sandbox",
@@ -225,7 +268,8 @@
         "home-manager": "home-manager",
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixpkgs": "nixpkgs_3",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "outline-editor": "outline-editor"
       }
     },
     "systems": {

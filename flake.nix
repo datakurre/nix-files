@@ -7,9 +7,11 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    agent-sandbox.url = "github:datakurre/agent-sandbox";
+    agent-sandbox.url = "github:datakurre/agent-sandbox/graph-agent";
     bpmn-to-image.url = "github:datakurre/bpmn-to-image";
     bpmn-to-image.inputs.nixpkgs.follows = "nixpkgs";
+    outline-editor.url = "github:datakurre/outline";
+    outline-editor.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs =
     {

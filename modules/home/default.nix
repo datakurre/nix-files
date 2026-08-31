@@ -6,6 +6,8 @@
   ./programs-devenv.nix
   ./programs-discord.nix
   ./programs-agent-sandbox.nix
+  ./programs-bpmn-to-image.nix
+  ./programs-evince.nix
   ./programs-git.nix
   ./programs-lock-session.nix
   ./programs-libreoffice.nix
