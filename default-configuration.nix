@@ -16,6 +16,7 @@
     pkgs.chromium
     pkgs.jfrog-cli
     pkgs.zip
+    pkgs.unzip
   ];
 
   imports = [
