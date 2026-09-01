@@ -7,11 +7,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1788205772,
-        "narHash": "sha256-Cr7p+u7FQyHKYWvjNz0bvchSuj1DvQS02PikGTa/5Sg=",
+        "lastModified": 1788244650,
+        "narHash": "sha256-mW5//i6vbtBDaCs1X3WI2sJB1lk3vXx1kBqHvwFq6qg=",
         "owner": "datakurre",
         "repo": "agent-sandbox",
-        "rev": "7d21671704e487a6d900a08550a7eb890525182e",
+        "rev": "f232926950f39ec198c981d559ede17907ddf6da",
         "type": "github"
       },
       "original": {
