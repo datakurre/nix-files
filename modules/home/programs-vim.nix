@@ -11,6 +11,8 @@
       settings.shiftwidth = 4;
       plugins = [ pkgs.vimPlugins.vim-colors-solarized ];
       extraConfig = ''
+        let g:zip_unzipcmd = "${pkgs.unzip}/bin/unzip"
+
         " Enable autoindent
         set ai
 
