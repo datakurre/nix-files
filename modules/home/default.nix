@@ -8,6 +8,7 @@
   ./programs-agent-sandbox.nix
   ./programs-bpmn-to-image.nix
   ./programs-evince.nix
+  ./programs-gimp.nix
   ./programs-git.nix
   ./programs-lock-session.nix
   ./programs-libreoffice.nix
