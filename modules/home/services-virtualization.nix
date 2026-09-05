@@ -31,11 +31,9 @@
     sockets.podman = {
       Unit.Description = "Podman API Socket";
       Socket = {
-        ListenStream = [
-          "%t/podman/podman.sock"
-          "%t/docker.sock"
-        ];
+        ListenStream = "%t/podman/podman.sock";
         SocketMode = "0660";
+        Symlinks = "%t/docker.sock";
       };
       Install.WantedBy = [ "sockets.target" ];
     };
