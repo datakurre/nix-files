@@ -116,11 +116,12 @@ River uses tags (bitmask): a window can be on multiple tags simultaneously.
 | `Super + right button` + drag | Resize floating window |
 
 Pointer devices are configured from `~/.config/river/init`. The Logitech
-trackball uses button-scroll (hold `BTN_SIDE` and roll). On **makondo** and **atsoukka**,
-it expects the host OS to remap the small buttons to `BTN_TASK` via a udev hwdb rule,
-and uses `BTN_TASK` for scrolling instead to prevent accidental "Back" navigation in
-browsers. On standalone Home Manager hosts (like **atsoukka**), this udev rule must
-be installed manually:
+trackball uses button-scroll (hold `BTN_TASK` and roll). On **albemuth**,
+**makondo**, and **atsoukka**, it expects the host OS to remap the small buttons
+to `BTN_TASK` via a udev hwdb rule, and uses `BTN_TASK` for scrolling instead
+to prevent accidental "Back" navigation in browsers. On NixOS (**albemuth** and
+**makondo**), this is declared in `manual.nix`. On standalone Home Manager hosts
+(like **atsoukka**), this udev rule must be installed manually:
 
 ```ini
 # /etc/udev/hwdb.d/99-logitech-trackball.hwdb
@@ -153,11 +154,10 @@ trackball's `/dev/input/event*` node and write access to `/dev/uinput` (usually
 by adding the user to the `input` and `uinput` groups, or by a udev rule).
 Check the service with `systemctl --user status evdev-debounce`.
 
-Additionally, on **makondo** and **atsoukka** every
-other pointer and touch device is muted with `riverctl input <dev> events
-disabled` — the touchpad, its trackpoint node, the ELAN touchscreen, a phantom
-`PS/2 Generic Mouse` and the Ergodox's spurious pointer endpoints all inject
-stray motion otherwise. List what the compositor sees with
+Additionally, every other pointer and touch device is muted with `riverctl
+input <dev> events disabled` — the touchpad, its trackpoint node, the ELAN
+touchscreen, a phantom `PS/2 Generic Mouse` and the Ergodox's spurious pointer
+endpoints all inject stray motion otherwise. List what the compositor sees with
 `riverctl list-inputs`.
 
 ## Configuration

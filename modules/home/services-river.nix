@@ -217,35 +217,20 @@ in
       riverctl border-color-urgent 0xdc322f
       riverctl hide-cursor when-typing enabled
 
-    ''
-    + (
-      if config.home.username == "atsoukka" then
-        ''
-          # BTN_TASK, not BTN_SIDE: hwdb remaps the small left button (see
-          # machines/makondo-p7670/manual.nix) so libinput's replayed click is inert
-          # instead of triggering Firefox's "Back".
-          for dev in $(riverctl list-inputs | grep -iE 'trackball|marble'); do
-            riverctl input "$dev" scroll-method button
-            riverctl input "$dev" scroll-button BTN_TASK
-            riverctl input "$dev" scroll-button-lock disabled
-            riverctl input "$dev" middle-emulation disabled
-          done
-          # Trackball only: mute the touchpad, its trackpoint node, the ELAN
-          # touchscreen, the phantom PS/2 mouse and the Ergodox's pointer endpoints.
-          for dev in $(riverctl list-inputs | grep -E '^(pointer|touch)-' | grep -viE 'trackball|marble'); do
-            riverctl input "$dev" events disabled
-          done
-        ''
-      else
-        ''
-          for dev in $(riverctl list-inputs | grep -i trackball); do
-            riverctl input "$dev" scroll-method button
-            riverctl input "$dev" scroll-button BTN_SIDE
-            riverctl input "$dev" scroll-button-lock enabled
-          done
-        ''
-    )
-    + ''
+      # BTN_TASK, not BTN_SIDE: hwdb remaps the small left button (see
+      # machines/makondo-p7670/manual.nix and machines/albemuth-x1g9/manual.nix) so
+      # libinput's replayed click is inert instead of triggering Firefox's "Back".
+      for dev in $(riverctl list-inputs | grep -iE 'trackball|marble'); do
+        riverctl input "$dev" scroll-method button
+        riverctl input "$dev" scroll-button BTN_TASK
+        riverctl input "$dev" scroll-button-lock disabled
+        riverctl input "$dev" middle-emulation disabled
+      done
+      # Trackball only: mute the touchpad, its trackpoint node, the ELAN
+      # touchscreen, the phantom PS/2 mouse and the Ergodox's pointer endpoints.
+      for dev in $(riverctl list-inputs | grep -E '^(pointer|touch)-' | grep -viE 'trackball|marble'); do
+        riverctl input "$dev" events disabled
+      done
 
       riverctl map normal Super+Shift Return spawn foot
       riverctl map normal Super P spawn fuzzel
