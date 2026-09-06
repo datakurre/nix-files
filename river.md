@@ -439,6 +439,12 @@ kanshi pins it to exactly 1920x1080 at scale 1, placed right of the panel's
 OBS canvas of 1920x1080 then captures it **1:1**, with no downscaling and none
 of the letterboxing a 16:10 panel forces on a 16:9 canvas.
 
+That mode **must** be written `mode --custom 1920x1080@60Hz`. A headless output
+advertises exactly one mode (1280x720), and kanshi applies a profile atomically:
+asking for a mode the output does not advertise fails the entire profile, so a
+plain `mode 1920x1080` leaves the stage at 1280x720 *and* drops eDP-1 back to
+scale 1 — the tiny-fonts bug, reached from an unexpected direction.
+
 Workflow:
 
 1. Slides/demo go to the stage with `Super+S`, which follows focus there so the

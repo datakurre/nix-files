@@ -117,7 +117,11 @@ in
           }
           {
             criteria = "HEADLESS-1";
-            mode = "1920x1080";
+            # --custom is required: a wlroots headless output advertises only
+            # one mode (1280x720), and kanshi applies profiles atomically, so
+            # requesting an unadvertised mode drops eDP-1's scale too. See the
+            # longer note in machines/makondo-p7670/manual.nix.
+            mode = "--custom 1920x1080@60Hz";
             scale = 1.0;
             position = "1920,0";
           }

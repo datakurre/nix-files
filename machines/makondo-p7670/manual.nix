@@ -150,7 +150,13 @@ in
             }
             {
               criteria = "HEADLESS-1";
-              mode = "1920x1080";
+              # --custom is required, not cosmetic. A wlroots headless output
+              # advertises exactly one mode (1280x720); asking for a mode it
+              # does not advertise makes kanshi reject the whole profile, and
+              # kanshi applies profiles atomically -- so a plain "1920x1080"
+              # here silently takes eDP-1's scale down with it, reinstating the
+              # tiny-fonts bug from an unexpected direction.
+              mode = "--custom 1920x1080@60Hz";
               scale = 1.0;
               position = "1920,0";
             }

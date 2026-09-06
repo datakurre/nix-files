@@ -108,8 +108,15 @@ let
   #
   # There are exactly two outputs, so `next` is unambiguous and no output name
   # is needed (river-classic's send-to-output takes a direction, not a name).
+  #
+  # -current-tags is essential, not a nicety. Tags are per-output: a bare
+  # send-to-output moves the view but keeps its tag mask, while the stage has
+  # its own focused tags (tag 1 by default). A window sent from tag 3 therefore
+  # lands on the stage still tagged 3, on an output displaying tag 1 -- present
+  # but invisible, so OBS faithfully captures an empty desktop. -current-tags
+  # retags the view to whatever the destination output is currently showing.
   riverPresent = pkgs.writeShellScriptBin "river-present" ''
-    riverctl send-to-output next
+    riverctl send-to-output -current-tags next
     riverctl focus-output next
   '';
 
