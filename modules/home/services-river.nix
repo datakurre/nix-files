@@ -119,6 +119,22 @@ let
     riverctl focus-output next
   '';
 
+  # Watch the stage from the panel. HEADLESS-1 is never scanned out, so the only
+  # way to see it is to copy it into a window -- wl-mirror does exactly that via
+  # wlr-screencopy. This is what makes the stage usable interactively: mirror it
+  # beside OBS and drive the app there while watching this window, instead of
+  # working blind against OBS's preview.
+  #
+  # Toggles, so a second press closes it rather than stacking mirrors. Mirroring
+  # HEADLESS-1 (never the panel) means there is no feedback loop.
+  riverStageView = pkgs.writeShellScriptBin "river-stage-view" ''
+    if ${pkgs.procps}/bin/pgrep -x wl-mirror >/dev/null 2>&1; then
+      ${pkgs.procps}/bin/pkill -x wl-mirror
+      exit 0
+    fi
+    exec ${pkgs.wl-mirror}/bin/wl-mirror HEADLESS-1
+  '';
+
   # kanshi owns the stage geometry, but it can lose the race against river
   # registering the headless output -- the same race ~/.config/river/init
   # already works around by restarting kanshi. Re-apply on demand if OBS shows
@@ -159,7 +175,9 @@ in
     riverStashToggle
     riverPresent
     riverPresentBack
+    riverStageView
     riverStageReset
+    pkgs.wl-mirror
     pkgs.lswt
     pkgs.jq
     riverLock
@@ -241,6 +259,12 @@ in
 
       riverctl keyboard-layout -options "eurosign:e,caps:escape,nbsp:none" fi
       riverctl focus-follows-cursor disabled
+
+      # Warp the pointer onto the output that just took focus. Without it,
+      # Super+S moves the keyboard to the (invisible) presentation stage while
+      # the pointer stays behind on the panel, so clicks land on the wrong
+      # output with nothing on screen to explain why.
+      riverctl set-cursor-warp on-output-change
       riverctl set-repeat 25 660
       riverctl xcursor-theme Adwaita 24
       riverctl background-color 0x002b36
@@ -308,7 +332,8 @@ in
       # stage. Super+Control+S re-applies the stage geometry.
       riverctl map normal Super S spawn river-present
       riverctl map normal Super+Shift S spawn river-present-back
-      riverctl map normal Super+Control S spawn river-stage-reset
+      riverctl map normal Super+Control S spawn river-stage-view
+      riverctl map normal Super+Shift+Control S spawn river-stage-reset
 
       for i in $(seq 1 9); do
         riverctl map normal Super "$i"            set-focused-tags "$((1 << (i - 1)))"

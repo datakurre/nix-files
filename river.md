@@ -98,9 +98,11 @@ River uses tags (bitmask): a window can be on multiple tags simultaneously.
 |---|---|
 | `Super+S` | Send focused window to the stage and follow it |
 | `Super+Shift+S` | Return focus to the panel, leave the window on the stage |
-| `Super+Ctrl+S` | Re-apply stage geometry (1920x1080) |
+| `Super+Ctrl+S` | Show/hide the stage mirror window (`wl-mirror`) |
+| `Super+Shift+Ctrl+S` | Re-apply stage geometry (1920x1080) |
 
-See [Presentation output (recording with OBS)](#presentation-output-recording-with-obs).
+See [Presentation output (recording with OBS)](#presentation-output-recording-with-obs)
+for the mechanism, and [river-obs.md](river-obs.md) for the streaming workflow.
 
 ### Media keys
 
@@ -440,11 +442,19 @@ of the letterboxing a 16:10 panel forces on a 16:9 canvas.
 Workflow:
 
 1. Slides/demo go to the stage with `Super+S`, which follows focus there so the
-   keyboard drives them.
+   keyboard drives them. `set-cursor-warp on-output-change` brings the pointer
+   along, so clicks land where the keyboard went.
 2. `Super+Shift+S` returns focus to the panel. The stage keeps rendering, so
    the recording is unaffected.
-3. OBS stays on the panel, capturing `HEADLESS-1` — you watch the audience's
-   view in its preview while your own screen stays private.
+3. `Super+Ctrl+S` mirrors the stage into a window (`wl-mirror`, another
+   wlr-screencopy consumer) — the stage is never scanned out, so this is the
+   only way to see it. Watch that beside OBS rather than OBS's own preview.
+4. OBS stays on the panel, capturing `HEADLESS-1`, and adds the webcam on top
+   as a V4L2 source. Composition splits cleanly: River arranges the content,
+   OBS overlays only the camera.
+
+The day-to-day workflow is written up for the presenter in
+[river-obs.md](river-obs.md).
 
 > **kanshi profiles must list `HEADLESS-1`.** kanshi applies a profile only
 > when it matches the *whole* connected output set. A profile naming `eDP-1`
