@@ -34,8 +34,10 @@ this way, see the same file's "Presentation output" section.
    This is expected the first time — the portal remembers a specific output.
 
 3. **Check the webcam is live** in the `Content + Webcam` scene. It should be
-   smooth, not a slideshow. A frozen or 5 fps image means the camera fell back
-   to uncompressed YUV: Properties → Video Format → **MJPEG**, 1920x1080, 30.
+   smooth, not a slideshow and not black. The `Webcam` source is a **Video
+   Capture Device (V4L2)** on `/dev/video0`, MJPEG, 1920x1080, 30 — do not
+   replace it with the PipeWire camera source. See the webcam entries under
+   "When something looks wrong" if it is dead.
 
 4. **Mirror the stage** with `Super+Ctrl+S`. A window opens showing the stage
    live. Put it next to OBS. **This is how you see what you are presenting** —
@@ -117,15 +119,41 @@ output you are focused on. On the stage, that switches what the audience sees.
 
 ## When something looks wrong
 
-**Black or frozen stage in OBS** — the capture died, usually after a
-suspend/resume. Sources → `Screen Capture` → Properties → Select Monitor →
-`HEADLESS-1`.
+**You sent a window to the stage and OBS shows an empty desktop** — the most
+confusing failure, and nothing is actually broken. Tags are **per-output**: the
+stage has its own focused tags, so a window sent from tag 3 arrives still
+tagged 3 on an output displaying tag 1. It is there, just not on a visible tag.
+`river-present` passes `-current-tags` to retag on arrival, so this should not
+happen; if it does, either press `Super+1..9` on the stage until the window
+appears, or run `riverctl send-to-output -current-tags next` by hand.
+
+**Black or frozen stage in OBS** — distinct from empty. The capture died,
+usually after a suspend/resume. Sources → `Screen Capture` → Properties →
+Select Monitor → `HEADLESS-1`.
 
 **Stage is not 1920x1080** — `Super+Shift+Ctrl+S` re-applies the geometry.
 Everything else in the frame will look soft or letterboxed until it is right.
 
-**Webcam is choppy** — Properties → Video Format → MJPEG. At 1920x1080 the raw
-YUV mode only offers 5 fps; MJPEG gives a real 30.
+**Webcam is black and the log repeats `select timed out` / `stream reset`** —
+OBS is on the wrong node or resetting faster than the camera can start. The
+camera exposes four nodes that all report the identical name
+`Integrated_Webcam_FHD`, so the OBS dropdown cannot distinguish them:
+`/dev/video0` is the RGB camera (MJPG + YUYV), `/dev/video2` is the infrared
+sensor (GREY only — it opens fine and never sends a frame), and `video1`/
+`video3` are metadata. Set the device back to `/dev/video0`. Confirm the camera
+itself is healthy, with OBS closed:
+
+```sh
+v4l2-ctl -d /dev/video0 --stream-mmap --stream-count=10   # ten "<" = fine
+for d in /dev/video*; do echo "== $d"; v4l2-ctl -d "$d" --list-formats | grep "\[[0-9]\]"; done
+```
+
+The node listing `MJPG` is the one you want. Also leave **Autoreset on Timeout
+off**: at a few frame periods it fires before a UVC camera can produce its
+first MJPG frame, so the stream resets forever and never starts.
+
+**Webcam is choppy or 5 fps** — Properties → Video Format → **MJPEG**. At
+1920x1080 the raw YUYV mode only offers 5 fps; MJPEG gives a real 30.
 
 **Typing goes nowhere** — your keyboard is on the other output. `Super+W`
 cycles. `Super+Shift+S` always lands you on the panel.
@@ -138,15 +166,45 @@ the output does not advertise (the stage only ever advertises 1280x720, so its
 mode must be written `--custom`). Both live in `machines/<host>/manual.nix`.
 Confirm with `journalctl --user -u kanshi -b | tail`.
 
-**Recording stutters** — check for `glEGLImageTargetTexture2DOES` in the log
-(`~/.config/obs-studio/logs/`). That is a GPU-level capture problem, not
-something to fix mid-session.
+**`glEGLImageTargetTexture2DOES failed` in the log — ignore it.** It appears
+once at startup, immediately followed by `Renegotiating stream`, and the
+capture then works. OBS runs its GL context on the NVIDIA GPU (for NVENC) while
+River composites on the Intel iGPU, so the first DMA-BUF format offered cannot
+be imported; OBS renegotiates and the second one succeeds. It is noise, not a
+fault, and recording with NVENC works alongside it. Only worry if the stream
+never reaches `streaming` afterwards.
 
 ---
 
+## Output settings
+
+Already configured, listed so you can recognise a wrong value:
+
+| | |
+|---|---|
+| Canvas / output | 1920x1080, 30 fps |
+| Encoder | NVENC (hardware, on the dGPU) |
+| Recording | `hybrid_mp4` into `/home/atsoukka` |
+| Video bitrate | 6000 kbps |
+| Audio | 48 kHz stereo, 160 kbps |
+
+`hybrid_mp4` is crash-safe — a recording that is interrupted stays playable, so
+there is no need to record MKV and remux afterwards.
+
 ## Publishing to YouTube
 
-The profile is already 1920x1080 at 30 fps. Before going live, paste your key
-into Settings → Stream (Service: YouTube - RTMPS). Do a 30-second test
-recording first and actually watch it back — it is the only way to catch a
-silent microphone or a stage at the wrong size.
+Paste your key into Settings → Stream (Service: **YouTube - RTMPS**); it is
+deliberately left blank in the repo. Streaming uses the same 1920x1080/30 and
+NVENC settings as recording.
+
+Do a 30-second test recording first and **watch it back**. It is the only way
+to catch a silent microphone, an empty stage, or a webcam that died — all three
+look fine in the OBS preview.
+
+## The virtual camera
+
+`Start Virtual Camera` publishes the current scene to `/dev/video9` as "OBS
+Virtual Camera", so Chromium or Firefox can use the full composition — stage
+plus webcam overlay — as a webcam in a video call. It needs no setup; the
+`v4l2loopback` module is configured in
+[modules/nixos/programs-obs.nix](modules/nixos/programs-obs.nix).
