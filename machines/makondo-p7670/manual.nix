@@ -6,6 +6,36 @@
 }:
 let
   evdev-debounce = pkgs.callPackage ../../pkgs/evdev-debounce { };
+  obs-nvenc =
+    pkgs.runCommand "obs-nvenc"
+      {
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+      }
+      ''
+        mkdir -p $out/bin $out/share/applications
+        makeWrapper ${pkgs.obs-studio}/bin/obs $out/bin/obs-nvenc \
+          --suffix LD_LIBRARY_PATH : /run/opengl-driver/lib \
+          --set __NV_PRIME_RENDER_OFFLOAD 1 \
+          --set __NV_PRIME_RENDER_OFFLOAD_PROVIDER NVIDIA-G0 \
+          --set __GLX_VENDOR_LIBRARY_NAME nvidia \
+          --set __VK_LAYER_NV_optimus NVIDIA_only
+        cp ${
+          pkgs.makeDesktopItem {
+            name = "obs-nvenc";
+            desktopName = "OBS Studio (NVENC)";
+            genericName = "Streaming/Recording Software (NVENC)";
+            comment = "Free and open source software for video recording and live streaming (NVIDIA NVENC)";
+            exec = "obs-nvenc %U";
+            icon = "com.obsproject.Studio";
+            categories = [
+              "AudioVideo"
+              "Recorder"
+            ];
+            startupNotify = true;
+            startupWMClass = "obs";
+          }
+        }/share/applications/* $out/share/applications/
+      '';
 in
 {
   boot.initrd.availableKernelModules = [
@@ -27,6 +57,7 @@ in
   boot.tmp.cleanOnBoot = true;
   environment.systemPackages = [
     pkgs.acpi
+    obs-nvenc
   ];
   fileSystems."/" = {
     options = [ "noatime" ];
@@ -37,9 +68,8 @@ in
   # for H264/HEVC/AV1 and obs-qsv11.so spends ~800ms at every startup discovering that
   # it has no runtime and registering zero encoders. intel-media-driver is the VA-API
   # (iHD) driver; vpl-gpu-rt is the oneVPL runtime that obs-qsv11 needs on Gen12.
-  # Together they give the iGPU a working H.264/HEVC encoder, which is the fallback
-  # that makes it possible to drop the NVIDIA offload wrapper below if the PipeWire
-  # DMA-BUF import failures it causes ever become the bigger problem.
+  # Together they give the iGPU working H.264/HEVC QuickSync and VA-API hardware
+  # encoders used by default OBS on the iGPU.
   hardware.graphics.extraPackages = [
     pkgs.intel-media-driver
     pkgs.vpl-gpu-rt
@@ -116,26 +146,37 @@ in
   # exactly 1920x1080, so an OBS canvas of the same size captures it 1:1 -- no
   # downscaling, and none of the 16:10 letterboxing the panel itself needs.
   #
+  # Default OBS is deliberately NOT wrapped with the PRIME render-offload env vars, and
+  # therefore renders on the iGPU like everything else. That costs NVENC, and it
+  # is not a free choice -- the two requirements are mutually exclusive here:
   #
-  # Wrap OBS with the PRIME render-offload env vars so its OpenGL context runs
-  # on the NVIDIA GPU (same vars as the generated nvidia-offload command). This
-  # is required, not just an optimization: obs-nvenc uses cuGraphicsGLRegisterImage
-  # to hand OBS's rendered textures to NVENC directly, which only works when the
-  # GL context and the CUDA context are on the same GPU.
+  #   * obs-nvenc uses cuGraphicsGLRegisterImage to hand OBS's rendered textures
+  #     to NVENC, which only works when the GL and CUDA contexts are on the same
+  #     GPU. That needs OBS's GL context on the dGPU.
+  #   * PipeWire screencast hands OBS DMA-BUFs allocated by river, which composites
+  #     on the iGPU. Importing those into an NVIDIA EGL context fails with
+  #     glEGLImageTargetTexture2DOES -> GL_INVALID_OPERATION. That needs OBS's GL
+  #     context on the iGPU.
   #
-  # nixpkgs' obs-studio only patches the RUNPATH of $out/lib/obs-plugins/*.so
-  # (see addDriverRunpath in the obs-studio derivation) so obs-nvenc.so itself
-  # can dlopen libnvidia-encode.so.1 -- but NVENC support is actually probed by
-  # spawning $out/bin/obs-nvenc-test as a subprocess, and that helper binary
-  # gets no such RUNPATH, so it fails with "Cannot load libnvidia-encode.so.1"
-  # even though the driver is present. Adding the same /run/opengl-driver/lib that
-  # addDriverRunpath points at to LD_LIBRARY_PATH fixes the helper too, since it
-  # inherits the wrapped obs process's environment.
+  # Capture wins for the default session, because a recorder that cannot see the screen is useless while
+  # one that encodes on the iGPU is merely slower. The failure was not subtle:
+  # with the wrapper, capturing HEADLESS-1 negotiated BGRx/modifier 0, failed the
+  # EGL import, renegotiated to modifier 0xffffffffffffff and RGBx, ran out of
+  # options ("no more input formats"), disconnected and retried forever -- so OBS
+  # recorded pure black. wl-mirror showed the same output correctly, because it
+  # runs on the iGPU; that contrast is what identified the cause.
   #
-  # --suffix, not --prefix: this wrapper is the outermost of three (obs-studio's own
-  # qtWrapperArgs, then this, then home-manager's wrapOBS), so a prefix would put the
-  # driver env ahead of $out/lib and Mesa's libGL for the whole process. A suffix still
-  # fixes obs-nvenc-test, which has no other source for libnvidia-encode.so.1.
+  # Capturing eDP-1 happened to survive this (it offers a format both GPUs accept),
+  # which is why the bug looked like harmless log noise until the headless stage --
+  # the entire point of the setup -- was tried.
+  #
+  # Encoding in default OBS uses QSV/VAAPI on the iGPU via hardware.graphics.extraPackages
+  # above; set the OBS encoder accordingly.
+  #
+  # For workloads where NVENC is desired, the alternative launcher `obs-nvenc`
+  # (in environment.systemPackages above) runs OBS with PRIME render-offload and
+  # --suffix LD_LIBRARY_PATH : /run/opengl-driver/lib (needed for obs-nvenc-test to find
+  # libnvidia-encode.so.1).
   home-manager.users.${config.user.name} = {
     services.kanshi = {
       enable = true;
@@ -165,18 +206,5 @@ in
       ];
     };
 
-    programs.obs-studio.package = pkgs.symlinkJoin {
-      name = "obs-studio";
-      paths = [ pkgs.obs-studio ];
-      nativeBuildInputs = [ pkgs.makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/obs \
-          --suffix LD_LIBRARY_PATH : /run/opengl-driver/lib \
-          --set __NV_PRIME_RENDER_OFFLOAD 1 \
-          --set __NV_PRIME_RENDER_OFFLOAD_PROVIDER NVIDIA-G0 \
-          --set __GLX_VENDOR_LIBRARY_NAME nvidia \
-          --set __VK_LAYER_NV_optimus NVIDIA_only
-      '';
-    };
   };
 }

@@ -1,210 +1,162 @@
-# Streaming and recording with River + OBS
+# Streaming and Recording with River + OBS
 
-How to record or stream slides, a screen share and a webcam from this laptop,
-at 1920x1080 for YouTube.
+How to record or stream slides, screen share, and webcam from this laptop at 1920x1080 (16:9) for YouTube.
 
-The setup exists because of one constraint: on Wayland, OBS captures a whole
-**output** — never a window, and never a workspace you are not looking at. So
-we give River a second output that has no physical screen behind it, put the
-presentation there, and keep the panel for yourself.
+## The Concept
 
-- **Panel** (`eDP-1`) — what you see. OBS, notes, chat. Never recorded.
-- **Stage** (`HEADLESS-1`) — 1920x1080, invisible, recorded. Slides live here.
+Wayland screen capture copies a whole **output** — never an individual window or a hidden workspace. To keep your notes and OBS controls private while presenting, River provides a virtual second output:
 
-The audience sees only the stage. OBS adds the webcam on top.
+- **Panel** (`eDP-1`): Your physical laptop screen (3840x2400 @ 2x scaling). Holds OBS, notes, chat, and the stage mirror. **Never recorded.**
+- **Stage** (`HEADLESS-1`): A headless 1920x1080 virtual output running at 60 Hz. Holds your slides and apps. **This is what OBS captures 1:1.**
 
-For keybindings and River itself, see [river.md](river.md). For why it is built
-this way, see the same file's "Presentation output" section.
+OBS captures the Stage and overlays your Webcam on top.
 
 ---
 
-## Before you start
+## Happy-Path Recording Walkthrough
 
-1. **Check the stage exists.**
-   ```sh
-   wlr-randr | grep -A2 HEADLESS-1
-   ```
-   Expect `1920x1080`. Nothing at all means River started without the headless
-   backend — log out and back in. Wrong size means kanshi lost a startup race:
-   press `Super+Ctrl+Shift+S`.
-
-2. **Open OBS on the panel** and confirm the preview shows the stage, not your
-   desktop. If it shows your desktop, the capture is on the wrong output:
-   Sources → `Screen Capture` → Properties → Select Monitor → `HEADLESS-1`.
-   This is expected the first time — the portal remembers a specific output.
-
-3. **Check the webcam is live** in the `Content + Webcam` scene. It should be
-   smooth, not a slideshow and not black. The `Webcam` source is a **Video
-   Capture Device (V4L2)** on `/dev/video0`, MJPEG, 1920x1080, 30 — do not
-   replace it with the PipeWire camera source. See the webcam entries under
-   "When something looks wrong" if it is dead.
-
-4. **Mirror the stage** with `Super+Ctrl+S`. A window opens showing the stage
-   live. Put it next to OBS. **This is how you see what you are presenting** —
-   do not rely on OBS's small preview.
-
----
-
-## The three keys
-
-| Key | What it does |
-|---|---|
-| `Super+S` | Send this window to the stage and go with it |
-| `Super+Shift+S` | Come back to the panel, leave the window on the stage |
-| `Super+Ctrl+S` | Show/hide the stage mirror window |
-
-`Super+S` moves your keyboard **and** pointer to the stage, so you drive the
-slides normally while watching the mirror window. `Super+Shift+S` brings you
-back to the panel; whatever is on the stage keeps rendering and keeps being
-recorded.
-
-That is the whole workflow. Everything else is ordinary River.
-
----
-
-## Running a session
-
-**Set up**
-
-1. Open your slides on any tag.
-2. `Super+S` — the slides move to the stage and your focus follows.
-3. `Super+Shift+S` — back to the panel.
-4. `Super+Ctrl+S` — mirror the stage so you can see it.
-5. Arrange OBS and the mirror side by side (`Super+H` / `Super+L` to adjust the
-   split).
-
-**Present**
-
-- Advance slides: `Super+S` to move focus to the stage, then drive as usual.
-- Check notes or chat: `Super+Shift+S`, read, `Super+S` to go back.
-- Add a terminal or browser to the stage: focus it, `Super+S`. The stage is a
-  normal River output, so tags and `rivertile` work there — `Super+H`/`Super+L`
-  to split slides and terminal side by side on the stage itself.
-
-**Switch look** — in OBS, click a scene:
-
-| Scene | Use it for |
-|---|---|
-| `Content Only` | Dense slides, code, anything needing the full frame |
-| `Content + Webcam` | Default. Small camera, bottom right |
-| `Content + Big Webcam` | Explaining, storytelling, Q&A |
-| `Webcam Full` | Intro, outro, talking directly to the audience |
-
-The scenes differ **only** in the webcam. Content is whatever is on the stage,
-so you change content by moving windows in River, not by switching OBS scenes.
-
-**Finish** — Stop Recording in OBS, then `Super+Ctrl+S` to close the mirror.
-
----
-
-## Rules of thumb
-
-**Anything on the stage is being recorded.** There is no "preview" state. Move
-a window there and it is live. Sort out notifications, secrets and private tabs
-*before* sending a window across.
-
-**Nothing on the panel is ever recorded.** Notes, chat, email, the OBS window
-itself — all invisible to the audience. This is the point of the setup.
-
-**Never put OBS on the stage.** Mirroring a capture of itself gives the
-infinite-tunnel effect. If it happens, `Super+Shift+W` moves it back.
-
-**Watch the mirror, not the preview.** The mirror is full size and current.
-OBS's preview is small and lags slightly.
-
-**Stage tags are separate from panel tags.** `Super+1..9` switches tags on the
-output you are focused on. On the stage, that switches what the audience sees.
-
----
-
-## When something looks wrong
-
-**You sent a window to the stage and OBS shows an empty desktop** — the most
-confusing failure, and nothing is actually broken. Tags are **per-output**: the
-stage has its own focused tags, so a window sent from tag 3 arrives still
-tagged 3 on an output displaying tag 1. It is there, just not on a visible tag.
-`river-present` passes `-current-tags` to retag on arrival, so this should not
-happen; if it does, either press `Super+1..9` on the stage until the window
-appears, or run `riverctl send-to-output -current-tags next` by hand.
-
-**Black or frozen stage in OBS** — distinct from empty. The capture died,
-usually after a suspend/resume. Sources → `Screen Capture` → Properties →
-Select Monitor → `HEADLESS-1`.
-
-**Stage is not 1920x1080** — `Super+Shift+Ctrl+S` re-applies the geometry.
-Everything else in the frame will look soft or letterboxed until it is right.
-
-**Webcam is black and the log repeats `select timed out` / `stream reset`** —
-OBS is on the wrong node or resetting faster than the camera can start. The
-camera exposes four nodes that all report the identical name
-`Integrated_Webcam_FHD`, so the OBS dropdown cannot distinguish them:
-`/dev/video0` is the RGB camera (MJPG + YUYV), `/dev/video2` is the infrared
-sensor (GREY only — it opens fine and never sends a frame), and `video1`/
-`video3` are metadata. Set the device back to `/dev/video0`. Confirm the camera
-itself is healthy, with OBS closed:
-
+### 1. Launch OBS
+Open a terminal or the app launcher (`Super+P`) and launch:
 ```sh
-v4l2-ctl -d /dev/video0 --stream-mmap --stream-count=10   # ten "<" = fine
-for d in /dev/video*; do echo "== $d"; v4l2-ctl -d "$d" --list-formats | grep "\[[0-9]\]"; done
+obs
 ```
+> **Note:** Always launch standard `obs` for stage recordings. It runs on the Intel iGPU using QuickSync (QSV) / VA-API hardware encoding, allowing zero-copy capture of the headless stage. (See [Launchers](#launchers-obs-vs-obs-nvenc) below).
 
-The node listing `MJPG` is the one you want. Also leave **Autoreset on Timeout
-off**: at a few frame periods it fires before a UVC camera can produce its
-first MJPG frame, so the stream resets forever and never starts.
+- Verify the preview shows the stage (black or wallpaper until apps are moved there).
+- In the `Content + Webcam` scene, verify your webcam is live and smooth.
 
-**Webcam is choppy or 5 fps** — Properties → Video Format → **MJPEG**. At
-1920x1080 the raw YUYV mode only offers 5 fps; MJPEG gives a real 30.
+### 2. Send your presentation to the Stage
+1. Open your slides, code editor, or browser on any tag on your panel.
+2. Press **`Super+S`**.
+   - The focused window immediately moves to the stage.
+   - Your keyboard and mouse pointer follow it there.
 
-**Typing goes nowhere** — your keyboard is on the other output. `Super+W`
-cycles. `Super+Shift+S` always lands you on the panel.
+### 3. Open the Stage Mirror
+Press **`Super+Ctrl+S`**.
+- A live mirror window (`wl-mirror`) opens on your panel showing the stage.
+- Tile it next to OBS (`Super+H` / `Super+L` to adjust split).
+- **This mirror is how you see and interact with your presentation full size** without relying on OBS's smaller preview.
 
-**Desktop text suddenly tiny, and the stage is 1280x720** — these two always
-happen together, and mean kanshi applied *nothing*. It applies a profile all or
-nothing, so one bad output entry takes the panel's scaling down with it. Two
-causes: the profile does not list every connected output, or it asks for a mode
-the output does not advertise (the stage only ever advertises 1280x720, so its
-mode must be written `--custom`). Both live in `machines/<host>/manual.nix`.
-Confirm with `journalctl --user -u kanshi -b | tail`.
+### 4. Choose your Scene
+In OBS, click the scene that matches your presentation segment:
 
-**`glEGLImageTargetTexture2DOES failed` in the log — ignore it.** It appears
-once at startup, immediately followed by `Renegotiating stream`, and the
-capture then works. OBS runs its GL context on the NVIDIA GPU (for NVENC) while
-River composites on the Intel iGPU, so the first DMA-BUF format offered cannot
-be imported; OBS renegotiates and the second one succeeds. It is noise, not a
-fault, and recording with NVENC works alongside it. Only worry if the stream
-never reaches `streaming` afterwards.
+| Scene | Composition | Best For |
+|---|---|---|
+| `Content Only` | Stage fullscreen (no webcam) | Dense slides, code demos, full diagrams |
+| `Content + Webcam` | Stage fullscreen + small PiP (bottom-right) | Default presentation mode |
+| `Content + Big Webcam` | Stage fullscreen + ~40% PiP (bottom-right) | Explaining concepts, Q&A, storytelling |
+| `Webcam Full` | Webcam fullscreen | Intro, outro, direct address to audience |
+
+> **Tip:** OBS scenes differ *only* in webcam layout. Content is controlled by River on the stage.
+
+### 5. Record and Present
+1. Click **Start Recording** in OBS.
+2. Present your slides:
+   - Type or click in the stage window (your cursor will be in the mirror).
+   - Need to check notes or OBS? Press **`Super+Shift+S`** to return focus to the panel.
+   - Ready to resume slides? Press **`Super+S`** to focus the stage again.
+   - Need multiple apps on stage? Move another window there with `Super+S`. River's tiling (`Super+H`/`Super+L`) works on the stage just like on the panel!
+
+### 6. Wrap Up
+1. Click **Stop Recording** in OBS.
+2. Press **`Super+Ctrl+S`** to close the mirror window.
+3. Bring your presentation window back to the panel whenever you want using `Super+Shift+W` (or close it with `Super+Shift+C`).
+
+Your video is saved in `~/` in crash-safe `hybrid_mp4` format (playable even if interrupted).
 
 ---
 
-## Output settings
+## Quick Reference: Presentation Stage Keys
 
-Already configured, listed so you can recognise a wrong value:
+| Key | Action | What Happens |
+|---|---|---|
+| `Super+S` | **Present Window** | Sends focused window to the stage, retags it to match the stage, and moves keyboard + pointer focus to the stage. |
+| `Super+Shift+S` | **Return to Panel** | Moves keyboard and pointer focus back to the panel. Windows on the stage remain there and keep recording. |
+| `Super+Ctrl+S` | **Toggle Mirror** | Opens/closes a live `wl-mirror` window on your panel showing the stage. |
+| `Super+Shift+Ctrl+S` | **Reset Stage Mode** | Re-applies 1920x1080@60Hz custom geometry to `HEADLESS-1` if kanshi ever loses state. |
+| `Super+W` | **Cycle Outputs** | Switches focus between panel (`eDP-1`) and stage (`HEADLESS-1`). |
 
-| | |
-|---|---|
-| Canvas / output | 1920x1080, 30 fps |
-| Encoder | NVENC (hardware, on the dGPU) |
-| Recording | `hybrid_mp4` into `/home/atsoukka` |
-| Video bitrate | 6000 kbps |
-| Audio | 48 kHz stereo, 160 kbps |
+---
 
-`hybrid_mp4` is crash-safe — a recording that is interrupted stays playable, so
-there is no need to record MKV and remux afterwards.
+## Rules of Thumb
 
-## Publishing to YouTube
+1. **Anything on the stage is live.** There is no "staging" or preview buffer. The instant a window is moved to the stage, the audience sees it. Close private tabs and mute notifications beforehand.
+2. **The panel is always private.** OBS controls, presenter notes, chat, email, and scratchpads on `eDP-1` are never recorded.
+3. **Never send OBS to the stage.** Capturing OBS inside OBS creates an infinite mirror tunnel. If this happens by accident, press `Super+Shift+W` to return it to the panel.
+4. **Watch the mirror, not the OBS preview.** `wl-mirror` (`Super+Ctrl+S`) runs 1:1 at full refresh rate with zero lag.
+5. **Stage tags are independent.** Just like your panel has tags 1–9, the stage has its own tags. `Super+S` uses `-current-tags` to automatically match whatever tag the stage is currently showing.
 
-Paste your key into Settings → Stream (Service: **YouTube - RTMPS**); it is
-deliberately left blank in the repo. Streaming uses the same 1920x1080/30 and
-NVENC settings as recording.
+---
 
-Do a 30-second test recording first and **watch it back**. It is the only way
-to catch a silent microphone, an empty stage, or a webcam that died — all three
-look fine in the OBS preview.
+## Launchers: `obs` vs `obs-nvenc`
 
-## The virtual camera
+- **`obs`** *(Default / Recommended)*:
+  - Runs OBS on the **Intel iGPU** using **Intel QuickSync Video (QSV)** or VA-API hardware encoding (`intel-media-driver` + `vpl-gpu-rt`).
+  - Shares the GPU with River's compositor, enabling zero-copy DMA-BUF imports.
+  - **Required for presentation stage (`HEADLESS-1`) capture.**
+- **`obs-nvenc`** *(Alternative Launcher)*:
+  - Launches OBS offloaded to the **NVIDIA dGPU** with hardware **NVENC** enabled.
+  - Suffixes `LD_LIBRARY_PATH` with `/run/opengl-driver/lib` so the `obs-nvenc-test` helper probes CUDA successfully.
+  - Use this for heavy local encoding where screen capture is taken from physical displays (`eDP-1`) or camera-only streams where DMA-BUF import errors do not apply.
 
-`Start Virtual Camera` publishes the current scene to `/dev/video9` as "OBS
-Virtual Camera", so Chromium or Firefox can use the full composition — stage
-plus webcam overlay — as a webcam in a video call. It needs no setup; the
-`v4l2loopback` module is configured in
-[modules/nixos/programs-obs.nix](modules/nixos/programs-obs.nix).
+---
+
+## Output Settings
+
+Configured out of the box in the `Nimetön` profile:
+
+| Setting | Value | Notes |
+|---|---|---|
+| **Canvas & Output** | 1920x1080, 30 fps | Zero canvas scaling, 1:1 match with stage |
+| **Encoder** | Hardware (QSV, H.264) | Uses Intel iGPU (`obs_qsv11_v2` / `qsv`) |
+| **Recording Format** | `hybrid_mp4` | Crash-safe MP4; no remuxing needed |
+| **Video Bitrate** | 6000 kbps | YouTube 1080p recommended bitrate |
+| **Audio** | 48 kHz stereo, 160 kbps | AAC |
+
+### Publishing to YouTube
+To stream to YouTube:
+1. Open **Settings → Stream**.
+2. Service: **YouTube - RTMPS** (Server: *Primary YouTube ingest server*).
+3. Paste your YouTube stream key and click **Apply**.
+4. Run a 30-second test stream/recording and verify audio levels and framing.
+
+### OBS Virtual Camera
+Click **Start Virtual Camera** in OBS to publish the current scene to `/dev/video9`.
+Applications like Chromium, Firefox, Google Meet, or Zoom will detect "OBS Virtual Camera" as a webcam device, allowing you to share your combined presentation stage and camera in web meetings.
+
+---
+
+## When Something Looks Wrong
+
+### Stage in OBS is an empty desktop after `Super+S`
+River tags are per-output. `Super+S` passes `-current-tags` to ensure windows land on the stage's visible tag. If a window appears missing:
+- Press `Super+S` to focus the stage, then press `Super+1` (or `Super+2`..`9`) to switch to the tag containing the window.
+- Or run `riverctl send-to-output -current-tags next` in a terminal.
+
+### Black stage preview or `glEGLImageTargetTexture2DOES failed` loop
+- Make sure you launched standard **`obs`**, not `obs-nvenc`. Capturing `HEADLESS-1` requires OBS on the Intel iGPU.
+- If OBS was already open before River configured the stage, select the source:
+  *Sources → `Screen Capture` → Properties → Select Monitor → `HEADLESS-1`*.
+
+### Stage is not 1920x1080 or panel text became tiny
+- Press **`Super+Shift+Ctrl+S`** to force re-apply the 1920x1080 custom mode to `HEADLESS-1`.
+- If eDP-1 dropped to scale 1.0 (tiny fonts), kanshi profile failed to match. Verify with:
+  ```sh
+  wlr-randr | grep -E "HEADLESS-1|eDP-1|Scale|px"
+  ```
+  Both outputs must be listed in kanshi (`HEADLESS-1` requires `--custom 1920x1080@60Hz`).
+
+### Webcam is black or log shows `select timed out`
+- Dell FHD webcams expose 4 nodes under the same card name:
+  - `/dev/video0`: RGB camera (**use this one**)
+  - `/dev/video1`, `/dev/video3`: UVC metadata
+  - `/dev/video2`: Infrared / Windows Hello camera (GREY-only, never delivers frames)
+- Double-click **`Webcam`** in OBS sources:
+  - Device: Ensure it resolves to `/dev/video0`.
+  - Video Format: **MJPEG** (provides real 30 fps; raw YUYV is capped at 5 fps).
+  - Resolution: `1920x1080`, Framerate: `30`.
+  - **Autoreset on Timeout**: Keep **unchecked** (a short timeout livelocks UVC camera initialization).
+
+### Keyboard/mouse input goes nowhere
+- Your focus is on the other output.
+- Press **`Super+Shift+S`** to bring focus back to the panel, or **`Super+W`** to cycle outputs.

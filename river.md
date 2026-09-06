@@ -469,7 +469,7 @@ The day-to-day workflow is written up for the presenter in
 > tiny" bug, arriving from an unexpected direction.
 
 If OBS shows the stage at something other than 1920x1080, kanshi lost the
-startup race against river registering the output; `Super+Ctrl+S` re-applies
+startup race against river registering the output; `Super+Shift+Ctrl+S` re-applies
 the geometry.
 
 The portal's restore token is bound to a specific output, so after enabling

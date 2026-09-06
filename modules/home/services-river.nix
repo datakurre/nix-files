@@ -336,7 +336,8 @@ in
       # Super+S sends the focused window to the stage and follows it, so the
       # keyboard drives the slides while the panel keeps showing OBS;
       # Super+Shift+S returns focus to the panel and leaves the slides on the
-      # stage. Super+Control+S re-applies the stage geometry.
+      # stage. Super+Control+S toggles the stage mirror (wl-mirror);
+      # Super+Shift+Control+S re-applies the stage geometry.
       riverctl map normal Super S spawn river-present
       riverctl map normal Super+Shift S spawn river-present-back
       riverctl map normal Super+Control S spawn river-stage-view
@@ -462,6 +463,7 @@ in
       systemd.enable = true;
       settings = [
         {
+          output = "!HEADLESS-1";
           layer = "top";
           position = "right";
           exclusive = false;
