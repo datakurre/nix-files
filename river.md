@@ -92,6 +92,16 @@ River uses tags (bitmask): a window can be on multiple tags simultaneously.
 | `Super+W` | Focus next output (screen) |
 | `Super+Shift+W` | Move window to next output |
 
+### Presentation stage
+
+| Key | Action |
+|---|---|
+| `Super+S` | Send focused window to the stage and follow it |
+| `Super+Shift+S` | Return focus to the panel, leave the window on the stage |
+| `Super+Ctrl+S` | Re-apply stage geometry (1920x1080) |
+
+See [Presentation output (recording with OBS)](#presentation-output-recording-with-obs).
+
 ### Media keys
 
 | Key | Action |
@@ -393,4 +403,59 @@ services.pipewire = {
   pulse.enable = true;
 };
 ```
-Then OBS can use the Portal/Wayland capture source.
+Then OBS can use the Portal/Wayland capture source. See
+[Presentation output (recording with OBS)](#presentation-output-recording-with-obs)
+for the recording setup itself.
+
+Two limits of `xdg-desktop-portal-wlr` are worth knowing before designing
+scenes around it:
+
+- **There is no window capture.** wlr-screencopy copies whole outputs, so
+  "Window Capture (PipeWire)" hands OBS the entire output regardless of what
+  you pick in the chooser. Several window-capture sources in one scene are
+  several identical full-screen streams, not separate windows.
+- **You cannot capture a tag you are not looking at.** An unmapped tag is not
+  composited, so there is nothing to copy. Recording one workspace while
+  working in another needs a second output — which is what the presentation
+  stage is for.
+
+## Presentation output (recording with OBS)
+
+A single-monitor machine cannot record "the other workspace": wlr-screencopy
+copies a composited output, and an unmapped tag is never composited. The fix is
+a second output that exists but is never scanned out.
+
+`modules/nixos/services-river.nix` starts river with the headless wlroots
+backend, giving a virtual output `HEADLESS-1` alongside the panel:
+
+```
+WLR_BACKENDS=libinput,drm,headless WLR_HEADLESS_OUTPUTS=1
+```
+
+kanshi pins it to exactly 1920x1080 at scale 1, placed right of the panel's
+1920x1200 logical area (`machines/*/manual.nix`). The size is deliberate: an
+OBS canvas of 1920x1080 then captures it **1:1**, with no downscaling and none
+of the letterboxing a 16:10 panel forces on a 16:9 canvas.
+
+Workflow:
+
+1. Slides/demo go to the stage with `Super+S`, which follows focus there so the
+   keyboard drives them.
+2. `Super+Shift+S` returns focus to the panel. The stage keeps rendering, so
+   the recording is unaffected.
+3. OBS stays on the panel, capturing `HEADLESS-1` — you watch the audience's
+   view in its preview while your own screen stays private.
+
+> **kanshi profiles must list `HEADLESS-1`.** kanshi applies a profile only
+> when it matches the *whole* connected output set. A profile naming `eDP-1`
+> alone silently stops matching once the headless backend is on, and a
+> non-matching profile leaves every output at scale 1 — the "GTK/Qt apps look
+> tiny" bug, arriving from an unexpected direction.
+
+If OBS shows the stage at something other than 1920x1080, kanshi lost the
+startup race against river registering the output; `Super+Ctrl+S` re-applies
+the geometry.
+
+The portal's restore token is bound to a specific output, so after enabling
+this the first time, re-pick the source in OBS (Screen Capture → Properties →
+Select Monitor → `HEADLESS-1`); it will reconnect to the panel otherwise.

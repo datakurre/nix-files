@@ -99,6 +99,36 @@ let
         riverctl border-color-focused 0x859900
     fi
   '';
+
+  # Presentation stage: HEADLESS-1, the virtual output from the headless wlroots
+  # backend (modules/nixos/services-river.nix). OBS captures it while the panel
+  # keeps showing OBS itself -- the only way to record "another workspace" on a
+  # single-monitor machine, since wlr-screencopy copies a composited output and
+  # an unmapped tag has nothing to copy.
+  #
+  # There are exactly two outputs, so `next` is unambiguous and no output name
+  # is needed (river-classic's send-to-output takes a direction, not a name).
+  riverPresent = pkgs.writeShellScriptBin "river-present" ''
+    riverctl send-to-output next
+    riverctl focus-output next
+  '';
+
+  # Return to the panel without dragging the window back: only focus moves, so
+  # the slides keep rendering on the stage and the recording is unaffected.
+  riverPresentBack = pkgs.writeShellScriptBin "river-present-back" ''
+    riverctl focus-output next
+  '';
+
+  # kanshi owns the stage geometry, but it can lose the race against river
+  # registering the headless output -- the same race ~/.config/river/init
+  # already works around by restarting kanshi. Re-apply on demand if OBS shows
+  # the stage at anything other than 1920x1080.
+  riverStageReset = pkgs.writeShellScriptBin "river-stage-reset" ''
+    ${pkgs.wlr-randr}/bin/wlr-randr \
+      --output HEADLESS-1 --custom-mode 1920x1080@60 --scale 1 --pos 1920,0
+    ${pkgs.libnotify}/bin/notify-send -t 2000 \
+      "Presentation stage" "HEADLESS-1 reset to 1920x1080"
+  '';
 in
 {
   dconf = lib.mkIf (!isStandalone) {
@@ -127,6 +157,9 @@ in
     riverStash
     riverStashList
     riverStashToggle
+    riverPresent
+    riverPresentBack
+    riverStageReset
     pkgs.lswt
     pkgs.jq
     riverLock
@@ -267,6 +300,15 @@ in
       riverctl map normal Super+Shift Q exit
       riverctl map normal Super W focus-output next
       riverctl map normal Super+Shift W send-to-output next
+
+      # Presentation stage (HEADLESS-1). S for stage: P is the fuzzel launcher.
+      # Super+S sends the focused window to the stage and follows it, so the
+      # keyboard drives the slides while the panel keeps showing OBS;
+      # Super+Shift+S returns focus to the panel and leaves the slides on the
+      # stage. Super+Control+S re-applies the stage geometry.
+      riverctl map normal Super S spawn river-present
+      riverctl map normal Super+Shift S spawn river-present-back
+      riverctl map normal Super+Control S spawn river-stage-reset
 
       for i in $(seq 1 9); do
         riverctl map normal Super "$i"            set-focused-tags "$((1 << (i - 1)))"

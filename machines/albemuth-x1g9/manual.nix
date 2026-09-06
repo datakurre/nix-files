@@ -95,6 +95,15 @@ in
     };
   };
 
+  # HEADLESS-1 is the virtual presentation output created by the headless
+  # wlroots backend (modules/nixos/services-river.nix). It must be listed here
+  # even though nothing is normally sent to it: kanshi only applies a profile
+  # whose outputs match the whole connected set, so omitting it would stop the
+  # profile from matching and drop eDP-1 back to scale 1.
+  #
+  # Placed to the right of the panel's 1920x1200 logical area, at scale 1 and
+  # exactly 1920x1080, so an OBS canvas of the same size captures it 1:1 with
+  # no scaling and no 16:10 letterboxing.
   home-manager.users.${config.user.name}.services.kanshi = {
     enable = true;
     settings = [
@@ -104,6 +113,13 @@ in
           {
             criteria = "eDP-1";
             scale = 2.0;
+            position = "0,0";
+          }
+          {
+            criteria = "HEADLESS-1";
+            mode = "1920x1080";
+            scale = 1.0;
+            position = "1920,0";
           }
         ];
       }
