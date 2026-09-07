@@ -7,9 +7,9 @@
     "name": "devenv"
   },
   "datakurre.vscode-operaton-form-js-modeler": {
-    "version": "0.1.0",
-    "url": "https://datakurre.gallerycdn.vsassets.io/extensions/datakurre/vscode-operaton-form-js-modeler/0.1.0/1773905012867/Microsoft.VisualStudio.Services.VSIXPackage",
-    "sha256": "1kjvsizpv3qviynwvv06hag2drlb575l2dk0qb9c1n03vm9nrxyq",
+    "version": "0.2.0",
+    "url": "https://datakurre.gallerycdn.vsassets.io/extensions/datakurre/vscode-operaton-form-js-modeler/0.2.0/1788802890876/Microsoft.VisualStudio.Services.VSIXPackage",
+    "sha256": "1k5x90bjb3mbdnwbqf87xjd0p7ls8cj7pcr8im7g2zz17b55fg0p",
     "publisher": "datakurre",
     "name": "vscode-operaton-form-js-modeler"
   },
