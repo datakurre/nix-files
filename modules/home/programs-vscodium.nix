@@ -19,16 +19,23 @@ let
       };
     };
 
-  manualExtensions = pkgs.lib.mapAttrsToList buildManualExt manualExtsData;
+  manualExts = pkgs.lib.mapAttrs buildManualExt manualExtsData;
+
+  operatonExtensions = [
+    manualExts."datakurre.vscode-operaton-form-js-modeler"
+    manualExts."datakurre.vscode-operaton-bpmn-js-modeler"
+    manualExts."datakurre.vscode-operaton-dmn-js-modeler"
+  ];
 
   commonExtensions =
     (with pkgs.open-vsx; [
       vscodevim.vim
       jnoortheen.nix-ide
     ])
-    ++ manualExtensions;
+    ++ [ manualExts."datakurre.devenv" ];
   codiumProfiles = [
     "plain"
+    "bpmn"
     "java"
     "python"
     "python-rust"
@@ -47,6 +54,10 @@ in
     profiles = {
       plain = {
         extensions = commonExtensions;
+      };
+
+      bpmn = {
+        extensions = commonExtensions ++ operatonExtensions;
       };
 
       java = {
