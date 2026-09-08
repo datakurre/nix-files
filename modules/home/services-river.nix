@@ -9,7 +9,6 @@
 let
   isStandalone = osConfig == null;
   trackballScrollButton = if isStandalone then "BTN_SIDE" else "BTN_TASK";
-  trackballScrollButtonLock = if isStandalone then "enabled" else "disabled";
   standaloneSwaylock = "/usr/local/bin/swaylock";
   standaloneSwaylockConfig = ''
     effect=xjack
@@ -290,7 +289,7 @@ in
       for dev in $(riverctl list-inputs | grep -iE 'trackball|marble'); do
         riverctl input "$dev" scroll-method button
         riverctl input "$dev" scroll-button ${trackballScrollButton}
-        riverctl input "$dev" scroll-button-lock ${trackballScrollButtonLock}
+        riverctl input "$dev" scroll-button-lock disabled
         riverctl input "$dev" middle-emulation disabled
       done
       # Trackball only: mute the touchpad, its trackpoint node, the ELAN
