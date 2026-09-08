@@ -28,8 +28,8 @@ let
       ln -s ${nixglWrappers.nixGLNvidia}/bin/nixGLNvidia-${nixglConfig.nvidiaVersion} $out/bin/nixGLNvidia
     ''
   );
-  bpmnEditor = lib.optional (nixglConfig != null && nixglConfig.nvidiaVersion != null) (
-    pkgs.writeShellScriptBin "bpmn-editor" ''
+  bpmnModeler = lib.optional (nixglConfig != null && nixglConfig.nvidiaVersion != null) (
+    pkgs.writeShellScriptBin "bpmn-modeler" ''
       exec env GDK_BACKEND=x11 nixGLNvidia \
         ${operatonBpmnModeler.packages.${pkgs.system}.default}/bin/operaton-bpmn-editor "$@"
     ''
@@ -79,7 +79,7 @@ in
     riverSession
   ]
   ++ nixglPackage
-  ++ bpmnEditor;
+  ++ bpmnModeler;
   programs.nushell.environmentVariables.TMPDIR = tmpDir;
   xdg.configFile."nix/nix.conf".text = ''
     experimental-features = nix-command flakes
