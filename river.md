@@ -128,20 +128,17 @@ for the mechanism, and [river-obs.md](river-obs.md) for the streaming workflow.
 | `Super + right button` + drag | Resize floating window |
 
 Pointer devices are configured from `~/.config/river/init`. The Logitech
-trackball uses button-scroll (hold `BTN_TASK` and roll). On **albemuth**,
-**makondo**, and **atsoukka**, it expects the host OS to remap the small buttons
-to `BTN_TASK` via a udev hwdb rule, and uses `BTN_TASK` for scrolling instead
-to prevent accidental "Back" navigation in browsers. On NixOS (**albemuth** and
-**makondo**), this is declared in `manual.nix`. On standalone Home Manager hosts
-(like **atsoukka**), this udev rule must be installed manually:
+trackball uses button-scroll while rolling the ball. On NixOS (**albemuth** and
+**makondo**), the small buttons are remapped to `BTN_TASK` via a udev hwdb rule
+declared in `manual.nix`; River uses `BTN_TASK` to prevent accidental "Back"
+navigation in browsers. On standalone Home Manager hosts (like **atsoukka**),
+the host-level hwdb rule is unavailable, so River uses the Marble's native
+`BTN_SIDE` button code instead:
 
 ```ini
-# /etc/udev/hwdb.d/99-logitech-trackball.hwdb
-evdev:name:Logitech USB Trackball:*
- KEYBOARD_KEY_90004=btn_task
- KEYBOARD_KEY_90005=btn_task
+# Standalone Home Manager: native Marble button code
+scroll-button = BTN_SIDE
 ```
-*(Run `sudo systemd-hwdb update && sudo udevadm trigger` to apply it.)*
 
 The standalone `atsoukka` Home Manager profile installs `interception-tools`
 and `evdev-debounce`, and starts a user-level `udevmon` service on graphical

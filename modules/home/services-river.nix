@@ -8,6 +8,8 @@
 
 let
   isStandalone = osConfig == null;
+  trackballScrollButton = if isStandalone then "BTN_SIDE" else "BTN_TASK";
+  trackballScrollButtonLock = if isStandalone then "enabled" else "disabled";
   standaloneSwaylock = "/usr/local/bin/swaylock";
   standaloneSwaylockConfig = ''
     effect=xjack
@@ -281,13 +283,14 @@ in
       riverctl border-color-urgent 0xdc322f
       riverctl hide-cursor when-typing enabled
 
-      # BTN_TASK, not BTN_SIDE: hwdb remaps the small left button (see
-      # machines/makondo-p7670/manual.nix and machines/albemuth-x1g9/manual.nix) so
-      # libinput's replayed click is inert instead of triggering Firefox's "Back".
+      # NixOS remaps the small buttons to BTN_TASK in hwdb (see
+      # machines/makondo-p7670/manual.nix and machines/albemuth-x1g9/manual.nix).
+      # Standalone Home Manager cannot install that system rule, so it uses the
+      # Marble's native BTN_SIDE instead.
       for dev in $(riverctl list-inputs | grep -iE 'trackball|marble'); do
         riverctl input "$dev" scroll-method button
-        riverctl input "$dev" scroll-button BTN_TASK
-        riverctl input "$dev" scroll-button-lock disabled
+        riverctl input "$dev" scroll-button ${trackballScrollButton}
+        riverctl input "$dev" scroll-button-lock ${trackballScrollButtonLock}
         riverctl input "$dev" middle-emulation disabled
       done
       # Trackball only: mute the touchpad, its trackpoint node, the ELAN
