@@ -2,9 +2,38 @@
   config,
   pkgs,
   lib,
+  nixgl,
+  operatonBpmnModeler,
   ...
 }:
 let
+  nixglConfig =
+    if builtins.pathExists ./nixgl-local.json then
+      builtins.fromJSON (builtins.readFile ./nixgl-local.json)
+    else
+      null;
+  nixglPackage = lib.optional (nixglConfig != null && nixglConfig.nvidiaVersion != null) (
+    let
+      nixglPkgs = import nixgl.inputs.nixpkgs {
+        system = nixglConfig.system;
+        config.allowUnfree = true;
+      };
+      nixglWrappers = import (nixgl + "/default.nix") {
+        pkgs = nixglPkgs;
+        nvidiaVersion = nixglConfig.nvidiaVersion;
+      };
+    in
+    pkgs.runCommand "nixGLNvidia" { } ''
+      mkdir -p $out/bin
+      ln -s ${nixglWrappers.nixGLNvidia}/bin/nixGLNvidia-${nixglConfig.nvidiaVersion} $out/bin/nixGLNvidia
+    ''
+  );
+  bpmnEditor = lib.optional (nixglConfig != null && nixglConfig.nvidiaVersion != null) (
+    pkgs.writeShellScriptBin "bpmn-editor" ''
+      exec env GDK_BACKEND=x11 nixGLNvidia \
+        ${operatonBpmnModeler.packages.${pkgs.system}.default}/bin/operaton-bpmn-editor "$@"
+    ''
+  );
   riverSession = pkgs.writeShellScriptBin "river-session" ''
     if [ -f "${config.home.homeDirectory}/.bashrc.d/99-nix.sh" ]; then
       . "${config.home.homeDirectory}/.bashrc.d/99-nix.sh"
@@ -48,7 +77,9 @@ in
   home.sessionVariables.TMPDIR = tmpDir;
   home.packages = [
     riverSession
-  ];
+  ]
+  ++ nixglPackage
+  ++ bpmnEditor;
   programs.nushell.environmentVariables.TMPDIR = tmpDir;
   xdg.configFile."nix/nix.conf".text = ''
     experimental-features = nix-command flakes

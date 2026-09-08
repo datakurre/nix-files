@@ -116,6 +116,24 @@
         "type": "github"
       }
     },
+    "flake-utils_3": {
+      "inputs": {
+        "systems": "systems_3"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "graph-agent": {
       "inputs": {
         "nixpkgs": [
@@ -173,6 +191,27 @@
       "original": {
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
+        "type": "github"
+      }
+    },
+    "nixgl": {
+      "inputs": {
+        "flake-utils": "flake-utils_3",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1762090880,
+        "narHash": "sha256-fbRQzIGPkjZa83MowjbD2ALaJf9y6KMDdJBQMKFeY/8=",
+        "owner": "nix-community",
+        "repo": "nixGL",
+        "rev": "b6105297e6f0cd041670c3e8628394d4ee247ed5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixGL",
         "type": "github"
       }
     },
@@ -240,6 +279,40 @@
         "type": "github"
       }
     },
+    "nixpkgs_4": {
+      "locked": {
+        "lastModified": 1788746152,
+        "narHash": "sha256-RaKngusl5I8pNi8RfrVvsHq3NZe7eFWzDlb01+hEVqY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "42f17a57f4f6e33b3de3dca0a2a5ea5233169d02",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "operaton-bpmn-modeler": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_4"
+      },
+      "locked": {
+        "lastModified": 1788871473,
+        "narHash": "sha256-o7OX03UJL7Wq161UPyFuD5jamuJOaOnLLNdF2yY0Cgk=",
+        "owner": "vasara-bpm",
+        "repo": "vscode-operaton-bpmn-js-modeler",
+        "rev": "303a4f31a28209ac228335373e5e1bbc446587ef",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "vasara-bpm",
+        "repo": "vscode-operaton-bpmn-js-modeler",
+        "type": "gitlab"
+      }
+    },
     "outline-editor": {
       "inputs": {
         "nixpkgs": [
@@ -267,8 +340,10 @@
         "flake-compat": "flake-compat",
         "home-manager": "home-manager",
         "nix-vscode-extensions": "nix-vscode-extensions",
+        "nixgl": "nixgl",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "operaton-bpmn-modeler": "operaton-bpmn-modeler",
         "outline-editor": "outline-editor"
       }
     },
@@ -288,6 +363,21 @@
       }
     },
     "systems_2": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_3": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

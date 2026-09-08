@@ -6,10 +6,13 @@
     flake-compat.flake = false;
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    nixgl.url = "github:nix-community/nixGL";
+    nixgl.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     agent-sandbox.url = "github:datakurre/agent-sandbox/graph-agent";
     bpmn-to-image.url = "github:datakurre/bpmn-to-image";
     bpmn-to-image.inputs.nixpkgs.follows = "nixpkgs";
+    operaton-bpmn-modeler.url = "gitlab:vasara-bpm/vscode-operaton-bpmn-js-modeler";
     outline-editor.url = "github:datakurre/outline";
     outline-editor.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -19,6 +22,7 @@
       nixpkgs,
       nixpkgs-unstable,
       home-manager,
+      nixgl,
       ...
     }@inputs:
     let
@@ -148,6 +152,10 @@
           }
           ./home-configuration.nix
         ];
+        extraSpecialArgs = {
+          inherit nixgl;
+          operatonBpmnModeler = inputs.operaton-bpmn-modeler;
+        };
       };
 
       nixosConfigurations.albemuth = mkNixos ./machines/albemuth-x1g9 {
