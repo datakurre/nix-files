@@ -7,7 +7,6 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixgl.url = "github:nix-community/nixGL";
-    nixgl.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     agent-sandbox.url = "github:datakurre/agent-sandbox/graph-agent";
     bpmn-to-image.url = "github:datakurre/bpmn-to-image";
