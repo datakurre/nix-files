@@ -32,10 +32,10 @@ let
       vscodevim.vim
       jnoortheen.nix-ide
     ])
-    ++ [ manualExts."datakurre.devenv" ];
+    ++ [ manualExts."datakurre.devenv" ]
+    ++ operatonExtensions;
   codiumProfiles = [
     "plain"
-    "bpmn"
     "java"
     "python"
     "python-rust"
@@ -54,10 +54,6 @@ in
     profiles = {
       plain = {
         extensions = commonExtensions;
-      };
-
-      bpmn = {
-        extensions = commonExtensions ++ operatonExtensions;
       };
 
       java = {
