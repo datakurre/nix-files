@@ -313,11 +313,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1788872293,
-        "narHash": "sha256-K8Dm+bjk96lio7zQtQmSmUnFzQgdtFaRm3foeairN88=",
+        "lastModified": 1789125271,
+        "narHash": "sha256-r2qX5CyzsFJC0uvjHDS9PpyJet4m/z0Vg7SFbomem/g=",
         "owner": "vasara-bpm",
         "repo": "vscode-operaton-bpmn-js-modeler",
-        "rev": "fda86cd622ea2692e54ed44259847cf9237f09b2",
+        "rev": "1b439edda77e1e018d12525a81e2e0a527da437f",
         "type": "gitlab"
       },
       "original": {
