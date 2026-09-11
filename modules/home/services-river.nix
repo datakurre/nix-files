@@ -9,6 +9,8 @@
 let
   isStandalone = osConfig == null;
   trackballScrollButton = if isStandalone then "BTN_SIDE" else "BTN_TASK";
+  isAlbemuth = !isStandalone && osConfig.networking.hostName == "albemuth";
+  disableOtherPointers = !isAlbemuth;
   standaloneSwaylock = "/usr/local/bin/swaylock";
   standaloneSwaylockConfig = ''
     effect=xjack
@@ -292,11 +294,13 @@ in
         riverctl input "$dev" scroll-button-lock disabled
         riverctl input "$dev" middle-emulation disabled
       done
-      # Trackball only: mute the touchpad, its trackpoint node, the ELAN
-      # touchscreen, the phantom PS/2 mouse and the Ergodox's pointer endpoints.
-      for dev in $(riverctl list-inputs | grep -E '^(pointer|touch)-' | grep -viE 'trackball|marble'); do
-        riverctl input "$dev" events disabled
-      done
+      ${lib.optionalString disableOtherPointers ''
+        # Trackball only: mute the touchpad, its trackpoint node, the ELAN
+        # touchscreen, the phantom PS/2 mouse and the Ergodox's pointer endpoints.
+        for dev in $(riverctl list-inputs | grep -E '^(pointer|touch)-' | grep -viE 'trackball|marble'); do
+          riverctl input "$dev" events disabled
+        done
+      ''}
 
       riverctl map normal Super+Shift Return spawn foot
       riverctl map normal Super P spawn fuzzel
