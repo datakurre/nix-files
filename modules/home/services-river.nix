@@ -267,6 +267,11 @@ in
       # to fail or miss the outputs. This ensures it applies HiDPI configurations.
       systemctl --user restart kanshi || true
 
+      # Keep the physical panel HiDPI even if kanshi's profile was evaluated
+      # before the headless output became available. swaylock uses the output
+      # scale for its effect and otherwise renders at half size.
+      ${pkgs.wlr-randr}/bin/wlr-randr --output eDP-1 --scale 2 || true
+
       riverctl keyboard-layout -options "eurosign:e,caps:escape,nbsp:none" fi
       riverctl focus-follows-cursor disabled
 

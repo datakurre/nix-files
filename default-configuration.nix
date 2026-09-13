@@ -34,6 +34,7 @@
     pkgs.jfrog-cli
     pkgs.zip
     pkgs.unzip
+    pkgs.bpmn-modeler
   ];
 
   imports = [

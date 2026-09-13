@@ -49,6 +49,14 @@
         });
       };
 
+      bpmnModelerOverlay = final: prev: {
+        bpmn-modeler = prev.writeShellScriptBin "bpmn-modeler" ''
+          exec ${
+            inputs.operaton-bpmn-modeler.packages.${prev.stdenv.hostPlatform.system}.default
+          }/bin/operaton-bpmn-editor "$@"
+        '';
+      };
+
       mkAgentSandboxOverlay = selinux: final: prev: {
         agent-sandbox = prev.symlinkJoin {
           name = "agent-sandbox";
@@ -72,6 +80,7 @@
           inputs.bpmn-to-image.overlays.default
           unstableOverlay
           agentSandboxOverlay
+          bpmnModelerOverlay
         ];
       };
 
@@ -94,6 +103,7 @@
                   self.overlays.default
                   swaylockXjackOverlay
                   agentSandboxOverlay
+                  bpmnModelerOverlay
                 ];
                 user.name = name;
                 user.description = description;
@@ -111,6 +121,7 @@
       overlays.swaylock-xjack = swaylockXjackOverlay;
       overlays.agent-sandbox = agentSandboxOverlay;
       overlays.bpmn-to-image = inputs.bpmn-to-image.overlays.default;
+      overlays.bpmn-modeler = bpmnModelerOverlay;
 
       formatter.${system} = pkgs.writeShellApplication {
         name = "formatter";
@@ -122,6 +133,8 @@
           treefmt "$@"
         '';
       };
+
+      packages.${system}.bpmn-modeler = pkgs.bpmn-modeler;
 
       homeConfigurations."atsoukka" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
