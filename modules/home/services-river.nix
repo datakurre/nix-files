@@ -74,6 +74,32 @@ let
     riverctl send-layout-cmd rivertile "main-count 1"
   '';
 
+  riverSpace = pkgs.writeShellScriptBin "river-space" ''
+    state="$HOME/.cache/river-space"
+    current=$(cat "$state" 2>/dev/null || echo 1)
+
+    case "''${1:-}" in
+      next)
+        current=$((current % 9 + 1))
+        ;;
+      previous)
+        current=$((current - 2))
+        current=$((current % 9 + 9))
+        current=$((current % 9 + 1))
+        ;;
+      [1-9])
+        current="$1"
+        ;;
+      *)
+        exit 2
+        ;;
+    esac
+
+    mkdir -p "$(dirname "$state")"
+    printf '%s\n' "$current" > "$state"
+    riverctl set-focused-tags "$((1 << (current - 1)))"
+  '';
+
   riverStash = pkgs.writeShellScriptBin "river-stash" ''
     riverctl set-view-tags 2147483648
     ${pkgs.libnotify}/bin/notify-send -t 1500 "Scratchpad" "Window stashed to Tag 32"
@@ -342,6 +368,8 @@ in
       riverctl map normal Super+Shift Q exit
       riverctl map normal Super W focus-output next
       riverctl map normal Super+Shift W send-to-output next
+      riverctl map normal Super Page_Down spawn "${lib.getExe riverSpace} next"
+      riverctl map normal Super Page_Up spawn "${lib.getExe riverSpace} previous"
 
       # Presentation stage (HEADLESS-1). S for stage: P is the fuzzel launcher.
       # Super+S sends the focused window to the stage and follows it, so the
@@ -355,7 +383,7 @@ in
       riverctl map normal Super+Shift+Control S spawn river-stage-reset
 
       for i in $(seq 1 9); do
-        riverctl map normal Super "$i"            set-focused-tags "$((1 << (i - 1)))"
+        riverctl map normal Super "$i"            spawn "${lib.getExe riverSpace} $i"
         riverctl map normal Super+Shift "$i"       set-view-tags "$((1 << (i - 1)))"
         riverctl map normal Super+Control "$i"        toggle-focused-tags "$((1 << (i - 1)))"
         riverctl map normal Super+Shift+Control "$i"  toggle-view-tags "$((1 << (i - 1)))"
