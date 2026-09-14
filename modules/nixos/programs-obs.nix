@@ -1,7 +1,8 @@
 { config, pkgs, ... }:
 {
   networking.firewall.allowedTCPPorts = [
-    4444
+    4444 # obs-websocket (legacy v4)
+    4455 # obs-websocket (v5 default)
   ];
 
   # OBS's virtual camera needs v4l2loopback; without it OBS logs "v4l2loopback not
