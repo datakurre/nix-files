@@ -34,6 +34,21 @@ let
     ])
     ++ [ manualExts."datakurre.devenv" ]
     ++ operatonExtensions;
+
+  pythonRobotExtensions =
+    commonExtensions
+    ++ (with pkgs.open-vsx; [
+      d-biehl.robotcode
+    ])
+    ++ (with pkgs.vscode-extensions; [
+      ms-python.python
+      (ms-python.debugpy.overrideAttrs (old: {
+        postInstall = (old.postInstall or "") + ''
+          sed -i 's|".noConfigDebugAdapterEndpoints"|"../../../../../../../../../../tmp/.noConfigDebugAdapterEndpoints"|g' $out/share/vscode/extensions/ms-python.debugpy/dist/extension.js
+        '';
+      }))
+    ]);
+
   codiumProfiles = [
     "plain"
     "java"
@@ -44,6 +59,7 @@ let
     "svelte"
     "python-robot"
     "java-python-robot"
+    "operaton"
   ];
 in
 {
@@ -125,19 +141,7 @@ in
       };
 
       python-robot = {
-        extensions =
-          commonExtensions
-          ++ (with pkgs.open-vsx; [
-            d-biehl.robotcode
-          ])
-          ++ (with pkgs.vscode-extensions; [
-            ms-python.python
-            (ms-python.debugpy.overrideAttrs (old: {
-              postInstall = (old.postInstall or "") + ''
-                sed -i 's|".noConfigDebugAdapterEndpoints"|"../../../../../../../../../../tmp/.noConfigDebugAdapterEndpoints"|g' $out/share/vscode/extensions/ms-python.debugpy/dist/extension.js
-              '';
-            }))
-          ]);
+        extensions = pythonRobotExtensions;
       };
 
       java-python-robot = {
@@ -162,6 +166,10 @@ in
             }))
             redhat.java
           ]);
+      };
+
+      operaton = {
+        extensions = pythonRobotExtensions ++ [ manualExts."datakurre.vscode-operaton-robotframework" ];
       };
     };
   };

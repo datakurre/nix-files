@@ -26,5 +26,12 @@
     "sha256": "1s1nwqviaanxlxd0l9x3lc1ky8p28k9a7f724ykipz8bbcipxiyr",
     "publisher": "datakurre",
     "name": "vscode-operaton-dmn-js-modeler"
+  },
+  "datakurre.vscode-operaton-robotframework": {
+    "version": "0.2.2",
+    "url": "https://gitlab.com/api/v4/projects/82550273/packages/generic/vscode-operaton-robotframework/0.2.2/vscode-operaton-robotframework-0.2.2.vsix",
+    "sha256": "1w1g0jyyqzm6w5qrp3ympb62cdqz5336mqpr7d6cgj0nr3pgzhl0",
+    "publisher": "datakurre",
+    "name": "vscode-operaton-robotframework"
   }
 }

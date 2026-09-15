@@ -9,7 +9,12 @@ EXTENSIONS = {
     "datakurre.devenv": "openvsx",
     "datakurre.vscode-operaton-form-js-modeler": "marketplace",
     "datakurre.vscode-operaton-bpmn-js-modeler": "marketplace",
-    "datakurre.vscode-operaton-dmn-js-modeler": "marketplace"
+    "datakurre.vscode-operaton-dmn-js-modeler": "marketplace",
+    "datakurre.vscode-operaton-robotframework": "gitlab"
+}
+
+GITLAB_PROJECTS = {
+    "datakurre.vscode-operaton-robotframework": 82550273
 }
 
 def get_marketplace_ext(publisher, name):
@@ -45,6 +50,19 @@ def get_openvsx_ext(publisher, name):
         data = json.loads(response.read().decode())
     return data['version'], data['files']['download']
 
+def get_gitlab_ext(project_id):
+    url = f"https://gitlab.com/api/v4/projects/{project_id}/releases/permalink/latest"
+    req = urllib.request.Request(url)
+    with urllib.request.urlopen(req) as response:
+        data = json.loads(response.read().decode())
+
+    vsix_url = next(
+        link['url']
+        for link in data['assets']['links']
+        if link['url'].endswith('.vsix')
+    )
+    return data['tag_name'].removeprefix('v'), vsix_url
+
 def main():
     results = {}
     for ext_id, registry in EXTENSIONS.items():
@@ -53,8 +71,10 @@ def main():
         
         if registry == "marketplace":
             version, url = get_marketplace_ext(publisher, name)
-        else:
+        elif registry == "openvsx":
             version, url = get_openvsx_ext(publisher, name)
+        else:
+            version, url = get_gitlab_ext(GITLAB_PROJECTS[ext_id])
             
         print(f" -> Found v{version}. Prefetching sha256 hash...")
         res = subprocess.run(['nix-prefetch-url', url], capture_output=True, text=True)
