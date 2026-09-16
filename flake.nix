@@ -90,6 +90,7 @@
           name,
           description,
           home,
+          homeStateVersion,
         }:
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -108,12 +109,50 @@
                 user.name = name;
                 user.description = description;
                 user.home = home;
+                home-manager.users.${name}.home.stateVersion = homeStateVersion;
               }
             )
             home-manager.nixosModules.home-manager
             host
             ./default-configuration.nix
           ];
+        };
+      mkHome =
+        {
+          username,
+          homeDirectory,
+          stateVersion,
+        }:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfreePredicate =
+              pkg:
+              builtins.elem (nixpkgs.lib.getName pkg) [
+                "corefonts"
+                "discord"
+                "vagrant"
+              ];
+            overlays = [
+              inputs.nix-vscode-extensions.overlays.default
+              inputs.bpmn-to-image.overlays.default
+              unstableOverlay
+              swaylockXjackOverlay
+              agentSandboxSelinuxOverlay
+            ];
+          };
+          modules = [
+            {
+              home.username = username;
+              home.homeDirectory = homeDirectory;
+              home.stateVersion = stateVersion;
+            }
+            ./home-configuration.nix
+          ];
+          extraSpecialArgs = {
+            inherit nixgl;
+            operatonBpmnModeler = inputs.operaton-bpmn-modeler;
+          };
         };
     in
     {
@@ -136,50 +175,24 @@
 
       packages.${system}.bpmn-modeler = pkgs.bpmn-modeler;
 
-      homeConfigurations."atsoukka" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          inherit system;
-          config = {
-            allowUnfreePredicate =
-              pkg:
-              builtins.elem (nixpkgs.lib.getName pkg) [
-                "corefonts"
-                "discord"
-                "vagrant"
-              ];
-          };
-          overlays = [
-            inputs.nix-vscode-extensions.overlays.default
-            inputs.bpmn-to-image.overlays.default
-            unstableOverlay
-            swaylockXjackOverlay
-            agentSandboxSelinuxOverlay
-          ];
-        };
-        modules = [
-          {
-            home.username = "atsoukka";
-            home.homeDirectory = "/home/atsoukka";
-            home.stateVersion = "24.11";
-          }
-          ./home-configuration.nix
-        ];
-        extraSpecialArgs = {
-          inherit nixgl;
-          operatonBpmnModeler = inputs.operaton-bpmn-modeler;
-        };
+      homeConfigurations."atsoukka" = mkHome {
+        username = "atsoukka";
+        homeDirectory = "/home/atsoukka";
+        stateVersion = "24.11";
       };
 
       nixosConfigurations.albemuth = mkNixos ./machines/albemuth-x1g9 {
         name = "datakurre";
         description = "Asko Soukka";
         home = "/home/datakurre";
+        homeStateVersion = "24.05";
       };
 
       nixosConfigurations.makondo = mkNixos ./machines/makondo-p7670 {
         name = "atsoukka";
         description = "Asko Soukka";
         home = "/home/atsoukka";
+        homeStateVersion = "24.11";
       };
     };
 }

@@ -43,6 +43,8 @@ let
     export XDG_CURRENT_DESKTOP=river
     export MOZ_ENABLE_WAYLAND=1
     export NIXOS_OZONE_WL=1
+    export WLR_BACKENDS="''${WLR_BACKENDS:-libinput,drm,headless}"
+    export WLR_HEADLESS_OUTPUTS="''${WLR_HEADLESS_OUTPUTS:-1}"
     default_renderer="''${WLR_RENDERER:-gles2}"
     river_bin="${lib.getExe pkgs.river-classic}"
     nixgl_nvidia="$(command -v nixGLNvidia 2>/dev/null || true)"

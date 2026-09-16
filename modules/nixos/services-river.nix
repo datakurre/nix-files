@@ -25,17 +25,6 @@ let
   # eDP-1 alone silently stops matching once this backend is on -- and a
   # non-matching profile leaves the panel at scale 1, which is exactly the
   # "GTK/Qt clients render tiny" failure documented in machines/*/manual.nix.
-  compositorEnv = {
-    WLR_BACKENDS = "libinput,drm,headless";
-    WLR_HEADLESS_OUTPUTS = "1";
-  };
-  envCmd = lib.concatStringsSep " " (
-    [
-      "env"
-      "XDG_CURRENT_DESKTOP=river"
-    ]
-    ++ lib.mapAttrsToList (k: v: "${k}=${v}") (waylandEnv // compositorEnv)
-  );
 in
 {
   environment.sessionVariables = {
@@ -71,7 +60,7 @@ in
     greetd = {
       enable = true;
       settings.default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd '${envCmd} ${pkgs.river-classic}/bin/river'";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd '${config.user.home}/.nix-profile/bin/river-session'";
         user = "greeter";
       };
     };
