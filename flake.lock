@@ -43,6 +43,28 @@
         "type": "github"
       }
     },
+    "bpmn-auto-layout": {
+      "inputs": {
+        "bpmn-to-image": "bpmn-to-image_2",
+        "nixpkgs": [
+          "operaton-bpmn-modeler",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789884794,
+        "narHash": "sha256-aZ9hSvygAVAWdG5FwvXjeaktvG35B5n2k/YPeR1Uw4Q=",
+        "owner": "datakurre",
+        "repo": "bpmn-auto-layout",
+        "rev": "a8881e585339c1bdbff150e542db45f5aab32c78",
+        "type": "github"
+      },
+      "original": {
+        "owner": "datakurre",
+        "repo": "bpmn-auto-layout",
+        "type": "github"
+      }
+    },
     "bpmn-to-image": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -56,6 +78,29 @@
         "owner": "datakurre",
         "repo": "bpmn-to-image",
         "rev": "a3cc8f4a12ee220a3a38251c60d4280ff7b78c95",
+        "type": "github"
+      },
+      "original": {
+        "owner": "datakurre",
+        "repo": "bpmn-to-image",
+        "type": "github"
+      }
+    },
+    "bpmn-to-image_2": {
+      "inputs": {
+        "flake-utils": "flake-utils_4",
+        "nixpkgs": [
+          "operaton-bpmn-modeler",
+          "bpmn-auto-layout",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789222056,
+        "narHash": "sha256-NbuGqA8zwqE1KPSA6N/cYA1BAqBVNu6gWPhuiO1rtKI=",
+        "owner": "datakurre",
+        "repo": "bpmn-to-image",
+        "rev": "6ea890508118ab38f40bcea44a67aa70206ab1a2",
         "type": "github"
       },
       "original": {
@@ -119,6 +164,24 @@
     "flake-utils_3": {
       "inputs": {
         "systems": "systems_3"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_4": {
+      "inputs": {
+        "systems": "systems_4"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -294,11 +357,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1788746152,
-        "narHash": "sha256-RaKngusl5I8pNi8RfrVvsHq3NZe7eFWzDlb01+hEVqY=",
+        "lastModified": 1789632929,
+        "narHash": "sha256-RjR8AyvGlWuw16XRj7C1YDEw4E27ciuyPeB2nDMzgTU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "42f17a57f4f6e33b3de3dca0a2a5ea5233169d02",
+        "rev": "a32edd7654519351e48e80372a928df336394670",
         "type": "github"
       },
       "original": {
@@ -310,14 +373,15 @@
     },
     "operaton-bpmn-modeler": {
       "inputs": {
+        "bpmn-auto-layout": "bpmn-auto-layout",
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1789329454,
-        "narHash": "sha256-F7+F6KKDa9phvqkxlHotUUkUIjermAcDjen93hq3QJo=",
+        "lastModified": 1789885019,
+        "narHash": "sha256-uliAASRxT0WrFYA4ERNjs2jdUyAckIC1am3/Bke/xl4=",
         "owner": "vasara-bpm",
         "repo": "vscode-operaton-bpmn-js-modeler",
-        "rev": "bfec7f6eac4c869fa69b9215e7a2af7f907cdaef",
+        "rev": "9d6a81b4ffb444499b81bd4721d2f2d03482c023",
         "type": "gitlab"
       },
       "original": {
@@ -391,6 +455,21 @@
       }
     },
     "systems_3": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_4": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
