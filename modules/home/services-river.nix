@@ -189,6 +189,29 @@ let
   # this module instead, and a greetd command pointing at a script that
   # doesn't exist in ~/.nix-profile/bin fails at login with no build-time
   # error.
+  # Re-applies the trackball's button-scroll config. River keeps no config for a
+  # device that was (re)created after init ran -- a re-plug, or the interception-tools
+  # uinput copy being rebuilt -- so this runs from a user service on every new input
+  # device. Keep the settings in step with the loop in the river init below.
+  trackballApply = pkgs.writeShellScript "river-trackball-apply" ''
+    riverctl=${pkgs.river-classic}/bin/riverctl
+    $riverctl list-inputs | grep -iE 'trackball|marble' | sort -u | while read -r dev; do
+      $riverctl input "$dev" scroll-method button
+      $riverctl input "$dev" scroll-button ${trackballScrollButton}
+      $riverctl input "$dev" scroll-button-lock disabled
+      $riverctl input "$dev" middle-emulation disabled
+    done
+  '';
+  trackballWatch = pkgs.writeShellScript "river-trackball-watch" ''
+    ${trackballApply}
+    ${pkgs.systemd}/bin/udevadm monitor --udev --subsystem-match=input --property |
+      while read -r line; do
+        if [ "$line" = "ACTION=add" ]; then
+          sleep 1 # let River enumerate the new device
+          ${trackballApply}
+        fi
+      done
+  '';
   riverSession = pkgs.writeShellScriptBin "river-session" ''
     if [ -f "${config.home.homeDirectory}/.bashrc.d/99-nix.sh" ]; then
       . "${config.home.homeDirectory}/.bashrc.d/99-nix.sh"
@@ -640,6 +663,20 @@ in
   # Prevent rapid crash loops (start-limit-hit) when River is still initializing
   systemd.user.services.waybar.Service.RestartSec = "2";
   systemd.user.services.swayidle.Service.RestartSec = "2";
+
+  systemd.user.services.river-trackball = {
+    Unit = {
+      Description = "Re-apply River button-scroll config to the trackball on hotplug";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${trackballWatch}";
+      Restart = "on-failure";
+      RestartSec = "2";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   systemd.user.services.kanshi = lib.mkIf config.services.kanshi.enable {
     Service.RestartSec = "2";
