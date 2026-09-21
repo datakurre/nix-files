@@ -1,7 +1,8 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs.git = {
     enable = true;
+    package = pkgs.git.override { guiSupport = true; };
     signing = {
       key = "5A9D4532";
       signByDefault = true;
