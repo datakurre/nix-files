@@ -11,7 +11,7 @@
     agent-sandbox.url = "github:datakurre/agent-sandbox";
     bpmn-to-image.url = "github:datakurre/bpmn-to-image";
     bpmn-to-image.inputs.nixpkgs.follows = "nixpkgs";
-    operaton-bpmn-modeler.url = "github:datakurre/operaton-bpmn-modeler";
+    operaton-bpmn-modeler.url = "github:datakurre/bpmn-modeler";
     outline-editor.url = "github:datakurre/outline";
     outline-editor.inputs.nixpkgs.follows = "nixpkgs";
   };
