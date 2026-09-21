@@ -54,6 +54,7 @@ let
     "java"
     "python"
     "python-rust"
+    "python-react"
     "elm"
     "react"
     "svelte"
@@ -105,6 +106,21 @@ in
             charliermarsh.ruff
             rust-lang.rust-analyzer
             tamasfe.even-better-toml
+          ])
+          ++ (with pkgs.vscode-extensions; [
+            ms-python.python
+          ]);
+      };
+
+      python-react = {
+        extensions =
+          commonExtensions
+          ++ (with pkgs.open-vsx; [
+            charliermarsh.ruff
+            dbaeumer.vscode-eslint
+            esbenp.prettier-vscode
+            dsznajder.es7-react-js-snippets
+            bradlc.vscode-tailwindcss
           ])
           ++ (with pkgs.vscode-extensions; [
             ms-python.python
