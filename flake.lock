@@ -3,20 +3,18 @@
     "agent-sandbox": {
       "inputs": {
         "antigravity-nix": "antigravity-nix",
-        "graph-agent": "graph-agent",
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1789495303,
-        "narHash": "sha256-bi+lF8R32b4bMfxg2nWecTSQwU71IDqyYBdTlW6nPNQ=",
+        "lastModified": 1789938211,
+        "narHash": "sha256-fxFgU12YAHDE3IOEKUrrU4QCQf6VCDtFzy0SasIvOi4=",
         "owner": "datakurre",
         "repo": "agent-sandbox",
-        "rev": "a45485697fdc090f52a6a44a3966caf0e2a72c09",
+        "rev": "53da1e2106522860c10c56b107d44b187dbacebc",
         "type": "github"
       },
       "original": {
         "owner": "datakurre",
-        "ref": "graph-agent",
         "repo": "agent-sandbox",
         "type": "github"
       }
@@ -30,11 +28,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789456590,
-        "narHash": "sha256-l+eVN2ZQE7IIvyKmhHlHiouLzfzvtCAGgSYPybAVygE=",
+        "lastModified": 1789802026,
+        "narHash": "sha256-Q36Xa8cQftL4apO5jKhhvhaEJbfEKFDOltM44JxEjmY=",
         "owner": "jacopone",
         "repo": "antigravity-nix",
-        "rev": "c0718d9185b063e685fc133f79f8b8d6276d070f",
+        "rev": "b92ea8e30f8b8dc0892586940c1437d52228e14c",
         "type": "github"
       },
       "original": {
@@ -197,27 +195,6 @@
         "type": "github"
       }
     },
-    "graph-agent": {
-      "inputs": {
-        "nixpkgs": [
-          "agent-sandbox",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1788510150,
-        "narHash": "sha256-idGivcqHTyf3ZvxfJNDq/FpztOBFnYCsCyogm1SwrGY=",
-        "owner": "datakurre",
-        "repo": "graph-agent",
-        "rev": "bd6123a0910adfec23c70776e7f22e4398bbf0ae",
-        "type": "github"
-      },
-      "original": {
-        "owner": "datakurre",
-        "repo": "graph-agent",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -278,11 +255,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1789286504,
-        "narHash": "sha256-eiEK7cKZORNEvX0GeF3RtNEF/JXhgf2RqSp3230q13E=",
+        "lastModified": 1789785513,
+        "narHash": "sha256-B44WL6h0XoLjJ41bUPJk0X5SDinLCII//6EcBLXKiJ0=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "ef34387ddd751e1ab8857adf4676492d32eb24ec",
+        "rev": "20b1ddd1aa5ace70c9468305030aa4f9ef79671b",
         "type": "github"
       },
       "original": {
@@ -378,7 +355,7 @@
       },
       "locked": {
         "lastModified": 1789885019,
-        "narHash": "sha256-uliAASRxT0WrFYA4ERNjs2jdUyAckIC1am3/Bke/xl4=",
+        "narHash": "sha256-lIr/xspp2Zqdz2jnyiDZEkuhBkL//+4chXvx73mfJtk=",
         "owner": "vasara-bpm",
         "repo": "vscode-operaton-bpmn-js-modeler",
         "rev": "9d6a81b4ffb444499b81bd4721d2f2d03482c023",

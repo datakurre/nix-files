@@ -55,6 +55,7 @@ let
     "python"
     "python-rust"
     "python-react"
+    "python-svelte"
     "elm"
     "react"
     "svelte"
@@ -121,6 +122,20 @@ in
             esbenp.prettier-vscode
             dsznajder.es7-react-js-snippets
             bradlc.vscode-tailwindcss
+          ])
+          ++ (with pkgs.vscode-extensions; [
+            ms-python.python
+          ]);
+      };
+
+      python-svelte = {
+        extensions =
+          commonExtensions
+          ++ (with pkgs.open-vsx; [
+            charliermarsh.ruff
+            svelte.svelte-vscode
+            dbaeumer.vscode-eslint
+            esbenp.prettier-vscode
           ])
           ++ (with pkgs.vscode-extensions; [
             ms-python.python

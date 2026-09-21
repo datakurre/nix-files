@@ -8,10 +8,10 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixgl.url = "github:nix-community/nixGL";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    agent-sandbox.url = "github:datakurre/agent-sandbox/graph-agent";
+    agent-sandbox.url = "github:datakurre/agent-sandbox";
     bpmn-to-image.url = "github:datakurre/bpmn-to-image";
     bpmn-to-image.inputs.nixpkgs.follows = "nixpkgs";
-    operaton-bpmn-modeler.url = "gitlab:vasara-bpm/vscode-operaton-bpmn-js-modeler";
+    operaton-bpmn-modeler.url = "github:datakurre/operaton-bpmn-modeler";
     outline-editor.url = "github:datakurre/outline";
     outline-editor.inputs.nixpkgs.follows = "nixpkgs";
   };
