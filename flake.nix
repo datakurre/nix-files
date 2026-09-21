@@ -53,7 +53,7 @@
         bpmn-modeler = prev.writeShellScriptBin "bpmn-modeler" ''
           exec ${
             inputs.operaton-bpmn-modeler.packages.${prev.stdenv.hostPlatform.system}.default
-          }/bin/operaton-bpmn-modeler "$@"
+          }/bin/operaton-modeler "$@"
         '';
       };
 
