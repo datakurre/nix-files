@@ -50,11 +50,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789979493,
-        "narHash": "sha256-eZ14FCgCjQvUUR2oHaxcTTCLUlRjl1q+K6XJyIvD1AY=",
+        "lastModified": 1790009291,
+        "narHash": "sha256-2ooxZa1LcwrZYTDht0jt9ovefjQC9fgwfLGPSBzstb8=",
         "owner": "datakurre",
         "repo": "bpmn-auto-layout",
-        "rev": "2c639063cb61c399169ac223c30da35b23cb902d",
+        "rev": "16416534b1c7226adf24a332f0f3657f66d8dba9",
         "type": "github"
       },
       "original": {
@@ -71,11 +71,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788087251,
-        "narHash": "sha256-aoW60/2Yzyo7h6UhQN0KRFN1nm+XqcvJyN+dYU1xb3A=",
+        "lastModified": 1789880265,
+        "narHash": "sha256-+JNp02CO6XpnaPDIsN25UKs56sXzs+2iegUyXfFlTmI=",
         "owner": "datakurre",
         "repo": "bpmn-to-image",
-        "rev": "a3cc8f4a12ee220a3a38251c60d4280ff7b78c95",
+        "rev": "d30693a10db1d14ec3282ef341f5020cd991ab35",
         "type": "github"
       },
       "original": {
@@ -405,11 +405,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1790000992,
-        "narHash": "sha256-QHNVM5m6cPVPAhDeKzIoHJSXOwFwtbKClI2aqfqDkxo=",
+        "lastModified": 1790009656,
+        "narHash": "sha256-+CKUPbM+VIi0utewFg35wCDTuA7TMUr+nDDkeToO3NU=",
         "owner": "datakurre",
         "repo": "bpmn-modeler",
-        "rev": "e4c340918bc1dfbb913ff273491be0cf95fc729c",
+        "rev": "05f8fd65f64e37b0413407166696d705b6aaba7a",
         "type": "github"
       },
       "original": {
