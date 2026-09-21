@@ -50,11 +50,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789884794,
-        "narHash": "sha256-aZ9hSvygAVAWdG5FwvXjeaktvG35B5n2k/YPeR1Uw4Q=",
+        "lastModified": 1789979493,
+        "narHash": "sha256-eZ14FCgCjQvUUR2oHaxcTTCLUlRjl1q+K6XJyIvD1AY=",
         "owner": "datakurre",
         "repo": "bpmn-auto-layout",
-        "rev": "a8881e585339c1bdbff150e542db45f5aab32c78",
+        "rev": "2c639063cb61c399169ac223c30da35b23cb902d",
         "type": "github"
       },
       "original": {
@@ -105,6 +105,38 @@
         "owner": "datakurre",
         "repo": "bpmn-to-image",
         "type": "github"
+      }
+    },
+    "bpmnRepo": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789978540,
+        "narHash": "sha256-ghZd3FPTOOyy+Yl+pejo/n/btOx9P5uJykxu7BrZaXQ=",
+        "ref": "refs/heads/main",
+        "rev": "cea0883b1b5a5672b8f6453da8d2e8f86e8c1ef9",
+        "revCount": 323,
+        "type": "git",
+        "url": "https://gitlab.com/vasara-bpm/vscode-operaton-bpmn-js-modeler.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gitlab.com/vasara-bpm/vscode-operaton-bpmn-js-modeler.git"
+      }
+    },
+    "dmnRepo": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774018741,
+        "narHash": "sha256-ROgpVWe7ZSGUgg6Wo4ccWZ54YdZTpACaoqQdYFQYcU4=",
+        "ref": "refs/heads/main",
+        "rev": "f281d3404ef09057b36c02986b49a49ed7b3c422",
+        "revCount": 295,
+        "type": "git",
+        "url": "https://gitlab.com/vasara-bpm/vscode-operaton-dmn-js-modeler.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gitlab.com/vasara-bpm/vscode-operaton-dmn-js-modeler.git"
       }
     },
     "flake-compat": {
@@ -193,6 +225,22 @@
         "owner": "numtide",
         "repo": "flake-utils",
         "type": "github"
+      }
+    },
+    "formRepo": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789978541,
+        "narHash": "sha256-ow74e0KAP4IRNweoJC2dIamUsLWdqkvcbd2Ob2EkFo4=",
+        "ref": "refs/heads/main",
+        "rev": "5198c5412b872f5180c450e43276b108167d911d",
+        "revCount": 53,
+        "type": "git",
+        "url": "https://gitlab.com/vasara-bpm/vscode-operaton-form-js-modeler.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gitlab.com/vasara-bpm/vscode-operaton-form-js-modeler.git"
       }
     },
     "home-manager": {
@@ -334,11 +382,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1789632929,
-        "narHash": "sha256-RjR8AyvGlWuw16XRj7C1YDEw4E27ciuyPeB2nDMzgTU=",
+        "lastModified": 1789724158,
+        "narHash": "sha256-nlKgrm0dsVhOSopKheVBCcOpiIticufPPVLdVOI0euA=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a32edd7654519351e48e80372a928df336394670",
+        "rev": "0a3468a402c449992505b6a9fc5b06580141b750",
         "type": "github"
       },
       "original": {
@@ -351,20 +399,23 @@
     "operaton-bpmn-modeler": {
       "inputs": {
         "bpmn-auto-layout": "bpmn-auto-layout",
+        "bpmnRepo": "bpmnRepo",
+        "dmnRepo": "dmnRepo",
+        "formRepo": "formRepo",
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1789885019,
-        "narHash": "sha256-lIr/xspp2Zqdz2jnyiDZEkuhBkL//+4chXvx73mfJtk=",
-        "owner": "vasara-bpm",
-        "repo": "vscode-operaton-bpmn-js-modeler",
-        "rev": "9d6a81b4ffb444499b81bd4721d2f2d03482c023",
-        "type": "gitlab"
+        "lastModified": 1790000992,
+        "narHash": "sha256-QHNVM5m6cPVPAhDeKzIoHJSXOwFwtbKClI2aqfqDkxo=",
+        "owner": "datakurre",
+        "repo": "bpmn-modeler",
+        "rev": "e4c340918bc1dfbb913ff273491be0cf95fc729c",
+        "type": "github"
       },
       "original": {
-        "owner": "vasara-bpm",
-        "repo": "vscode-operaton-bpmn-js-modeler",
-        "type": "gitlab"
+        "owner": "datakurre",
+        "repo": "bpmn-modeler",
+        "type": "github"
       }
     },
     "outline-editor": {
