@@ -10,6 +10,8 @@ let
   isStandalone = osConfig == null;
   trackballScrollButton = if isStandalone then "BTN_SIDE" else "BTN_TASK";
   isAlbemuth = !isStandalone && osConfig.networking.hostName == "albemuth";
+  hasHeadlessOutput = isStandalone || osConfig.services.river-headless-output.enable;
+  headlessBackend = lib.optionalString hasHeadlessOutput ",headless";
   disableOtherPointers = !isAlbemuth;
   standaloneSwaylock = "/usr/local/bin/swaylock";
   standaloneSwaylockConfig = ''
@@ -135,8 +137,8 @@ let
   # single-monitor machine, since wlr-screencopy copies a composited output and
   # an unmapped tag has nothing to copy.
   #
-  # There are exactly two outputs, so `next` is unambiguous and no output name
-  # is needed (river-classic's send-to-output takes a direction, not a name).
+  # There are exactly two outputs, so `next` is unambiguous here. River Classic
+  # also supports targeting an output by name.
   #
   # -current-tags is essential, not a nicety. Tags are per-output: a bare
   # send-to-output moves the view but keeps its tag mask, while the stage has
@@ -149,10 +151,19 @@ let
     riverctl focus-output next
   '';
 
+  riverHdmiPresent = pkgs.writeShellScriptBin "river-hdmi-present" ''
+    riverctl send-to-output -current-tags HDMI-A-1
+    riverctl focus-output HDMI-A-1
+  '';
+
   # Return to the panel without dragging the window back: only focus moves, so
   # the slides keep rendering on the stage and the recording is unaffected.
   riverPresentBack = pkgs.writeShellScriptBin "river-present-back" ''
     riverctl focus-output next
+  '';
+
+  riverHdmiPresentBack = pkgs.writeShellScriptBin "river-hdmi-present-back" ''
+    riverctl focus-output eDP-1
   '';
 
   # Watch the stage from the panel. HEADLESS-1 is never scanned out, so the only
@@ -171,6 +182,14 @@ let
     exec ${pkgs.wl-mirror}/bin/wl-mirror HEADLESS-1
   '';
 
+  riverHdmiView = pkgs.writeShellScriptBin "river-hdmi-view" ''
+    if ${pkgs.procps}/bin/pgrep -x wl-mirror >/dev/null 2>&1; then
+      ${pkgs.procps}/bin/pkill -x wl-mirror
+      exit 0
+    fi
+    exec ${pkgs.wl-mirror}/bin/wl-mirror HDMI-A-1
+  '';
+
   # kanshi owns the stage geometry, but it can lose the race against river
   # registering the headless output -- the same race ~/.config/river/init
   # already works around by restarting kanshi. Re-apply on demand if OBS shows
@@ -180,6 +199,72 @@ let
       --output HEADLESS-1 --custom-mode 1920x1080@60 --scale 1 --pos 1920,0
     ${pkgs.libnotify}/bin/notify-send -t 2000 \
       "Presentation stage" "HEADLESS-1 reset to 1920x1080"
+  '';
+
+  riverHdmiReset = pkgs.writeShellScriptBin "river-hdmi-reset" ''
+    ${pkgs.wlr-randr}/bin/wlr-randr \
+      --output HDMI-A-1 --mode 1920x1080@60Hz --scale 1 --pos 1440,0
+    ${pkgs.libnotify}/bin/notify-send -t 2000 \
+      "Presentation HDMI" "HDMI-A-1 reset to 1920x1080"
+  '';
+
+  display = pkgs.writeShellScriptBin "display" ''
+    set -eu
+
+    wlr_randr=${pkgs.wlr-randr}/bin/wlr-randr
+    kanshictl=${pkgs.kanshi}/bin/kanshictl
+
+    switch_profile() {
+      "$kanshictl" reload
+      exec "$kanshictl" switch "$1"
+    }
+
+    usage() {
+      printf '%s\n' \
+        'Usage: display <extend|mirror|disable|outputs|status>' \
+        '  extend         Extend HDMI-A-1 beside eDP-1' \
+        '  mirror         Mirror eDP-1 fullscreen on HDMI-A-1' \
+        '  disable        Turn HDMI off via Kanshi' \
+        '  outputs        List displays and supported modes' \
+        '  status         Show current display state' \
+        'Shortcuts:' \
+        '  Extend mode only:' \
+        '    Super+W              Focus HDMI-A-1' \
+        '    Super+Shift+W        Focus eDP-1'
+    }
+
+    case "''${1:-}" in
+      extend)
+        switch_profile hdmi-extend
+        ;;
+      disable)
+        if "$wlr_randr" | ${pkgs.gnugrep}/bin/grep -q '^Output HDMI-A-1'; then
+          switch_profile hdmi-off
+        else
+          switch_profile internal
+        fi
+        ;;
+      mirror)
+        switch_profile hdmi-mirror
+        ;;
+      outputs|list)
+        exec "$wlr_randr"
+        ;;
+      status)
+        "$kanshictl" status
+        "$wlr_randr" | ${pkgs.gawk}/bin/awk '
+          /^Output / { print; next }
+          /^[[:space:]]+(Enabled|Current mode|Position|Scale):/ { print }
+        '
+        ;;
+      help|-h|--help|"")
+        usage
+        ;;
+      *)
+        usage >&2
+        exit 2
+        ;;
+    esac
   '';
 
   # Login-manager entry point (greetd on NixOS, any wayland-sessions-aware
@@ -221,8 +306,10 @@ let
     export XDG_CURRENT_DESKTOP=river
     export MOZ_ENABLE_WAYLAND=1
     export NIXOS_OZONE_WL=1
-    export WLR_BACKENDS="''${WLR_BACKENDS:-libinput,drm,headless}"
-    export WLR_HEADLESS_OUTPUTS="''${WLR_HEADLESS_OUTPUTS:-1}"
+    export WLR_BACKENDS="''${WLR_BACKENDS:-libinput,drm${headlessBackend}}"
+    ${lib.optionalString hasHeadlessOutput ''
+      export WLR_HEADLESS_OUTPUTS="''${WLR_HEADLESS_OUTPUTS:-1}"
+    ''}
     default_renderer="''${WLR_RENDERER:-gles2}"
     river_bin="${lib.getExe pkgs.river-classic}"
     nixgl_nvidia="$(command -v nixGLNvidia 2>/dev/null || true)"
@@ -269,16 +356,25 @@ in
     riverStash
     riverStashList
     riverStashToggle
-    riverPresent
-    riverPresentBack
-    riverStageView
-    riverStageReset
     pkgs.wl-mirror
     pkgs.lswt
     pkgs.jq
     riverLock
     riverSession
   ]
+  ++ lib.optionals hasHeadlessOutput [
+    riverPresent
+    riverPresentBack
+    riverStageView
+    riverStageReset
+  ]
+  ++ lib.optionals isAlbemuth [
+    riverHdmiPresent
+    riverHdmiPresentBack
+    riverHdmiView
+    riverHdmiReset
+  ]
+  ++ lib.optionals isAlbemuth [ display ]
   ++ lib.optionals isStandalone [
     pkgs.river-classic
     pkgs.foot
@@ -436,21 +532,32 @@ in
       riverctl map normal Super F toggle-fullscreen
       riverctl map normal Super+Shift F toggle-float
       riverctl map normal Super+Shift Q exit
-      riverctl map normal Super W focus-output next
-      riverctl map normal Super+Shift W send-to-output next
+      ${lib.optionalString (!isAlbemuth) ''
+        riverctl map normal Super W focus-output next
+        riverctl map normal Super+Shift W send-to-output next
+      ''}
       riverctl map normal Super Page_Down spawn "${lib.getExe riverSpace} next"
       riverctl map normal Super Page_Up spawn "${lib.getExe riverSpace} previous"
-
-      # Presentation stage (HEADLESS-1). S for stage: P is the fuzzel launcher.
-      # Super+S sends the focused window to the stage and follows it, so the
-      # keyboard drives the slides while the panel keeps showing OBS;
-      # Super+Shift+S returns focus to the panel and leaves the slides on the
-      # stage. Super+Control+S toggles the stage mirror (wl-mirror);
-      # Super+Shift+Control+S re-applies the stage geometry.
-      riverctl map normal Super S spawn river-present
-      riverctl map normal Super+Shift S spawn river-present-back
-      riverctl map normal Super+Control S spawn river-stage-view
-      riverctl map normal Super+Shift+Control S spawn river-stage-reset
+      ${lib.optionalString hasHeadlessOutput ''
+        # Presentation stage (HEADLESS-1). S for stage: P is the fuzzel launcher.
+        # Super+S sends the focused window to the stage and follows it, so the
+        # keyboard drives the slides while the panel keeps showing OBS;
+        # Super+Shift+S returns focus to the panel and leaves the slides on the
+        # stage. Super+Control+S toggles the stage mirror (wl-mirror);
+        # Super+Shift+Control+S re-applies the stage geometry.
+        riverctl map normal Super S spawn river-present
+        riverctl map normal Super+Shift S spawn river-present-back
+        riverctl map normal Super+Control S spawn river-stage-view
+        riverctl map normal Super+Shift+Control S spawn river-stage-reset
+      ''}
+      ${lib.optionalString isAlbemuth ''
+        # HDMI presentation shortcuts mirror the headless-stage workflow used
+        # on Makondo, targeting the physical HDMI output instead.
+        riverctl map normal Super S spawn river-hdmi-present
+        riverctl map normal Super+Shift S spawn river-hdmi-present-back
+        riverctl map normal Super+Control S spawn river-hdmi-view
+        riverctl map normal Super+Shift+Control S spawn river-hdmi-reset
+      ''}
 
       for i in $(seq 1 9); do
         riverctl map normal Super "$i"            spawn "${lib.getExe riverSpace} $i"

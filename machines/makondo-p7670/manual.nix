@@ -81,6 +81,7 @@ in
   hardware.nvidia.prime.offload.enable = true;
   hardware.nvidia.prime.offload.enableOffloadCmd = true;
   networking.hostName = "makondo";
+  services.river-headless-output.enable = true;
 
   # Deliberately NO libinput quirks file for the trackball. ModelBouncingKeys reads like
   # "this device bounces, please debounce it" but is the opposite: it means timestamps

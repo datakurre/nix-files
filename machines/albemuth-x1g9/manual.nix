@@ -6,6 +6,33 @@
 }:
 let
   evdev-debounce = pkgs.callPackage ../../pkgs/evdev-debounce { };
+  displayMirror = pkgs.writeShellScript "albemuth-display-mirror" ''
+    ${pkgs.procps}/bin/pkill -x wl-mirror 2>/dev/null || true
+    ${pkgs.river-classic}/bin/riverctl unmap normal Super W 2>/dev/null || true
+    ${pkgs.river-classic}/bin/riverctl unmap normal Super+Shift W 2>/dev/null || true
+    ${pkgs.wl-mirror}/bin/wl-mirror \
+      --backend screencopy-shm \
+      --no-show-cursor \
+      --fullscreen-output HDMI-A-1 \
+      --scaling fit \
+      eDP-1 &
+    mirror_pid=$!
+    sleep 1
+    ${pkgs.river-classic}/bin/riverctl focus-output eDP-1 || true
+    wait "$mirror_pid"
+  '';
+  displayExtend = pkgs.writeShellScript "albemuth-display-extend" ''
+    ${pkgs.procps}/bin/pkill -x wl-mirror 2>/dev/null || true
+    ${pkgs.river-classic}/bin/riverctl map normal Super W focus-output HDMI-A-1
+    ${pkgs.river-classic}/bin/riverctl map normal Super+Shift W send-to-output HDMI-A-1
+    ${pkgs.river-classic}/bin/riverctl focus-output eDP-1 || true
+  '';
+  displayStop = pkgs.writeShellScript "albemuth-display-stop" ''
+    ${pkgs.procps}/bin/pkill -x wl-mirror 2>/dev/null || true
+    ${pkgs.river-classic}/bin/riverctl unmap normal Super W 2>/dev/null || true
+    ${pkgs.river-classic}/bin/riverctl unmap normal Super+Shift W 2>/dev/null || true
+    ${pkgs.river-classic}/bin/riverctl focus-output eDP-1 || true
+  '';
 in
 {
   boot.initrd = {
@@ -95,37 +122,78 @@ in
     };
   };
 
-  # HEADLESS-1 is the virtual presentation output created by the headless
-  # wlroots backend (modules/nixos/services-river.nix). It must be listed here
-  # even though nothing is normally sent to it: kanshi only applies a profile
-  # whose outputs match the whole connected set, so omitting it would stop the
-  # profile from matching and drop eDP-1 back to scale 1.
-  #
-  # Placed to the right of the panel's 1920x1200 logical area, at scale 1 and
-  # exactly 1920x1080, so an OBS canvas of the same size captures it 1:1 with
-  # no scaling and no 16:10 letterboxing.
+  # Kanshi owns the physical output layout. The HDMI profiles all list both
+  # connected outputs; the mirror profile starts wl-mirror only after kanshi has
+  # successfully applied the layout. The extend profile is first so connecting
+  # HDMI defaults to a normal extended desktop.
   home-manager.users.${config.user.name}.services.kanshi = {
     enable = true;
     settings = [
+      {
+        profile.name = "hdmi-extend";
+        profile.outputs = [
+          {
+            criteria = "eDP-1";
+            status = "enable";
+            scale = 2.0;
+            position = "0,0";
+          }
+          {
+            criteria = "HDMI-A-1";
+            status = "enable";
+            mode = "1920x1080@60Hz";
+            scale = 1.0;
+            position = "1440,0";
+          }
+        ];
+        profile.exec = "${displayExtend}";
+      }
+      {
+        profile.name = "hdmi-mirror";
+        profile.outputs = [
+          {
+            criteria = "eDP-1";
+            status = "enable";
+            scale = 2.0;
+            position = "0,0";
+          }
+          {
+            criteria = "HDMI-A-1";
+            status = "enable";
+            mode = "1920x1080@60Hz";
+            scale = 1.0;
+            position = "1440,0";
+          }
+        ];
+        profile.exec = "${displayMirror}";
+      }
+      {
+        profile.name = "hdmi-off";
+        profile.outputs = [
+          {
+            criteria = "eDP-1";
+            status = "enable";
+            scale = 2.0;
+            position = "0,0";
+          }
+          {
+            criteria = "HDMI-A-1";
+            status = "disable";
+          }
+        ];
+        profile.exec = "${displayStop}";
+      }
       {
         profile.name = "internal";
         profile.outputs = [
           {
             criteria = "eDP-1";
+            status = "enable";
             scale = 2.0;
             position = "0,0";
           }
-          {
-            criteria = "HEADLESS-1";
-            # --custom is required: a wlroots headless output advertises only
-            # one mode (1280x720), and kanshi applies profiles atomically, so
-            # requesting an unadvertised mode drops eDP-1's scale too. See the
-            # longer note in machines/makondo-p7670/manual.nix.
-            mode = "--custom 1920x1080@60Hz";
-            scale = 1.0;
-            position = "1920,0";
-          }
         ];
+        profile.exec = "${displayStop}";
       }
     ];
   };

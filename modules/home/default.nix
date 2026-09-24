@@ -12,6 +12,7 @@
   ./programs-git.nix
   ./programs-lock-session.nix
   ./programs-libreoffice.nix
+  ./programs-losslesscut.nix
   ./programs-minecraft.nix
   ./programs-obs.nix
   ./programs-shell.nix
