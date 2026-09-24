@@ -230,7 +230,12 @@ let
         'Shortcuts:' \
         '  Extend mode only:' \
         '    Super+W              Focus HDMI-A-1' \
-        '    Super+Shift+W        Focus eDP-1'
+        '    Super+Shift+W        Send focused view to HDMI-A-1' \
+        '  HDMI presentation:' \
+        '    Super+S              Send focused view to HDMI-A-1 and focus it' \
+        '    Super+Shift+S        Return focus to eDP-1' \
+        '    Super+Control+S      Toggle HDMI-A-1 mirror preview' \
+        '    Super+Shift+Control+S Reset HDMI-A-1 geometry'
     }
 
     case "''${1:-}" in
