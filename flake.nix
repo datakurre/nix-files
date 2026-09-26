@@ -110,6 +110,7 @@
                 user.description = description;
                 user.home = home;
                 home-manager.users.${name}.home.stateVersion = homeStateVersion;
+                home-manager.extraSpecialArgs.outlineEditor = inputs.outline-editor;
               }
             )
             home-manager.nixosModules.home-manager
@@ -152,6 +153,7 @@
           extraSpecialArgs = {
             inherit nixgl;
             operatonBpmnModeler = inputs.operaton-bpmn-modeler;
+            outlineEditor = inputs.outline-editor;
           };
         };
     in

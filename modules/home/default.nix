@@ -17,6 +17,7 @@
   ./programs-obs.nix
   ./programs-shell.nix
   ./programs-nushell-ai.nix
+  ./programs-outline.nix
   ./programs-ssh.nix
   ./programs-taskwarrior.nix
   ./programs-vim.nix
