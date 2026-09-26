@@ -50,11 +50,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790021392,
-        "narHash": "sha256-r01t4qTez8MZ853qbiz5Z7lzE5XS3o00YbjDZQW5rsc=",
+        "lastModified": 1790402238,
+        "narHash": "sha256-SCmNxRQx7+4uFZLEwl7S/yHWwfkHO0kuEYupd01tC6I=",
         "owner": "datakurre",
         "repo": "bpmn-auto-layout",
-        "rev": "82bc81c78e6abb2637f69b9c1b82017c02516c8c",
+        "rev": "7ceacf2fbbe5132ed0446bcb0e3ea94d0c5b2884",
         "type": "github"
       },
       "original": {
@@ -405,11 +405,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1790340046,
-        "narHash": "sha256-hAV6+FCzAh8Dvvd2q203opNN8hlbsMWOC57PPhtrWnA=",
+        "lastModified": 1790404219,
+        "narHash": "sha256-hWRxxgt08fx4Q33CPMIIdZ0i8Co/Ao7FcjHDkf0dVxo=",
         "owner": "datakurre",
         "repo": "bpmn-modeler",
-        "rev": "5e99487a139f858c8781baf302d5556fa64144d8",
+        "rev": "7f14821aa88f3ed1ab50f4fa6d8e2fdd7ef1de23",
         "type": "github"
       },
       "original": {
