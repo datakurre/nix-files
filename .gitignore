@@ -2,3 +2,4 @@
 /result
 /.cache/
 /pkgs/swaylock-xjack/build/
+nixgl-local.json
