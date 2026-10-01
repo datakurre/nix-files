@@ -14,9 +14,9 @@
     "name": "vscode-operaton-form-js-modeler"
   },
   "datakurre.vscode-operaton-bpmn-js-modeler": {
-    "version": "0.7.3",
-    "url": "https://datakurre.gallerycdn.vsassets.io/extensions/datakurre/vscode-operaton-bpmn-js-modeler/0.7.3/1790838391779/Microsoft.VisualStudio.Services.VSIXPackage",
-    "sha256": "1dj005pnfhgc2yphgxnfzr5vrgbqkf2wi8nwp46xgylp7314lryz",
+    "version": "0.7.4",
+    "url": "https://datakurre.gallerycdn.vsassets.io/extensions/datakurre/vscode-operaton-bpmn-js-modeler/0.7.4/1790846422946/Microsoft.VisualStudio.Services.VSIXPackage",
+    "sha256": "1hq2xydsn168g6chp2jrrqsh80r85p9021mf20pqbk0080432p7y",
     "publisher": "datakurre",
     "name": "vscode-operaton-bpmn-js-modeler"
   },
