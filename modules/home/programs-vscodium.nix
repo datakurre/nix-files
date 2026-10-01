@@ -200,7 +200,12 @@ in
       };
 
       operaton = {
-        extensions = pythonRobotExtensions ++ [ manualExts."datakurre.vscode-operaton-robotframework" ];
+        extensions =
+          pythonRobotExtensions
+          ++ [ manualExts."datakurre.vscode-operaton-robotframework" ]
+          ++ (with pkgs.open-vsx; [
+            tamasfe.even-better-toml
+          ]);
       };
     };
   };
