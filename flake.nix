@@ -8,7 +8,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixgl.url = "github:nix-community/nixGL";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    agent-sandbox.url = "github:datakurre/agent-sandbox/feature/nix-serve-substituter";
+    agent-sandbox.url = "github:datakurre/agent-sandbox";
     bpmn-to-image.url = "github:datakurre/bpmn-to-image";
     bpmn-to-image.inputs.nixpkgs.follows = "nixpkgs";
     operaton-bpmn-modeler.url = "github:datakurre/bpmn-modeler";
