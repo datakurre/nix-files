@@ -8,7 +8,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixgl.url = "github:nix-community/nixGL";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    agent-sandbox.url = "github:datakurre/agent-sandbox";
+    agent-sandbox.url = "github:datakurre/agent-sandbox/feature/nix-serve-substituter";
     bpmn-to-image.url = "github:datakurre/bpmn-to-image";
     bpmn-to-image.inputs.nixpkgs.follows = "nixpkgs";
     operaton-bpmn-modeler.url = "github:datakurre/bpmn-modeler";
@@ -57,21 +57,16 @@
         '';
       };
 
-      mkAgentSandboxOverlay = selinux: final: prev: {
+      agentSandboxOverlay = final: prev: {
         agent-sandbox = prev.symlinkJoin {
           name = "agent-sandbox";
           paths = [ inputs.agent-sandbox.packages.${prev.stdenv.hostPlatform.system}.default ];
           nativeBuildInputs = [ prev.makeWrapper ];
           postBuild = ''
-            wrapProgram $out/bin/agent-sandbox --add-flags "--nix --git --ssh --gpg --devenv --ports --mounts --proxy --workspace${
-              if selinux then " --selinux" else ""
-            }"
+            wrapProgram $out/bin/agent-sandbox --add-flags "--nix --git --ssh --gpg --devenv --ports --mounts --proxy --workspace"
           '';
         };
       };
-
-      agentSandboxOverlay = mkAgentSandboxOverlay false;
-      agentSandboxSelinuxOverlay = mkAgentSandboxOverlay true;
 
       pkgs = import nixpkgs {
         inherit system;
@@ -139,7 +134,7 @@
               inputs.bpmn-to-image.overlays.default
               unstableOverlay
               swaylockXjackOverlay
-              agentSandboxSelinuxOverlay
+              agentSandboxOverlay
             ];
           };
           modules = [
