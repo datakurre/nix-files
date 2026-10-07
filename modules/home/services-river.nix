@@ -53,6 +53,28 @@ let
     exec "$swaylock_bin" -f
   '';
 
+  # Every kanshi profile on every host keeps the internal panel at scale 2, but
+  # kanshi only acts when a profile matches the connected output set. When none
+  # does (an unexpected dock/monitor, or the output re-appearing after resume),
+  # river re-adds eDP-1 at scale 1 and clients render tiny. Enforce only that
+  # one invariant, and leave everything else to kanshi.
+  riverPanelScale = pkgs.writeShellScriptBin "river-panel-scale" ''
+    wrong="$(${pkgs.wlr-randr}/bin/wlr-randr --json 2>/dev/null |
+      ${pkgs.jq}/bin/jq -r '.[] | select(.name == "eDP-1" and .enabled and .scale != 2) | .name')" || exit 0
+    if [ -n "$wrong" ]; then
+      ${pkgs.wlr-randr}/bin/wlr-randr --output eDP-1 --scale 2
+    fi
+  '';
+
+  # Outputs can re-appear a moment after logind reports the resume, so check
+  # again once they have settled.
+  riverResume = pkgs.writeShellScript "river-resume" ''
+    ${pkgs.wlopm}/bin/wlopm --on '*'
+    ${lib.getExe riverPanelScale}
+    sleep 3
+    ${lib.getExe riverPanelScale}
+  '';
+
   layoutRotate = pkgs.writeShellScriptBin "river-layout-rotate" ''
     state="$HOME/.cache/river-main-location"
     curr=$(cat "$state" 2>/dev/null || echo left)
@@ -365,6 +387,7 @@ in
     pkgs.lswt
     pkgs.jq
     riverLock
+    riverPanelScale
     riverSession
   ]
   ++ lib.optionals hasHeadlessOutput [
@@ -467,7 +490,7 @@ in
       # Keep the physical panel HiDPI even if kanshi's profile was evaluated
       # before the headless output became available. swaylock uses the output
       # scale for its effect and otherwise renders at half size.
-      ${pkgs.wlr-randr}/bin/wlr-randr --output eDP-1 --scale 2 || true
+      ${lib.getExe riverPanelScale} || true
 
       riverctl keyboard-layout -options "eurosign:e,caps:escape,nbsp:none" fi
       riverctl focus-follows-cursor disabled
@@ -767,8 +790,8 @@ in
     events = {
       "before-sleep" = "${lib.getExe riverLock}";
       "lock" = "${lib.getExe riverLock}";
-      "unlock" = "${pkgs.wlopm}/bin/wlopm --on '*'";
-      "after-resume" = "${pkgs.wlopm}/bin/wlopm --on '*'";
+      "unlock" = "${riverResume}";
+      "after-resume" = "${riverResume}";
     };
   };
 

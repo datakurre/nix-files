@@ -95,11 +95,35 @@ in
       export XTERM_SHELL="$SHELL"
     fi
   '';
+  # River always runs with the headless backend here (see
+  # modules/home/services-river.nix), and kanshi matches a profile against the
+  # whole connected output set -- so the panel-only profile never matched while
+  # HEADLESS-1 existed, and nothing restored the panel scale after resume.
+  # "internal" mirrors Makondo's profile; "single" is the fallback for a
+  # session started without the headless backend.
   services.kanshi = {
     enable = true;
     settings = [
       {
-        profile.name = "default";
+        profile.name = "internal";
+        profile.outputs = [
+          {
+            criteria = "eDP-1";
+            scale = 2.0;
+            position = "0,0";
+          }
+          {
+            criteria = "HEADLESS-1";
+            # A headless output advertises only 1280x720; a non-custom mode
+            # would make kanshi reject the whole profile.
+            mode = "--custom 1920x1080@60Hz";
+            scale = 1.0;
+            position = "1920,0";
+          }
+        ];
+      }
+      {
+        profile.name = "single";
         profile.outputs = [
           {
             criteria = "*";
