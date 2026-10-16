@@ -7,11 +7,11 @@
         "opencode": "opencode"
       },
       "locked": {
-        "lastModified": 1792061793,
-        "narHash": "sha256-IYjmSsHDv81kesmG7KK9WHShn44yk0zYOWLaKaRXCBk=",
+        "lastModified": 1792133395,
+        "narHash": "sha256-yAggNQL2ZsTxbM4HqKPmufnNncqAJsUqH1kT7DY0M4M=",
         "owner": "datakurre",
         "repo": "agent-sandbox",
-        "rev": "578aad532c722964c1a53b1116bae7bc617e6c94",
+        "rev": "9a06cae437589c26beb2a296e6d3d63fe6844889",
         "type": "github"
       },
       "original": {
@@ -111,15 +111,17 @@
     "bpmnRepo": {
       "flake": false,
       "locked": {
-        "lastModified": 1789978540,
-        "narHash": "sha256-ghZd3FPTOOyy+Yl+pejo/n/btOx9P5uJykxu7BrZaXQ=",
+        "lastModified": 1791560046,
+        "narHash": "sha256-GW+QNnUfpxMZCshj8BRZqXws2lm13bzx88j2ri43O44=",
         "ref": "refs/heads/main",
-        "rev": "cea0883b1b5a5672b8f6453da8d2e8f86e8c1ef9",
-        "revCount": 323,
+        "rev": "4f79c9f067a97799343081fbd0c3091aabc8b1ad",
+        "revCount": 391,
+        "submodules": true,
         "type": "git",
         "url": "https://gitlab.com/vasara-bpm/vscode-operaton-bpmn-js-modeler.git"
       },
       "original": {
+        "submodules": true,
         "type": "git",
         "url": "https://gitlab.com/vasara-bpm/vscode-operaton-bpmn-js-modeler.git"
       }
@@ -383,11 +385,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1789844176,
-        "narHash": "sha256-COQmpo4lFIzMgUjr3ntDpjH0NwrCnf7N0uhR+6WPGP8=",
+        "lastModified": 1791637130,
+        "narHash": "sha256-TuvwvSjJrpqyIYdjhQ7Wu+ADVfeOpO2Um21/V7TOubw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "79b35bf0bda5cd110f856aa5b5b2c5ba4460dbf5",
+        "rev": "ca1659429c950a11a565b5764e37a1b704e17ec8",
         "type": "github"
       },
       "original": {
@@ -428,11 +430,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1790597161,
-        "narHash": "sha256-8ZCjOdmQ9b7v4JRAwom3Dv2loBHGXVqZJfewVTFcFrc=",
+        "lastModified": 1792073493,
+        "narHash": "sha256-+yt9PQ+V2VR9TainrGWjZti0fWEjIY8EzUdjGkC1U7U=",
         "owner": "datakurre",
         "repo": "bpmn-modeler",
-        "rev": "1b29c9e16c1878cae4813b7fa7f4099b5e96be9b",
+        "rev": "048629be39028a642f076176e93ce6a424be081c",
         "type": "github"
       },
       "original": {
