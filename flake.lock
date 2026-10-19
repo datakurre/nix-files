@@ -430,11 +430,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1792073493,
-        "narHash": "sha256-+yt9PQ+V2VR9TainrGWjZti0fWEjIY8EzUdjGkC1U7U=",
+        "lastModified": 1792435971,
+        "narHash": "sha256-TdzAobZweQVVkljM+g/UNumcrsOo9r1wDEy+5gWy8SM=",
         "owner": "datakurre",
         "repo": "bpmn-modeler",
-        "rev": "048629be39028a642f076176e93ce6a424be081c",
+        "rev": "79a6d177c15d39d4883649ce59394cfa41d101ff",
         "type": "github"
       },
       "original": {
