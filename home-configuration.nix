@@ -48,6 +48,7 @@ in
   # `home-manager switch` from failing outside a desktop session.
   dconf.enable = lib.mkForce false;
   home.sessionVariables.TMPDIR = tmpDir;
+  home.sessionVariables.NETRC = "/home/atsoukka-nixbld/.netrc";
   home.packages = nixglPackage ++ bpmnModeler;
   programs.nushell.environmentVariables.TMPDIR = tmpDir;
   # Unlike bash (see .bashrc.d/99-nix.sh below), nushell never sources any
@@ -95,12 +96,10 @@ in
       export XTERM_SHELL="$SHELL"
     fi
   '';
-  # River always runs with the headless backend here (see
-  # modules/home/services-river.nix), and kanshi matches a profile against the
-  # whole connected output set -- so the panel-only profile never matched while
-  # HEADLESS-1 existed, and nothing restored the panel scale after resume.
-  # "internal" mirrors Makondo's profile; "single" is the fallback for a
-  # session started without the headless backend.
+  # Standalone River does not use the headless backend; it is enabled only by
+  # the Makondo NixOS option. Keep these profiles limited to physical outputs.
+  # "internal" mirrors the panel setup; "single" is the fallback for other
+  # connected outputs.
   services.kanshi = {
     enable = true;
     settings = [
@@ -111,14 +110,6 @@ in
             criteria = "eDP-1";
             scale = 2.0;
             position = "0,0";
-          }
-          {
-            criteria = "HEADLESS-1";
-            # A headless output advertises only 1280x720; a non-custom mode
-            # would make kanshi reject the whole profile.
-            mode = "--custom 1920x1080@60Hz";
-            scale = 1.0;
-            position = "1920,0";
           }
         ];
       }

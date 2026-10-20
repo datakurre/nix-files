@@ -10,7 +10,7 @@ let
   isStandalone = osConfig == null;
   trackballScrollButton = if isStandalone then "BTN_SIDE" else "BTN_TASK";
   isAlbemuth = !isStandalone && osConfig.networking.hostName == "albemuth";
-  hasHeadlessOutput = isStandalone || osConfig.services.river-headless-output.enable;
+  hasHeadlessOutput = !isStandalone && osConfig.services.river-headless-output.enable;
   headlessBackend = lib.optionalString hasHeadlessOutput ",headless";
   disableOtherPointers = !isAlbemuth;
   standaloneSwaylock = "/usr/local/bin/swaylock";
