@@ -7,11 +7,11 @@
         "opencode": "opencode"
       },
       "locked": {
-        "lastModified": 1793721889,
-        "narHash": "sha256-0b+o8fo0ZdGVUwB2zinZpwFVSILzusTtuL/S6CHI2jc=",
+        "lastModified": 1793777485,
+        "narHash": "sha256-7byCdCNjiVJRx6oknADd+4m0JgSNTHpTIP+umxxiN7w=",
         "owner": "datakurre",
         "repo": "agent-sandbox",
-        "rev": "56e6ba37863b586e1d3a9f02e0c650a09bbec5ac",
+        "rev": "105bd5b188f48e2cf85750edd186365a4b546011",
         "type": "github"
       },
       "original": {
